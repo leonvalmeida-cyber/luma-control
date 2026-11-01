@@ -1,0 +1,1 @@
+{"name": "Luma Control", "short_name": "Luma", "start_url": "./?v=0.7", "scope": "./", "display": "standalone", "background_color": "#0b0e18", "theme_color": "#101322", "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]}
