@@ -35,3 +35,13 @@ test('Existing missing subgroup refs may be preserved; new unknown refs are bloc
  assert.deepEqual(saved.groups,['local:removed']);
  assert.throws(()=>engine.saveLocal({...saved,groups:['local:new-missing']}),/Unbekannte/);
 });
+
+test('Feature HTML inline JS parses and IDs remain unique',()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
+ const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
+ for(const [index,m] of scripts.entries()){if(m[1].trim())assert.doesNotThrow(()=>new vm.Script(m[1],{filename:'index inline '+index}))}
+ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);assert.equal(new Set(ids).size,ids.length);
+ assert.ok(html.includes('groups-v1.js'));assert.ok(html.includes('scenes-v1.js'));
+ assert.ok(html.includes("window.lumaTargetIds=targetIds"));
+ assert.ok(!html.includes("el('groupSave').onclick"));
+});
