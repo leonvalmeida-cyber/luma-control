@@ -72,7 +72,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin:0 0 
 <section id="pageMusic" class="page" hidden>
  <div class="eyebrow">Live & Musik</div><h1>Fühl die Musik.<br>Sieh das Licht.</h1><p class="lead">Lichtstimmungen, die den Rhythmus sichtbar machen.</p>
  <div class="music-hero" id="musicHero"><div class="hero-kicker">✦ Luma Audio Experience</div><div class="music-orb"></div><div id="wave" class="music-wave"></div><div class="music-name"><strong id="musicVisualState">Musikvisualisierung</strong><span>Simulierte Animation · kein Mikrofonzugriff</span></div></div>
- <div class="card music-controls"><button id="musicStart" class="primary music-start" type="button">▶ Demo-Animation starten</button><div class="info-row"><span>Quelle: <strong>Demo-Signal</strong></span><span id="musicState">● Bereit</span></div></div>
+ <div class="card music-controls"><button id="musicStart" class="primary music-start" type="button">▶ Demo-Animation starten</button><div class="info-row"><span>Quelle: <strong>Demo-Signal</strong></span><span id="musicState">● Bereit</span></div><p id="demoMusicTarget" class="fine" aria-live="polite" style="margin:10px 0 0">Lichtbereich: Wohnzimmer</p></div>
  <div class="row section-head"><h2>Musikstimmung</h2><small>Live auswählen</small></div>
  <div class="music-options" id="musicModes"><button class="music-option" data-mode="pulse" type="button" aria-pressed="true"><span>◉</span>Pulse</button><button class="music-option" data-mode="flow" type="button" aria-pressed="false"><span>〰</span>Flow</button><button class="music-option" data-mode="ambient" type="button" aria-pressed="false"><span>✧</span>Ambient</button></div>
  <div class="card control-card" style="margin-top:13px"><div class="slider-line"><span>Intensität</span><strong id="musicIntensityNum">65 %</strong></div><input id="musicIntensity" class="luma-slider" type="range" min="0" max="100" value="65" aria-label="Musikintensität" style="--value:65%"></div>
@@ -135,7 +135,7 @@ function lightArea(){if(demoEngine&&demoEngine.group(demoTarget)){const ids=demo
 function renderLights(){
 byId('areaAll').setAttribute('aria-pressed',String(area==='all'));byId('areaLiving').setAttribute('aria-pressed',String(area==='living'));
 const list=lightArea(),count=list.filter(function(l){return l.on}).length;
-byId('heroRoom').textContent=area==='all'?'All':area==='living'?'Wohnzimmer':(demoEngine?.group(demoTarget)?.name||'Lichtbereich');
+byId('heroRoom').textContent=area==='all'?'All':area==='living'?'Wohnzimmer':(demoEngine?.group(demoTarget)?.name||'Lichtbereich');byId('demoMusicTarget').textContent='Lichtbereich: '+(demoEngine?.group(demoTarget)?.name||'Wohnzimmer');
 byId('heroState').textContent=list.length+' Lampen · '+(count?'Eingeschaltet':'Ausgeschaltet');
 byId('lampsCount').textContent=count+' von '+list.length+' aktiv';
 byId('lightHero').classList.toggle('off',!count);
@@ -151,7 +151,7 @@ byId('mainPower').addEventListener('click',function(){const allOn=lightArea().so
 byId('areaAll').addEventListener('click',function(){area='all';demoTarget='all';demoEngine?.setTarget('all');renderLights()});
 byId('areaLiving').addEventListener('click',function(){area='living';demoTarget='bridge:1';demoEngine?.setTarget(demoTarget);renderLights()});
 byId('lightBrightness').addEventListener('input',function(){brightness=+this.value;this.style.setProperty('--value',brightness+'%');byId('lightBrightnessNum').textContent=brightness+' %';renderLights()});
-function applyScene(scene){selectedScene=scene.id;const colors=scene.cols;lights.forEach(function(l,i){if(l.room==='living')l.color=colors[i%colors.length]});lightArea().forEach(function(l){l.on=true});renderLights();renderScenes();toast('Lichtwelt „'+scene.name+'“ als Demo aktiviert')}
+function applyScene(scene){selectedScene=scene.id;const colors=scene.cols;lights.forEach(function(l,i){if(lightArea().some(x=>x.id===l.id))l.color=colors[i%colors.length]});lightArea().forEach(function(l){l.on=true});renderLights();renderScenes();toast('Lichtwelt „'+scene.name+'“ als Demo aktiviert')}
 const strip=byId('moodStrip');[['cyberpunk','Neon Night'],['cozy','Gemütlich'],['aurora','Aurora'],['movie','Kino']].forEach(function(pair){const scene=scenes.find(function(s){return s.id===pair[0]});const b=document.createElement('button');b.type='button';b.className='mood-button';b.textContent=pair[1];b.style.setProperty('--mood1',scene.cols[0]);b.style.setProperty('--mood2',scene.cols[1]);b.setAttribute('aria-pressed',String(selectedScene===scene.id));b.addEventListener('click',function(){applyScene(scene);document.querySelectorAll('.mood-button').forEach(function(bb){bb.setAttribute('aria-pressed',String(bb===b))})});strip.append(b)});
 function scenePicture(scene){
  const cs=scene.cols,cat=scene.category;
