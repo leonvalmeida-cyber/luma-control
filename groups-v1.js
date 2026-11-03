@@ -60,9 +60,9 @@ if(payload?.format==='luma-groups-v2'&&payload.version===2){if(payload.bridgeId!
 else if(allowLegacy&&payload?.format==='luma-groups'&&payload.version===1&&Array.isArray(payload.groups)){incoming=payload.groups}
 else fail('Ungültiges oder nicht unterstütztes Sicherungsformat.');
 if(incoming.length>MAX_GROUPS)fail('Zu viele Gruppen.');const parsed=incoming.map(groupNormalize);const existing=new Map((merge?this.bucket.groups:[]).map(g=>[g.id,g]));let added=0;for(const g of parsed){if(!existing.has(g.id)){existing.set(g.id,g);added++}}
-const combined=[...existing.values()];assertGraph(combined);const before=copy(this.bucket);this.bucket.groups=combined;
-if(payload.version===2){this.bucket.order=uniqueStrings(payload.order);if(payload.meta!=null){for(const [id,meta] of Object.entries(payload.meta)){if(!isId(id)||!meta||typeof meta!=='object')fail('Ungültige Metadaten.');const normalized={order:uniqueStrings(meta.order||[]),positions:{}};for(const [lamp,pos] of Object.entries(meta.positions||{})){if(!isId(lamp)||!POSITIONS.includes(pos))fail('Ungültige Position.');if(pos)normalized.positions[lamp]=pos}this.bucket.meta[id]=normalized}}}
-try{this.persist()}catch(e){Object.assign(this.bucket,before);throw e}
+const combined=[...existing.values()];assertGraph(combined);const before=copy(this.bucket);const proposed={...copy(this.bucket),groups:combined};
+if(payload.version===2){proposed.order=uniqueStrings(payload.order);if(payload.meta!=null){for(const [id,meta] of Object.entries(payload.meta)){if(!isId(id)||!meta||typeof meta!=='object'||Array.isArray(meta))fail('Ungültige Metadaten.');const normalized={order:uniqueStrings(meta.order||[]),positions:{}};if(meta.positions!=null&&(typeof meta.positions!=='object'||Array.isArray(meta.positions)))fail('Ungültige Positionsdaten.');for(const [lamp,pos] of Object.entries(meta.positions||{})){if(!isId(lamp)||!POSITIONS.includes(pos))fail('Ungültige Position.');if(pos)normalized.positions[lamp]=pos}proposed.meta[id]=normalized}}}
+Object.assign(this.bucket,proposed);try{this.persist()}catch(e){Object.assign(this.bucket,before);throw e}
 return {added,total:this.bucket.groups.length}}
 }
 return {Engine,STORAGE,VERSION,POSITIONS,groupNormalize,assertGraph,normalizeLegacy,sortedBy};
