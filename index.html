@@ -341,11 +341,12 @@ async function connectInner(){
  }finally{el('hueLoad').disabled=false;el('hueLoad').textContent='Verbinden'}
 }
 function renderTargets(){
- const engine=ensureGroups(),select=el('target'),old=select.value||engine.currentTarget();
+ const engine=ensureGroups(),select=el('target'),old=select.dataset.bridgeIdentity===engine.bridgeId?select.value:engine.currentTarget();
  select.replaceChildren();
  for(const entry of engine.options())select.add(new Option(entry.name,entry.id));
  select.value=engine.group(old)?old:engine.currentTarget();
  if(!select.value)select.value='all';
+ select.dataset.bridgeIdentity=engine.bridgeId;
  const quick=el('targetQuick');quick.replaceChildren();
  for(const entry of [{id:'all',name:'🌐 All'},...(engine.livingRoom()?[{id:engine.livingRoom().id,name:'⌂ Wohnzimmer'}]:[])]){
   const b=document.createElement('button');b.type='button';b.className='g-quick-button';b.textContent=entry.name;b.setAttribute('aria-pressed',String(select.value===entry.id));
@@ -393,7 +394,7 @@ function renderScenes(){window.lumaScenesV1?.render()}
 window.lumaApplyCuratedScene=async scene=>{stopAll();window.lumaSceneSelection=scene;await paint();};
 function renderMood(){el('moodControls').replaceChildren();for(const [k,name,help] of [['brightness','Helligkeit','Gesamte Lichtstärke'],['saturation','Farbintensität','Von dezent bis kräftig'],['contrast','Kontrast','Unterschiede zwischen den Lampen']]){const label=document.createElement('label');label.className='range';label.textContent=name+' · '+mood[k]+' %';const input=document.createElement('input');input.type='range';input.min=k==='brightness'?1:0;input.max=100;input.value=mood[k];input.oninput=()=>{mood[k]=+input.value;label.firstChild.textContent=name+' · '+input.value+' %';save('mood',mood)};const note=document.createElement('p');note.className='note';note.textContent=help;label.append(input,note);el('moodControls').append(label)}}
 for(const [n,v] of [['Gemütlich',[45,55,25]],['Natürlich',[75,65,50]],['Lebendig',[85,100,80]],['Kino',[20,75,70]],['Standard',[75,85,50]]]){const b=document.createElement('button');b.className='alt';b.textContent=n;b.onclick=()=>{[mood.brightness,mood.saturation,mood.contrast]=v;save('mood',mood);renderMood()};el('moodPresets').append(b)}
-function renderLights(){el('lightList').replaceChildren();for(const id of order){const l=lights[id],row=document.createElement('div');row.className='lightrow';const name=document.createElement('strong');name.textContent=l.name+(l.state.reachable===false?' · nicht erreichbar':'');const b=document.createElement('button');b.textContent=l.state.on?'Aus':'Ein';b.className='alt';b.onclick=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:!l.state.on});l.state.on=!l.state.on;renderLights();status(l.name+' geschaltet.')});row.append(name,' ',b);if('bri' in l.state){const label=document.createElement('label');label.textContent='Helligkeit';const r=document.createElement('input');r.type='range';r.min=1;r.max=100;r.value=Math.round(l.state.bri/2.54);r.onchange=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:true,bri:Math.max(1,Math.round(+r.value*2.54))});status(l.name+' · '+r.value+' %')});label.append(r);row.append(label)}el('lightList').append(row)}}
+function renderLights(){el('lightList').replaceChildren();const visible=ensureGroups().resolve(el('target').value||'all',{reachableOnly:false});for(const id of visible){const l=lights[id];if(!l)continue;const row=document.createElement('div');row.className='lightrow';const name=document.createElement('strong');name.textContent=l.name+(l.state.reachable===false?' · nicht erreichbar':'');const b=document.createElement('button');b.textContent=l.state.on?'Aus':'Ein';b.className='alt';b.onclick=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:!l.state.on});l.state.on=!l.state.on;renderLights();status(l.name+' geschaltet.')});row.append(name,' ',b);if('bri' in l.state){const label=document.createElement('label');label.textContent='Helligkeit';const r=document.createElement('input');r.type='range';r.min=1;r.max=100;r.value=Math.round(l.state.bri/2.54);r.onchange=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:true,bri:Math.max(1,Math.round(+r.value*2.54))});status(l.name+' · '+r.value+' %')});label.append(r);row.append(label)}el('lightList').append(row)}}
 function renderGroups(){ensureGroups();groupUI.render()}
 function renderOrder(){/* Lampenreihenfolge wird über den Editor des zentralen Gruppenmodells verwaltet. */}
 function tab(name){
@@ -410,7 +411,7 @@ const settingsButton=document.createElement('button');settingsButton.type='butto
 el('settingsGroups').onclick=()=>{tab('group')};el('settingsBridge').onclick=()=>tab('connection');
 const firstMusicCard=el('musicPane').querySelector('section');firstMusicCard.after(el('musicOutput'));
 el('bridgeIp').value=read('ip','192.168.178.177');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.removeItem('luma07_key')}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
- try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();renderTree();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();renderTree();renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
  catch(e){status('Gruppenauswahl: '+e.message)}
 };
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
