@@ -34,13 +34,13 @@ Reason: the previously approved 48-scene library and its fixes already exist in 
 - UI supports creating, editing, nesting, duplicating, and deleting local groups, and sorting/positioning all and read-only Hue groups.
 - Cycle validation and ID validation prevent malformed new/imported graphs.
 - Export includes no credentials; v2 imports require the same bridge identity and are validated before storage writes.
-- Import conflicts preserve existing group definitions and add missing IDs, rather than silently overwriting.
+- Import conflicts preserve existing group definitions and add missing IDs, rather than silently overwriting. Existing lamp ordering and spatial preferences are only replaced on an explicit positive confirmation during v2 import.
 - A deleted local group is also removed from parents, and a selected deleted target falls back to All.
 - Local editor errors stay in the editor instead of going through the general Hue connection error handler.
 - Music audio analysis and transport loops, scene catalogue and existing bridge credentials were not rewritten.
 
 ## Checks performed
-- 18 initial in-memory core assertions, then 11 named regressions from \`tests/groups-v1.test.cjs\` executed with a compatible assertion harness inside the available JS tool.
+- 18 initial in-memory core assertions, then 16 named regressions from \`tests/groups-v1.test.cjs\` executed with a compatible assertion harness inside the available JS tool.
 - \`new Function\` syntax checks on \`groups-v1.js\`, \`groups-v1-ui.js\`, \`scenes-v1.js\`, and every inline \`index.html\` script. Checked IDs in feature HTML (111 unique).
 - Independent three-tab preview inline-script parsing and duplicate-ID check.
 - GitHub CI workflow created to run \`node --test\` and \`node --check\` on new commits; CI result not yet confirmed.
