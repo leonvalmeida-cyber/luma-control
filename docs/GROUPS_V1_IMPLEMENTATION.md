@@ -13,7 +13,7 @@ Reason: the previously approved 48-scene library and its fixes already exist in 
 - Legacy \`luma07_groups\` and \`luma07_order\` were global to the browser (not bridge-scoped), so changing bridges or transferring groups could accidentally mix numeric Hue IDs.
 - The previous import appended groups without a complete graph consistency check, allowing cycles to appear in imported data.
 - The previous catch-all \`guard()\` stopped motion and navigated to Connection even when the error came from local group validation.
-- Hue v1 API endpoints used: \`GET /lights\`, \`GET /groups\`, and per-light \`PUT /lights/{id}/state\`; Hue group music mode uses \`PUT /groups/{id}/action\`. An optional \`GET /config\` now captures the bridge's stable \`bridgeid\` once per connection, falling back to a previously saved ID or an IP-scoped ID.
+- Hue v1 API endpoints used: \`GET /lights\`, \`GET /groups\`, and per-light \`PUT /lights/{id}/state\`; Hue group music mode uses \`PUT /groups/{id}/action\`. An optional \`GET /config\` now captures the bridge's stable \`bridgeid\` once per connection, falling back to a previously saved ID for the same configured IP or an IP-scoped ID.
 
 ## New architecture
 - \`groups-v1.js\`: independent core with schema v2, scoped by bridge identity under \`luma_groups_v2\` only. Does not contain network calls or credentials.
