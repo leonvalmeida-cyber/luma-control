@@ -36,8 +36,8 @@ if(g&&['hue-room','hue-zone'].includes(g.type))editor.append(el('p','g-help','Di
 const nameLabel=el('label','g-field');nameLabel.append(el('span','','Gruppenname'));const name=el('input');name.type='text';name.maxLength=60;name.placeholder='Zum Beispiel: Fernseher';name.value=g?.name||'';name.disabled=!local;name.id='gName';nameLabel.append(name);editor.append(nameLabel);
 let lampsContainer=null,subgroups=null;
 if(local){
-editor.append(el('h4','','Lampen auswählen'));lampsContainer=el('div','g-check-list');lampsContainer.id='gMembers';checkedRows(lampsContainer,this.engine.globalOrder().map(id=>({id,name:this.engine.lights[id].name||id})),g?.lights||[]);editor.append(lampsContainer);
-editor.append(el('h4','','Untergruppen einschließen'));subgroups=el('div','g-check-list');subgroups.id='gNested';const others=this.engine.catalog().filter(x=>x.id!=='all'&&x.type!=='lamp'&&x.id!==g?.id);checkedRows(subgroups,others.map(x=>({id:x.id,name:x.name+' · '+labelText[x.type]})),g?.groups||[],{kind:'group'});editor.append(subgroups);
+editor.append(el('h4','','Lampen auswählen'));lampsContainer=el('div','g-check-list');lampsContainer.id='gMembers';const available=this.engine.globalOrder().map(id=>({id,name:this.engine.lights[id].name||id}));const missing=(g?.lights||[]).filter(id=>!this.engine.lights[id]).map(id=>({id,name:'Nicht erkannt (gespeichert): '+id}));checkedRows(lampsContainer,[...available,...missing],g?.lights||[]);editor.append(lampsContainer);
+editor.append(el('h4','','Untergruppen einschließen'));subgroups=el('div','g-check-list');subgroups.id='gNested';const others=this.engine.catalog().filter(x=>x.id!=='all'&&x.type!=='lamp'&&x.id!==g?.id);const missingGroups=(g?.groups||[]).filter(id=>!others.some(x=>x.id===id)).map(id=>({id,name:'Nicht erkannte Untergruppe: '+id}));checkedRows(subgroups,[...others.map(x=>({id:x.id,name:x.name+' · '+labelText[x.type]})),...missingGroups],g?.groups||[],{kind:'group'});editor.append(subgroups);
 }
 editor.append(el('h4','','Reihenfolge & Positionen'));
 const help=el('p','g-help','Sortierung für Lichtwellen und Musik. Pfeile erlauben Änderungen auch ohne Drag & Drop.');editor.append(help);
