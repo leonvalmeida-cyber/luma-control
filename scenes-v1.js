@@ -99,7 +99,9 @@ function art(scene,index){
  const visual=cat==='Neon'?skyline:cat==='Natur'?mountains+trees:cat==='Wärme'?mountains:cat==='Alltag'?'<path d="M0 183 H320 V240 H0z" fill="#29263c" opacity=".76"/><rect x="30" y="120" width="128" height="72" rx="7" fill="#3c3440" opacity=".7"/><rect x="179" y="95" width="95" height="98" rx="7" fill="#3c3440" opacity=".6"/><circle cx="224" cy="135" r="37" fill="'+cs[2]+'" opacity=".22"/>':horizon;
  const stars=Array.from({length:19},(_,i)=>'<circle cx="'+((i*71+index*13)%315+3)+'" cy="'+((i*43+index*7)%142+4)+'" r="'+(i%4===0?'2':'1')+'" fill="#fff" opacity="'+(i%3===0?'.75':'.38')+'"/>').join('');
  const glows='<ellipse cx="190" cy="55" rx="105" ry="84" fill="'+cs[1]+'" opacity=".28"/><circle cx="227" cy="96" r="44" fill="'+cs[2]+'" opacity=".13"/>';
- const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+cs[0]+'"/><stop offset=".5" stop-color="'+cs[1]+'"/><stop offset="1" stop-color="'+cs[3]+'"/></linearGradient></defs><rect width="320" height="240" fill="url(#bg)"/><rect width="320" height="240" fill="#0c1020" opacity=".35"/>'+glows+stars+visual+'</svg>';
+ const colorGlints=cs.map((color,i)=>'<circle cx="'+(25+i*44)+'" cy="'+(53+(i%3)*21)+'" r="'+(3+(i%3)*2)+'" fill="'+color+'" opacity=".72"/>').join('');
+ const gradientStops=cs.map((color,i)=>'<stop offset="'+(i/(cs.length-1)*100).toFixed(1)+'%" stop-color="'+color+'"/>').join('');
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'+gradientStops+'</linearGradient></defs><rect width="320" height="240" fill="url(#bg)"/><rect width="320" height="240" fill="#0c1020" opacity=".35"/>'+glows+stars+visual+colorGlints+'</svg>';
  return svg;
 }
 function render(){
@@ -133,7 +135,7 @@ function render(){
   const content=document.createElement('div');content.className='scene-card-content';
   const category=document.createElement('span');category.className='scene-card-category';category.textContent=scene.legacy?'Übernommener Favorit':scene.user?'Eigene Szene':scene.category;
   const name=document.createElement('button');name.type='button';name.className='scene-card-name';name.textContent=scene.name;name.onclick=()=>activate(scene);
-  const palette=document.createElement('div');palette.className='scene-card-swatches';for(const c of scene.colors.slice(0,5)){const i=document.createElement('i');i.style.background=toHex(c);palette.append(i)}
+  const palette=document.createElement('div');palette.className='scene-card-swatches';for(const c of scene.colors){const i=document.createElement('i');i.style.background=toHex(c);palette.append(i)}
   const bottom=document.createElement('div');bottom.className='scene-card-bottom';
   const activateButton=document.createElement('button');activateButton.textContent='Anwenden';activateButton.type='button';activateButton.onclick=()=>activate(scene);bottom.append(activateButton);
   const edit=document.createElement('button');edit.className='edit';edit.type='button';edit.textContent=scene.user?'Bearbeiten':'Kopie';
