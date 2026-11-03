@@ -17,3 +17,21 @@ test('JSON v2 export/import is bridge-scoped and idempotent',()=>{const {engine,
 test('Invalid imports do not partially modify existing state',()=>{const {engine}=fixture(),base=JSON.stringify(engine.exportBackup());const damaged=engine.exportBackup();damaged.meta={'all':{order:['a'],positions:{a:'invalid position'}}};assert.throws(()=>engine.importBackup(damaged),/Position/);assert.equal(JSON.stringify(engine.exportBackup().groups),JSON.stringify(JSON.parse(base).groups))});
 test('Invalid references and duplicate group IDs rejected',()=>{assert.throws(()=>groupNormalize({id:'system:all',name:'X',lights:[],groups:[]}),/Nur lokale/);assert.throws(()=>assertGraph([{id:'local:x',groups:[]},{id:'local:x',groups:[]}]),/Doppelte/);const {engine}=fixture();assert.throws(()=>engine.createLocal({name:'Bad',groups:['local:missing']}),/Unbekannte/)});
 test('Local groups never touch Hue Bridge nor HTTP',()=>{const {engine}=fixture();engine.createLocal({name:'Local',lights:['a']});engine.setOrder('all',['a','c','b']);assert.equal(typeof engine.request,'undefined')});
+
+test('Editing a group preserves missing device references',()=>{
+ const {engine}=fixture();
+ const old=engine.group('local:old');
+ engine.saveLocal({...old,lights:['a','missing-light']});
+ assert.deepEqual(engine.resolve(old.id),['a']);
+ assert.deepEqual(engine.group(old.id).lights,['a','missing-light']);
+ engine.saveLocal({...engine.group(old.id),name:'Renamed'});
+ assert.deepEqual(engine.group(old.id).lights,['a','missing-light']);
+});
+test('Existing missing subgroup refs may be preserved; new unknown refs are blocked',()=>{
+ const {engine}=fixture();
+ const original=engine.group('local:old');
+ engine.bucket.groups[0]={...original,groups:['local:removed']};
+ const saved=engine.saveLocal({...engine.group(original.id),name:'Renamed'});
+ assert.deepEqual(saved.groups,['local:removed']);
+ assert.throws(()=>engine.saveLocal({...saved,groups:['local:new-missing']}),/Unbekannte/);
+});
