@@ -72,8 +72,9 @@ function load(){
  const oldFav=(()=>{
   try{const v=JSON.parse(localStorage.getItem('luma07_favorites')||'[]');return Array.isArray(v)?v.filter(i=>Number.isInteger(i)&&i>=0&&i<192).map(i=>'legacy-'+i):[]}catch{return []}
  })();
- const users=Array.isArray(data?.userScenes)?data.userScenes.filter(s=>s.user===true).slice(0,150).map(normalize).filter(Boolean):[];
- return {favorites:[...new Set(data?.version===1&&Array.isArray(data.favorites)?data.favorites.filter(x=>typeof x==='string'):oldFav)],userScenes:users,selectedId:typeof data?.selectedId==='string'?data.selectedId:legacy[0]?.id,tab:data?.tab==='discover'?'discover':'favorites',filter:'Alle'};
+ const users=Array.isArray(data?.userScenes)?data.userScenes.filter(s=>s.user===true).slice(0,150).map(normalize).filter(x=>x&&x.id.startsWith('user-')):[];
+ let oldSelected=0;try{const n=JSON.parse(localStorage.getItem('luma07_selected')||'0');if(Number.isInteger(n)&&n>=0&&n<192)oldSelected=n}catch{}
+ return {favorites:[...new Set(data?.version===1&&Array.isArray(data.favorites)?data.favorites.filter(x=>typeof x==='string'):oldFav)],userScenes:users,selectedId:typeof data?.selectedId==='string'?data.selectedId:('legacy-'+oldSelected),tab:data?.tab==='discover'?'discover':'favorites',filter:'Alle'};
 }
 let state=load();
 let editorId=null,tab=state.tab,filter='Alle';
