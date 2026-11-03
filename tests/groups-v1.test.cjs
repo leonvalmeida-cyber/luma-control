@@ -45,3 +45,17 @@ test('Feature HTML inline JS parses and IDs remain unique',()=>{
  assert.ok(html.includes("window.lumaTargetIds=targetIds"));
  assert.ok(!html.includes("el('groupSave').onclick"));
 });
+
+test('Import never overwrites existing order unless explicitly requested',()=>{
+ const original=fixture().engine;original.setOrder('all',['b','a','c']);
+ const restored=fixture().engine;restored.setOrder('all',['c','a','b']);
+ const backup=original.exportBackup();
+ restored.importBackup(backup);
+ assert.deepEqual(restored.getOrder('all'),['c','a','b']);
+ restored.importBackup(backup,{replacePreferences:true});
+ assert.deepEqual(restored.getOrder('all'),['b','a','c']);
+});
+test('Hue room order from metadata controls the actual shared target resolver',()=>{
+ const {engine}=fixture();engine.setMeta('bridge:1',{order:['b','a'],positions:{}});
+ assert.deepEqual(engine.resolve('bridge:1',{reachableOnly:false}),['b','a']);
+});
