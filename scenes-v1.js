@@ -73,7 +73,7 @@ function load(){
   try{const v=JSON.parse(localStorage.getItem('luma07_favorites')||'[]');return Array.isArray(v)?v.filter(i=>Number.isInteger(i)&&i>=0&&i<192).map(i=>'legacy-'+i):[]}catch{return []}
  })();
  const users=Array.isArray(data?.userScenes)?data.userScenes.filter(s=>s.user===true).slice(0,150).map(normalize).filter(Boolean):[];
- return {favorites:[...new Set([...(Array.isArray(data?.favorites)?data.favorites.filter(x=>typeof x==='string'):[]),...oldFav])],userScenes:users,selectedId:typeof data?.selectedId==='string'?data.selectedId:legacy[0]?.id,tab:data?.tab==='discover'?'discover':'favorites',filter:'Alle'};
+ return {favorites:[...new Set(data?.version===1&&Array.isArray(data.favorites)?data.favorites.filter(x=>typeof x==='string'):oldFav)],userScenes:users,selectedId:typeof data?.selectedId==='string'?data.selectedId:legacy[0]?.id,tab:data?.tab==='discover'?'discover':'favorites',filter:'Alle'};
 }
 let state=load();
 let editorId=null,tab=state.tab,filter='Alle';
@@ -106,7 +106,7 @@ function render(){
  $('selectedScene').textContent=selected?.name||'Noch keine Szene gewählt';
  const v=tab==='favorites'?uniqueById(all().filter(s=>state.favorites.includes(s.id))):uniqueById([...curated,...state.userScenes]);
  const q=$('sceneSearch').value.trim().toLocaleLowerCase('de');
- const shown=v.filter(s=>(filter==='Alle'||s.category===filter)&&(s.name+' '+s.category).toLocaleLowerCase('de').includes(q));
+ const shown=v.filter(s=>(filter==='Alle'||s.category===filter||(filter==='Eigene'&&s.user))&&(s.name+' '+s.category).toLocaleLowerCase('de').includes(q));
  for(const [id,is] of [['favScenes',tab==='favorites'],['allScenes',tab==='discover']]){$(id).setAttribute('aria-selected',String(is))}
  $('sceneCount').textContent=shown.length+' '+(shown.length===1?'Szene':'Szenen');
  const filters=$('sceneFilters');filters.replaceChildren();
@@ -169,14 +169,14 @@ $('sceneEditorSave').onclick=()=>{
  const candidate=normalize({id:editorId||'user-'+(globalThis.crypto?.randomUUID?.()||Date.now().toString(36)),name,category:$('sceneEditorCategory').value,user:true,colors:rows.map(row=>hexToRGB(row.querySelector('input[type=color]').value)),brightnesses:rows.map(row=>Number(row.querySelector('input[type=range]').value)/100)});
  if(!candidate){$('sceneEditorStatus').textContent='Ungültige Szenendaten.';return}
  state.userScenes=state.userScenes.filter(s=>s.id!==candidate.id).concat(candidate);
- state.selectedId=candidate.id;save();$('sceneEditor').close();tab='favorites';if(!state.favorites.includes(candidate.id))state.favorites.push(candidate.id);save();render();
+ state.selectedId=candidate.id;window.lumaSceneSelection=candidate;save();$('sceneEditor').close();tab='favorites';if(!state.favorites.includes(candidate.id))state.favorites.push(candidate.id);save();render();
 };
 $('sceneEditorDelete').onclick=()=>{
  if(!editorId)return;
  if(!confirm('Diese eigene Szene wirklich löschen?'))return;
  state.userScenes=state.userScenes.filter(x=>x.id!==editorId);
  state.favorites=state.favorites.filter(id=>id!==editorId);
- if(state.selectedId===editorId)state.selectedId=curated[0].id;
+ if(state.selectedId===editorId){state.selectedId=curated[0].id;window.lumaSceneSelection=curated[0]}
  save();$('sceneEditor').close();render();
 };
 $('sceneEditorClose').onclick=()=>$('sceneEditor').close();
