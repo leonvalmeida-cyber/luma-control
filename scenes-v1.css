@@ -1,0 +1,59 @@
+/* Luma Collection v1 - scoped scene experience. No other tabs affected. */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.scene-hero{margin:13px 0 14px;padding:23px 19px 16px;border:1px solid #343555;border-radius:22px;background:radial-gradient(ellipse at 85% -10%,#493d87aa,transparent 55%),linear-gradient(150deg,#1d1c36,#161a2b 65%,#171829)}
+.scene-hero-top,.scene-tools{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.scene-eyebrow{font-size:10px;letter-spacing:2.1px;color:#c9c1ff;font-weight:700}
+.scene-tag{font-size:10px;padding:5px 9px;border:1px solid #7d71b3;border-radius:30px;color:#ddd1ff}
+.scene-hero h2{font-size:clamp(25px,6.6vw,35px);letter-spacing:-1.1px;line-height:1.09;margin:17px 0 8px;max-width:340px}
+.scene-hero p{color:#bbb9d6;font-size:13px;line-height:1.5;margin:0 0 20px;max-width:330px}
+.scene-tabs{display:grid;grid-template-columns:1fr 1fr;background:#0c0d1bc9;border-radius:12px;padding:4px;gap:3px}
+.scene-tab{min-height:42px;border-radius:10px;color:#b9b5d3;background:transparent;font-size:14px}
+.scene-tab[aria-selected=true]{background:#6f5bc8;color:#fff;box-shadow:0 2px 14px #483d8255}
+.scene-toolbar{padding:5px 0 10px}
+.scene-search-label{display:block}
+#sceneSearch{margin:0 0 9px;border:1px solid #3a3b53;border-radius:14px;background:#171a2c;color:white;padding:13px 15px;font-size:15px;width:100%}
+.scene-filter-row{display:flex;overflow:auto;gap:7px;padding:2px 1px 10px;scrollbar-width:none}
+.scene-filter-row::-webkit-scrollbar{display:none}
+.scene-filter{padding:8px 12px;min-height:36px;background:#23253b;border:1px solid #42415c;color:#ccc8dd;border-radius:20px;font-size:12px;white-space:nowrap}
+.scene-filter[aria-pressed=true]{background:#b7a2ff;color:#191323;border-color:#b7a2ff}
+.scene-tools{margin:0 2px 12px}
+.scene-add{min-height:34px;padding:7px 11px;background:#30334b;color:#ddd5ff;font-size:12px}
+.scene-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.scene-card{position:relative;border-radius:19px;overflow:hidden;min-width:0;background:#171d2d;border:1px solid #31344c;box-shadow:0 8px 20px #04050d55}
+.scene-card.is-selected{outline:2px solid #b49fff;outline-offset:1px}
+.scene-card-art{position:relative;aspect-ratio:1.05;overflow:hidden}
+.scene-card-art svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scene-card-art:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#111421a6 85%);pointer-events:none}
+.scene-card-star{position:absolute;z-index:2;right:9px;top:9px;min-height:36px;width:36px;padding:0;background:#161923a6;border:1px solid #ffffff44;border-radius:50%;font-size:22px;color:#d0cfe5}
+.scene-card-star[aria-pressed=true]{color:#ffd879;background:#1e1c2bdc}
+.scene-card-content{padding:10px 11px 12px}
+.scene-card-category{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:#9ca2c3;font-weight:700}
+.scene-card-name{display:block;width:100%;text-align:left;background:transparent;padding:4px 0 6px;border-radius:0;min-height:28px;font-size:14px;font-weight:650;line-height:1.3}
+.scene-card-name:focus-visible,.scene-card-star:focus-visible{outline:2px solid white}
+.scene-card-swatches{display:flex;height:10px;gap:3px;margin:7px 0 10px}
+.scene-card-swatches i{flex:1;border-radius:8px}
+.scene-card-bottom{display:flex;justify-content:space-between;align-items:center;gap:4px}
+.scene-card-bottom button{background:#343950;font-size:11px;padding:7px 10px;min-height:33px}
+.scene-card-bottom button:first-child{background:#6a5cc1}
+.scene-card-bottom .edit{background:transparent;color:#c9c9e7;padding:5px}
+.scene-blank{grid-column:1/-1;padding:30px 18px;text-align:center;border:1px dashed #595574;border-radius:16px;color:#c8c4de;background:#1c1d35}
+.scene-blank strong{display:block;color:white;font-size:17px;margin-bottom:8px}
+.scene-adjust h2{margin-bottom:0}
+.scene-adjust #selectedScene{font-size:11px;text-align:right;max-width:160px}
+.scene-adjust details>summary{font-size:13px}
+.scene-adjust .controls{gap:11px}
+.scene-adjust #moodControls .note{margin:4px 0}
+.scene-adjust #moodControls{display:grid;gap:7px}
+.scene-adjust #applyScene{flex:1}
+.scene-editor{background:#17192b;color:#f6f5ff;border:1px solid #59547c;border-radius:20px;padding:18px;width:min(94vw,550px);max-height:90vh;overflow:auto;box-shadow:0 22px 60px #000a}
+.scene-editor::backdrop{background:#000b;backdrop-filter:blur(5px)}
+.scene-editor h2{margin:0}
+.scene-editor .row{margin-bottom:12px}
+.scene-editor label{display:block;font-size:12px;margin:8px 0}
+.scene-editor input[type=color]{height:42px;width:52px;background:none;padding:0;border:none}
+.scene-editor .scene-editor-light{display:flex;gap:10px;align-items:center;margin:9px 0;border-bottom:1px solid #32354d;padding-bottom:8px}
+.scene-editor-light label{flex:1;margin:0}
+.scene-editor-light input[type=range]{margin:4px 0 0}
+@media(max-width:360px){.scene-gallery{gap:9px}.scene-card-content{padding:9px}.scene-card-name{font-size:12px}.scene-card-bottom button{padding:6px}}
+@media(min-width:620px){.scene-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.scene-tab,.scene-card,.scene-card-art{transition:none!important}}
