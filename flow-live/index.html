@@ -659,7 +659,7 @@ const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost')
 const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
 el('quickPanelBody').append(el('targetCard'));
 let quickClosing=false,quickCloseAnimation=null,quickFinishTimer=0;
-const quickClose=()=>{
+const quickClose=(options={})=>{
  if(quickOverlay.hidden||quickClosing)return;
  quickClosing=true;
  const finish=()=>{
@@ -673,6 +673,7 @@ const quickClose=()=>{
   window.lumaQuickPull?.reset?.();
   quickLauncher.focus({preventScroll:true});
  };
+ if(options?.immediate===true){finish();return}
  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(!reduce&&typeof quickSheet.animate==='function'){
   try{
@@ -704,6 +705,7 @@ const quickOpen=()=>{
  quickOverlay.querySelector('.quick-backdrop').style.opacity='';
  quickOverlay.style.pointerEvents='';
  quickLauncher.setAttribute('aria-expanded','true');
+ window.lumaQuickPull?.showOpened?.();
  document.body.style.top='-'+quickScrollPosition+'px';
  document.body.classList.add('quick-page-lock');
  const chosen=el('target').selectedOptions?.[0]?.textContent||'All';
