@@ -50,3 +50,43 @@
 #musicPane #miPreviewStrip i{flex:1;height:7px;border-radius:6px;background:#7e67a1;opacity:.9}
 @media(max-width:360px){#musicPane .mi-hero{padding:16px 12px}#musicPane .mi-visual{min-height:205px}#musicPane .mi-actions button{padding:11px 10px;font-size:12px}#musicPane .mi-quick{padding:13px 10px}}
 @media(prefers-reduced-motion:reduce){#musicPane .mi-orb,#musicPane .mi-bars i{transition:none!important}}
+
+/* Groups shrink to a one-line control when the user closes the chooser. */
+.target-card .mi-target-head{display:flex;align-items:center;flex-wrap:nowrap;gap:8px;min-width:0}
+.target-card .mi-target-head .target-label{font-size:12px;white-space:nowrap;flex:0 0 auto}
+.target-card .mi-target-head #targetSummary{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;text-align:right}
+.target-card #targetTreeToggle{width:42px;min-width:42px;min-height:42px;border:1px solid #a58fcb5c;border-radius:12px;font-size:21px;line-height:1;background:#312747;color:#dbc9ff;display:grid;place-items:center;padding:0}
+.target-card #targetTreeToggle:focus-visible{outline:2px solid #e2cbff;outline-offset:2px}
+.target-card #targetFastTree[hidden],.target-card #targetHelp[hidden]{display:none!important}
+.target-card:has(#targetFastTree[hidden]){padding-top:5px;padding-bottom:5px;margin-top:7px;margin-bottom:7px}
+
+/* Luma Music: compact disclosure instead of seven anonymous solid-color bars.
+   Real names after Hue connection; built-in vector silhouettes, no images downloaded. */
+#musicPane .mi-lamp-gallery{background:linear-gradient(130deg,#26203b,#141d32);border:1px solid #bba4e049;border-radius:20px;margin:12px 0;overflow:hidden}
+#musicPane .mi-lamp-gallery summary.mi-gallery-summary{display:flex;align-items:center;gap:9px;min-height:54px;padding:11px 13px;margin:0;list-style:none;cursor:pointer}
+#musicPane .mi-lamp-gallery summary::-webkit-details-marker{display:none}
+#musicPane .mi-gallery-summary-left{display:grid;gap:3px;min-width:0;flex:1}
+#musicPane .mi-gallery-summary-left strong{font-size:14px;color:#f4eafd;line-height:1.2}
+#musicPane .mi-gallery-summary-left small{font-size:11px;color:#c5b4e0}
+#musicPane .mi-gallery-dots{display:flex;align-items:center;gap:3px;opacity:.8}
+#musicPane .mi-gallery-dots i{height:11px;width:11px;border-radius:50%;background:#d7a0f5;box-shadow:0 0 10px #c990e089}
+#musicPane .mi-gallery-dots i:nth-child(2){background:#88c9fa;box-shadow:0 0 10px #72b9ef7d}
+#musicPane .mi-gallery-dots i:nth-child(3){background:#f3a09f;box-shadow:0 0 10px #ff9b9b5c}
+#musicPane .mi-gallery-chevron{font-size:23px;color:#d0b6f0;line-height:1;transition:transform .14s ease}
+#musicPane .mi-lamp-gallery[open] .mi-gallery-chevron{transform:rotate(180deg)}
+#musicPane .mi-gallery-body{border-top:1px solid #ffffff1b;padding:12px 12px 4px}
+#musicPane .mi-gallery-intro,#musicPane .mi-gallery-caption{font-size:11px;line-height:1.5;color:#c8bbdd;margin:2px 0 13px}
+#musicPane .mi-gallery-caption{margin:7px 2px 11px;color:#aa9fbe}
+#musicPane #lamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:4px 0 12px;align-items:stretch}
+#musicPane #lamps .lamp.mi-lamp-card{position:relative;box-sizing:border-box;height:auto;min-height:115px;min-width:0;padding:9px 7px 8px;border-radius:15px;background:linear-gradient(155deg,#ffffff0e,#ffffff02),#19213a;border:1px solid #ffffff20;display:flex;flex-direction:column;align-items:center;gap:4px;overflow:hidden;box-shadow:none!important;transition:border-color .2s ease}
+#musicPane #lamps .lamp.mi-lamp-card[hidden]{display:none!important}
+#musicPane #lamps .mi-lamp-top{display:grid;place-items:center;width:100%;height:62px}
+#musicPane #lamps .mi-lamp-avatar{height:63px;width:73px;max-width:100%;position:relative;display:grid;place-items:center;isolation:isolate}
+#musicPane #lamps .mi-lamp-avatar::before{content:"";position:absolute;width:50px;height:42px;top:14px;left:50%;transform:translateX(-50%);border-radius:50%;filter:blur(20px);background:var(--mi-lamp-color,#9875c5);opacity:calc(.16 + .56 * var(--mi-lamp-level,0));z-index:-1;pointer-events:none}
+#musicPane #lamps svg.mi-lamp-svg{width:61px;height:61px;max-width:100%;display:block;color:var(--mi-lamp-color,#b6a9dc);fill:currentColor;fill-opacity:.18;stroke:currentColor;stroke-width:3.1;stroke-linecap:round;stroke-linejoin:round;opacity:calc(.55 + .45 * var(--mi-lamp-level,0));filter:drop-shadow(0 0 6px #9b79ed39)}
+#musicPane #lamps .mi-lamp-name{font-size:11px;font-weight:740;line-height:1.2;color:#f1eafa;width:100%;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center}
+#musicPane #lamps .mi-lamp-meta{font-size:10px;color:#b4a7cd;line-height:1.1;text-align:center}
+@media(min-width:470px){#musicPane #lamps{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:650px){#musicPane #lamps{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:345px){#musicPane #lamps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){#musicPane .mi-gallery-chevron,#musicPane #lamps .lamp.mi-lamp-card{transition:none!important}}
