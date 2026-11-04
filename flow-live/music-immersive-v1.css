@@ -1,0 +1,52 @@
+/* Luma Music 1.0: Immersive shell layered over the existing verified microphone / Hue transport.
+   Scoped under #musicPane; no changes to lighting request cadence. */
+#musicPane{--mi-violet:#c6adff;--mi-cyan:#7adfff;--mi-muted:#c0b8d9;--mi-border:#ffffff24}
+#musicPane .mi-hero{background:radial-gradient(ellipse at 89% 2%,#7b38b45a,transparent 57%),radial-gradient(ellipse at 12% 95%,#1f6da85c,transparent 70%),linear-gradient(140deg,#21183c,#161c35 58%,#101b2d);border:1px solid #ffffff2c;border-radius:26px;padding:20px 17px 17px;margin:13px 0 15px;box-shadow:0 15px 34px #03030a4d;overflow:hidden}
+#musicPane .mi-label{font-weight:790;font-size:10px;letter-spacing:1.9px;color:#ceb5ff}
+#musicPane .mi-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#musicPane .mi-hero h2{font-size:clamp(30px,7vw,39px);letter-spacing:-1.3px;line-height:1.06;font-weight:790;margin:14px 0 10px}
+#musicPane .mi-hero .mi-lead{font-size:13px;color:#d0c6e7;max-width:390px;margin:0 0 15px}
+#musicPane #status{font-size:11px;border-radius:20px;background:#9864d52d;border:1px solid #c0a1eb59;max-width:144px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+#musicPane .mi-visual{position:relative;min-height:218px;height:clamp(218px,60vw,300px);border-radius:22px;border:1px solid #ffffff26;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 57% 45%,#8531c76f,transparent 44%),radial-gradient(ellipse at 28% 88%,#117bc075,transparent 63%),linear-gradient(135deg,#22163e,#20173e 51%,#10243c);margin:15px 0}
+#musicPane .mi-visual::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 80% 17%,#ff92e02d,transparent 55%);z-index:-1}
+#musicPane .mi-orb{position:absolute;width:190px;height:190px;max-width:62%;max-height:78%;border-radius:48% 52% 45% 55%;background:radial-gradient(circle at 35% 23%,#ffffffca 0,#ecbffa 8%,#d18cf3 23%,#995ddd 45%,#5553b9 65%,#1c83c5aa 78%,transparent 83%);box-shadow:0 0 40px #9f72f28e,0 0 110px #317edf55;filter:saturate(1.25);opacity:.55;transform:scale(var(--mi-scale,.85));transition:transform .12s ease-out,opacity .2s ease,filter .2s ease}
+#musicPane .mi-visual[data-live=true] .mi-orb{opacity:.8}
+#musicPane .mi-visual[data-live=false] .mi-orb{opacity:.3;filter:saturate(.45)}
+#musicPane .mi-bars{display:flex;gap:5px;align-items:center;justify-content:center;position:absolute;bottom:38px;left:0;right:0;height:42px;pointer-events:none}
+#musicPane .mi-bars i{height:var(--mi-height,7px);width:5px;display:block;border-radius:20px;background:linear-gradient(0deg,#7adfff,#eab2fe);box-shadow:0 0 12px #ac7ff755;transition:height .14s linear;opacity:.9}
+#musicPane .mi-visual[data-live=false] .mi-bars i{opacity:.36}
+#musicPane .mi-source{position:absolute;bottom:9px;left:12px;font-size:10px;color:#dfd4f3}
+#musicPane .mi-status-chip{font-size:10px;padding:8px 10px;border:1px solid #b792e663;border-radius:20px;background:#8f64ca36;white-space:nowrap}
+#musicPane .mi-actions{display:flex;gap:9px;align-items:stretch}
+#musicPane .mi-actions button{font-size:14px;min-height:51px;border-radius:15px;padding:11px 14px}
+#musicPane #start{flex:1;background:linear-gradient(135deg,#cfb6ff,#906ae2);color:#1f1533;box-shadow:0 7px 21px #7654c04a}
+#musicPane #stop{flex:0 0 auto;background:#ffffff19;border:1px solid #ffffff28;color:#fff}
+#musicPane #message{color:#cdc2e7;font-size:12px;height:3.7em;overflow:hidden;margin:10px 0 0;line-height:1.65}
+#musicPane .mi-footline{font-size:11px;display:flex;justify-content:space-between;gap:9px;color:#c7c0d9;margin-top:6px}
+#musicPane .mi-footline strong{color:#d9c6ff}
+#musicPane .mi-quick{background:linear-gradient(145deg,#ffffff10,#ffffff07),#191a32;border:1px solid #ffffff20;border-radius:22px;padding:16px 13px;margin:13px 0}
+#musicPane .mi-quick>h3{font-size:17px;margin:0 0 12px;letter-spacing:-.3px}
+#musicPane .mi-quick-block{margin-bottom:15px}
+#musicPane .mi-quick-block:last-child{margin-bottom:0}
+#musicPane .mi-quick-label{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#ded3ef;font-size:12px;font-weight:700;margin-bottom:8px}
+#musicPane .mi-quick #paletteSwatches{height:10px;margin:4px 0 10px;border-radius:9px;overflow:hidden}
+#musicPane .mi-quick #paletteSwatches i{height:100%}
+#musicPane .mi-quick .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;padding:4px 0 5px}
+#musicPane .mi-quick .chips::-webkit-scrollbar{display:none}
+#musicPane .mi-quick .chip{flex:0 0 auto;min-height:42px;border-radius:12px;padding:9px 12px;font-size:12px;white-space:nowrap;border:1px solid #ffffff23;background:#332c51}
+#musicPane .mi-quick .chip.on,#musicPane .mi-quick .chip[aria-pressed=true]{background:linear-gradient(125deg,#9c72da,#62499b);border-color:#c0a6ff;color:white}
+#musicPane .mi-quick .buttons{gap:7px;flex-wrap:nowrap;overflow-x:auto}
+#musicPane .mi-quick .buttons button{min-height:42px;flex:1;font-size:12px;padding:9px 12px;white-space:nowrap}
+#musicPane #miMusicTarget{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+#musicPane .mi-diagnostic{margin:12px 0;background:#ffffff0b;border:1px solid #ffffff20;border-radius:18px;padding:0 13px}
+#musicPane .mi-diagnostic summary{font-weight:750;font-size:13px;padding:13px 4px;min-height:45px;cursor:pointer}
+#musicPane .mi-diagnostic .mi-diagnostic-content{padding-bottom:10px}
+#musicPane .mi-diagnostic .card{margin:10px 0}
+#musicPane .mi-quick .mi-selection{font-size:11px;color:#baa8d8;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;max-width:190px}
+#musicPane .mi-microphone-note{font-size:11px;color:#b9acd3;line-height:1.6;margin:13px 0 0}
+#musicPane .mi-quick .mi-live-tag{font-size:10px;background:#8463b834;border:1px solid #b497da4f;padding:5px 8px;border-radius:12px}
+#musicPane .mi-expert-copy{font-size:11px;color:#b5a8d0;padding:0 3px;margin:8px 0}
+#musicPane #miPreviewStrip{display:flex;gap:7px}
+#musicPane #miPreviewStrip i{flex:1;height:7px;border-radius:6px;background:#7e67a1;opacity:.9}
+@media(max-width:360px){#musicPane .mi-hero{padding:16px 12px}#musicPane .mi-visual{min-height:205px}#musicPane .mi-actions button{padding:11px 10px;font-size:12px}#musicPane .mi-quick{padding:13px 10px}}
+@media(prefers-reduced-motion:reduce){#musicPane .mi-orb,#musicPane .mi-bars i{transition:none!important}}
