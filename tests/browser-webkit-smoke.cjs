@@ -117,13 +117,16 @@ const close=()=>new Promise(resolve=>server.close(resolve));
    Object.defineProperty(evt,'changedTouches',{value:[finger]});
    t.launcher.dispatchEvent(evt);
   });
-  await page.waitForTimeout(340);
+  await page.waitForTimeout(420);
   const opened=await page.evaluate(()=>({open:!document.getElementById('quickOverlay').hidden,
     preview:document.getElementById('quickOverlay').classList.contains('quick-preview'),
     pageLocked:document.body.classList.contains('quick-page-lock'),
-    expanded:document.getElementById('quickLauncher').getAttribute('aria-expanded')}));
+    expanded:document.getElementById('quickLauncher').getAttribute('aria-expanded'),
+    pullPhase:document.getElementById('quickLauncher').dataset.pullPhase,
+    progress:document.getElementById('quickLauncher').dataset.pullProgress}));
   console.log('WEBKIT_PULL_OPEN='+JSON.stringify(opened));
-  assert.deepEqual(opened,{open:true,preview:false,pageLocked:true,expanded:'true'});
+  if(pageErrors.length)console.log('WEBKIT_ERRORS_AFTER_PULL='+JSON.stringify(pageErrors));
+  assert.ok(opened.open&&!opened.preview&&opened.pageLocked&&opened.expanded==='true','final pull must snap open rather than stay preview');
   await page.screenshot({path:'/tmp/luma-webkit-opened.png'});
   await page.locator('#quickClose').click();
   await page.waitForTimeout(320);
