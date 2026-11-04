@@ -8,6 +8,8 @@ on:
       - 'quick-overlay.css'
       - 'ambient-lamp.js'
       - 'quick-swipe.js'
+      - 'quick-pull.js'
+      - 'tests/quick-pull-v10.test.cjs'
       - 'tests/browser-webkit-smoke.cjs'
       - '.github/workflows/flow-webkit-smoke.yml'
 jobs:
@@ -32,5 +34,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: luma-flow-webkit-moods
-          path: /tmp/luma-webkit-music.png
+          path: |
+            /tmp/luma-webkit-music.png
+            /tmp/luma-webkit-half-pulled.png
+            /tmp/luma-webkit-opened.png
           if-no-files-found: ignore
