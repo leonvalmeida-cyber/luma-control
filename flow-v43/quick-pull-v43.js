@@ -146,7 +146,7 @@ function attach({doc=root.document,win=root}={}){
   rootStyle.setProperty('--v43-dock-px',round(dock)+'px');
   const carriageY=round((g.lift+dock)*100/g.svgWidth);
   movingAssembly.setAttribute('transform','translate(0 '+(-carriageY)+')');
-  railCarriage.dataset.offset=String(carriageY);
+  railCarriage.setAttribute('data-offset',String(carriageY));
   launcher.dataset.railOffset=String(carriageY);
   rootStyle.setProperty('--luma-open-lift-px',round(g.lift)+'px');
   // WebKit SVG g translations use viewBox units: convert CSS-pixel travel
