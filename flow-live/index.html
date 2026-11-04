@@ -62,14 +62,6 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
   <div class="mi-quick-block"><div class="mi-quick-label"><span>Schnellstart</span></div><div id="miQuickPresets"></div></div>
   <p class="mi-microphone-note">Apple Music spielt weiter in deiner Musik-App. Luma analysiert den Klang über das Mikrofon, nicht den geschützten Audiostream.</p>
  </section>
-<details id="miLampGallery" class="mi-lamp-gallery">
- <summary class="mi-gallery-summary"><span class="mi-gallery-summary-left"><strong>💡 Deine Lichtvorschau</strong><small id="miLampCount">7 Vorschaukanäle</small></span><span class="mi-gallery-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mi-gallery-chevron" aria-hidden="true">⌄</span></summary>
- <div class="mi-gallery-body">
-  <p class="mi-gallery-intro" id="miLampIntro">Kompakte Vorschau der Lichteffekte. Nach dem Verbinden werden deine echten Lampennamen angezeigt.</p>
-  <div id="lamps" aria-label="Farbvorschau der ausgewählten Lampen"></div>
-  <p class="mi-gallery-caption">Die Symbole zeigen Lampentypen schematisch, keine Produktfotos. Farben sind berechnete Effekte – keine Messung des tatsächlichen Lampenzustands.</p>
- </div>
-</details>
 <section class="flow-guard" aria-label="Optionaler Störschutz">
  <div class="flow-guard-heading"><h3>◈ Störschutz</h3><small>BETA</small></div>
  <p class="flow-guard-description">Optionaler Schutz vor gleichmäßigen Störgeräuschen, zum Beispiel einem Lüfter oder Staubsauger. Gespräche lassen sich damit nicht zuverlässig herausfiltern.</p>
@@ -90,51 +82,6 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 <script>
 'use strict';
 const $=x=>document.getElementById(x);const lumaFlowGuard=window.LumaFlowNoiseGuard?new window.LumaFlowNoiseGuard.NoiseGuard():null;let guardUIUpdate=0;
-const miLampGlyphs={
- bulb:'<path d="M30 53v-4c-7-5-12-12-12-21a22 22 0 0 1 44 0c0 9-5 16-12 21v4"/><path d="M31 55h18m-16 7h14m-11 6h8"/><path d="M31 29c0-6 5-11 11-11" opacity=".5"/>',
- iris:'<path d="M15 51c3-18 15-29 25-29s22 11 25 29Z"/><ellipse cx="40" cy="53" rx="27" ry="6"/><path d="M22 57v5c6 4 30 4 36 0v-5"/><path d="M28 43c3-8 7-12 12-14" opacity=".5"/>',
- twilight:'<path d="M34 11h12v47H34z"/><path d="M30 58h20m-22 5h24m-31 6h38"/><path d="M40 16v37" opacity=".5"/>',
- strip:'<path d="M14 56c10-28 26 8 36-14s12-16 17-20" stroke-width="7" stroke-linecap="round"/><path d="M12 66h56" opacity=".4"/>'
-};
-function miLampIcon(kind){
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('class','mi-lamp-svg');svg.setAttribute('viewBox','0 0 80 80');
- svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
- svg.innerHTML=miLampGlyphs[kind]||miLampGlyphs.bulb;
- return svg
-}
-function miLampType(item){
- const name=(String(item?.name||'')+' '+String(item?.modelid||'')+' '+String(item?.type||'')).toLowerCase();
- if(name.includes('twilight'))return 'twilight';
- if(name.includes('iris'))return 'iris';
- if(name.includes('strip'))return 'strip';
- return 'bulb';
-}
-const lamps=Array.from({length:7},(_,i)=>{
- const card=document.createElement('div');card.className='lamp mi-lamp-card';
- const avatar=document.createElement('div');avatar.className='mi-lamp-avatar';avatar.append(miLampIcon(i===1?'iris':i===3?'twilight':'bulb'));
- const top=document.createElement('div');top.className='mi-lamp-top';top.append(avatar);
- const label=document.createElement('strong');label.className='mi-lamp-name';label.textContent='Kanal '+(i+1);
- const meta=document.createElement('span');meta.className='mi-lamp-meta';meta.textContent='Effekt '+(i+1);
- card.append(top,label,meta);$('lamps').append(card);return card
-});
-window.lumaUpdateMusicPreview=function(items){
- const known=Array.isArray(items);
- const visible=known?items.slice(0,lamps.length):lamps.map((_,i)=>({name:'Kanal '+(i+1),type:'Vorschau'}));
- const total=known?items.length:7;
- $('miLampCount').textContent=known?(total+' '+(total===1?'Lampe':'Lampen')+(total>7?' · erste 7':'') ):'7 Vorschaukanäle';
- $('miLampIntro').textContent=known?(total?'Echte Lampennamen · dynamische Vorschau der berechneten Musikeffekte.':'Keine erreichbaren Lampen im ausgewählten Lichtbereich.'):'Beispielkanäle · nach dem Verbinden erscheinen die echten Lampennamen.';
- lamps.forEach((card,i)=>{
-  const item=visible[i];card.hidden=!item;if(!item)return;
-  const kind=miLampType(item);
-  const icon=card.querySelector('.mi-lamp-svg');
-  if(icon&&icon.dataset.kind!==kind){const next=miLampIcon(kind);next.dataset.kind=kind;icon.replaceWith(next)}
-  card.querySelector('.mi-lamp-name').textContent=String(item.name||'Lampe '+(i+1));
-  card.querySelector('.mi-lamp-meta').textContent=known?'Kanal '+(i+1):'Beispiel';
-  card.title=String(item.name||'Lampe '+(i+1))+' · schematisches Symbol'
- })
-};
-window.lumaUpdateMusicPreview(null);
 const palettes={neon:[[242,28,94],[141,36,230],[251,82,26],[76,84,246],[243,34,185],[73,218,244],[254,74,49]],sunset:[[255,99,49],[248,170,58],[233,66,129],[250,193,81],[167,44,164],[255,117,83],[255,219,113]],ocean:[[13,95,161],[53,196,209],[38,127,177],[54,224,179],[71,76,183],[95,197,245],[40,169,202]],warm:[[221,112,46],[255,184,99],[241,142,61],[255,212,146],[185,82,43],[245,157,81],[235,194,132]]};
 let stream=null,context=null,analyser=null,data=null,raf=0,palette='neon',mode='bass',phase=0,last=performance.now(),bassSmooth=0,levelSmooth=0,prevBass=0,lastBeat=0,beats=0;
 function meter(id,n){const v=Math.max(0,Math.min(100,Math.round(n*100)));$(id).style.width=v+'%';$(id+'Num').textContent=v+'%'}
@@ -180,7 +127,7 @@ if(now-lastUiTick>=200){lastUiTick=now;$('audioHint').textContent=(noisePower?'N
 const impulse=Math.max(b-prevBass,v-priorEnergy,conv?(flowResult?.transient||0)*.26:0);if(!learning&&impulse>.07&&Math.max(b,v)>.1&&now-lastBeat>280){lastBeat=now;beats++;beatColor++;beatPulse=Math.min(1,.45+Math.max(b,v)*.8);$('beat').textContent='Impulse: '+beats;}prevBass+=(b-prevBass)*(1-Math.exp(-dt/.35));priorEnergy+=(v-priorEnergy)*(1-Math.exp(-dt/.35));if(v>.035)lastInput=now;const pulseAge=now-lastBeat;if(pulseAge>250)beatPulse*=Math.exp(-dt/(.18+(1-speed)*.4));const quiet=learning||v<.035&&now-lastInput>350;if(quiet){beatPulse=0;bassSmooth=0;levelSmooth=0;focusSmooth=0}const focus=Number($('focus').value)/100,driven=quiet?0:focusSignal(b,m,beatPulse,focus);focusSmooth+=(driven-focusSmooth)*blend;
 
 currentBands=[b,m,h];composeMusicFrames();}
-function composeMusicFrames(){const [b,m,h]=currentBands,focus=Number($('focus').value)/100;lamps.forEach((el,i)=>{let signal=focusSmooth,shift=0;if(mode==='wave')signal=Math.max(0,Math.sin(phase*2-i*.95))*focusSmooth;else if(mode==='spectrum')signal=[b*(1-focus),m*focus,h*.3][i%3];else if(mode==='beatcolor'){shift=beatColor;}else if(mode==='fast'){shift=Math.floor(phase*2);}if(signal<.035)signal=0;const intensity=musicBrightness(signal,Number($('light').value)/100,Number($('peak').value)/100),col=palettes[palette][(i+shift)%7];musicFrames[i]={rgb:col,brightness:intensity};if(performance.now()-(el._lumaPaintTime||-Infinity)>90){el._lumaPaintTime=performance.now();el.style.setProperty('--mi-lamp-color','rgb('+col.join(',')+')');el.style.setProperty('--mi-lamp-level',String(intensity))}})}
+function composeMusicFrames(){const [b,m,h]=currentBands,focus=Number($('focus').value)/100;musicFrames.forEach((frame,i)=>{let signal=focusSmooth,shift=0;if(mode==='wave')signal=Math.max(0,Math.sin(phase*2-i*.95))*focusSmooth;else if(mode==='spectrum')signal=[b*(1-focus),m*focus,h*.3][i%3];else if(mode==='beatcolor'){shift=beatColor;}else if(mode==='fast'){shift=Math.floor(phase*2);}if(signal<.035)signal=0;const intensity=musicBrightness(signal,Number($('light').value)/100,Number($('peak').value)/100),col=palettes[palette][(i+shift)%7];musicFrames[i]={rgb:col,brightness:intensity}})}
 
 function render(now){if(!analyser)return;if(now-lastAnalysisTick<33){raf=requestAnimationFrame(render);return}lastAnalysisTick=now;try{analyseFrame(now);analysisErrors=0}catch(e){analysisErrors++;$('status').textContent='Analysefehler';$('message').textContent='Audioanalyse: '+e.message;if(analysisErrors>=3){window.lumaStopMusic?.();stop();$('message').textContent='Audioanalyse angehalten: '+e.message;return}}if(analyser)raf=requestAnimationFrame(render)}
 function syncMusicControls(){const paletteNames={neon:'Neon',sunset:'Sonnenuntergang',ocean:'Ozean',warm:'Warm'},modeNames={bass:'Bass-Puls',wave:'Raumwelle',spectrum:'Frequenzen',beatcolor:'Beat-Farbwechsel',fast:'Schneller Farbfluss'};document.querySelectorAll('[data-palette]').forEach(b=>{const selected=b.dataset.palette===palette;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});document.querySelectorAll('[data-mode]').forEach(b=>{const selected=b.dataset.mode===mode;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});$('musicSelection').textContent=paletteNames[palette]+' · '+modeNames[mode];$('paletteSwatches').replaceChildren();palettes[palette].forEach(col=>{const sw=document.createElement('i');sw.style.background='rgb('+col.join(',')+')';$('paletteSwatches').append(sw)});composeMusicFrames()}
@@ -218,6 +165,34 @@ if(lumaFlowGuard){
 
 $('start').onclick=async()=>{if(audioStarting)return;const ok=await start();if(!ok)return;try{$('start').disabled=true;$('start').textContent='Verbinde Lampen …';await window.lumaEnsureConnection();await window.lumaStartMusic();$('start').textContent='Musik läuft';$('message').textContent='Eingangsbalken = Mikrofon. Musiksignal = nach Filter.';$('start').disabled=true;$('stop').disabled=false}catch(e){window.lumaStopMusic?.();stop();$('message').textContent=e.message;$('status').textContent='Start fehlgeschlagen'}};
 $('stop').onclick=()=>{window.lumaStopMusic?.();stop()};
+const moodPresentation={
+ neon:{name:'Neon',subtitle:'Electric Night',motif:'neon'},
+ sunset:{name:'Sunset',subtitle:'Beach Glow',motif:'sunset'},
+ ocean:{name:'Ocean',subtitle:'Blue Waves',motif:'ocean'},
+ warm:{name:'Warm',subtitle:'Cozy Light',motif:'warm'}
+};
+for(const button of document.querySelectorAll('#palettes [data-palette]')){
+ const id=button.dataset.palette,detail=moodPresentation[id];
+ if(!detail||!palettes[id])continue;
+ const colors=palettes[id].map(rgb=>'rgb('+rgb.join(',')+')');
+ button.classList.add('mi-mood-card');
+ button.setAttribute('aria-label','Farbstimmung '+detail.name+' auswählen');
+ button.style.setProperty('--mood-c1',colors[0]);button.style.setProperty('--mood-c2',colors[1]);
+ button.style.setProperty('--mood-c3',colors[3]);button.style.setProperty('--mood-c4',colors[5]);
+ button.dataset.moodArt=detail.motif;
+ const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
+ const glow=document.createElement('span');glow.className='mi-mood-glow';artwork.append(glow);
+ const beam=document.createElement('span');beam.className='mi-mood-beam';artwork.append(beam);
+ const wave=document.createElement('span');wave.className='mi-mood-wave';artwork.append(wave);
+ const caption=document.createElement('span');caption.className='mi-mood-caption';
+ const name=document.createElement('strong');name.textContent=detail.name;
+ const subtitle=document.createElement('small');subtitle.textContent=detail.subtitle;
+ caption.append(name,subtitle);
+ const dots=document.createElement('span');dots.className='mi-mood-pips';dots.setAttribute('aria-hidden','true');
+ for(const color of colors.slice(0,5)){const dot=document.createElement('i');dot.style.background=color;dots.append(dot)}
+ const check=document.createElement('span');check.className='mi-mood-check';check.textContent='✓';check.setAttribute('aria-hidden','true');
+ button.replaceChildren(artwork,caption,dots,check);
+}
 for(const b of document.querySelectorAll('[data-palette]'))b.onclick=()=>{palette=b.dataset.palette;musicSave();syncMusicControls()};for(const b of document.querySelectorAll('[data-mode]'))b.onclick=()=>{mode=b.dataset.mode;musicSave();syncMusicControls()};function musicSave(){try{localStorage.setItem('luma_live_music08',JSON.stringify({gain:$('gain').value,speed:$('speed').value,light:$('light').value,peak:$('peak').value,palette,mode,focus:$('focus').value,gate:$('gate').value}))}catch{}}
 function musicLabels(){for(const key of ['gain','speed','light','peak'])$(key+'Num').textContent=$(key).value+'%';const f=Number($('focus').value);$('focusNum').textContent=(f<25?'Takt':f>75?'Gesangsbereich':'Mischung')+' · '+f+'%';$('gateNum').textContent=$('gate').value+' dB';syncMusicControls()}
 for(const key of ['gain','speed','light','peak','focus','gate'])$(key).oninput=()=>{musicLabels();musicSave();composeMusicFrames()};
@@ -246,7 +221,7 @@ const say=s=>{if(q('musicInfo').textContent!==s)q('musicInfo').textContent=s};
 async function request(method,path,body){return window.lumaRequest(method,path,body,{music:method==='PUT'})}
 
 function end(message){window.lumaCancelMusicRequests?.();q('start').disabled=false;q('start').textContent='Musik starten';active=false;generation++;clearTimeout(timer);busy=false;q('musicOn').disabled=!devices.length;q('musicOff').disabled=true;if(message)say(message)}
-q('musicConnect').onclick=async()=>{end();devices=[];q('musicOn').disabled=true;q('musicConnect').disabled=true;try{const data=await request('GET','/lights');if(!data||Array.isArray(data)||typeof data!=='object')throw Error('Unerwartete Bridge-Antwort.');devices=Object.entries(data).filter(([id,d])=>d.state&&d.state.reachable!==false&&window.lumaTargetIds().includes(id)).map(([id,d])=>({id,color:'hue' in d.state&&'sat' in d.state,name:d.name||'Lampe '+id,type:d.type||'',modelid:d.modelid||''}));window.lumaUpdateMusicPreview?.(devices);say(devices.length+' erreichbare Lampen verbunden.');q('musicOn').disabled=!devices.length}catch(e){say('Verbinden fehlgeschlagen: '+(e.name==='AbortError'?'Zeitüberschreitung':e.message))}finally{q('musicConnect').disabled=false}};
+q('musicConnect').onclick=async()=>{end();devices=[];q('musicOn').disabled=true;q('musicConnect').disabled=true;try{const data=await request('GET','/lights');if(!data||Array.isArray(data)||typeof data!=='object')throw Error('Unerwartete Bridge-Antwort.');devices=Object.entries(data).filter(([id,d])=>d.state&&d.state.reachable!==false&&window.lumaTargetIds().includes(id)).map(([id,d])=>({id,color:'hue' in d.state&&'sat' in d.state,name:d.name||'Lampe '+id,type:d.type||'',modelid:d.modelid||''}));say(devices.length+' erreichbare Lampen verbunden.');q('musicOn').disabled=!devices.length}catch(e){say('Verbinden fehlgeschlagen: '+(e.name==='AbortError'?'Zeitüberschreitung':e.message))}finally{q('musicConnect').disabled=false}};
 function hsv(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0;if(d){if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=(h*60+360)%360}return {hue:Math.round(h/360*65535),sat:Math.round((max?d/max:0)*254),bri:Math.max(1,Math.round(max*254))}}
 function diag(note=''){
  const age=lastFrame?Math.round(performance.now()-lastFrame):null;
@@ -504,6 +479,20 @@ function renderTree(){
   groupTree=new window.LumaGroupsTree.Tree(engine,el('targetFastTree'),{
    getSelected:()=>el('target').value||engine.currentTarget(),
    getLampIcon:(id,device)=>lampIconPrefs.icon(bridgeIdentity,id,device),
+   onPower:async(lightId,on)=>{
+    if(!connected)throw Error('Bridge nicht verbunden. Unter ⚙ die Bridge verbinden.');
+    const device=lights[lightId];
+    if(!device||device.state?.reachable===false)throw Error('Lampe nicht erreichbar.');
+    // Explicit manual action wins; otherwise running Music would switch it back on.
+    stopAll();
+    const answer=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',{on});
+    if(!Array.isArray(answer)||!answer.some(result=>result.success))throw Error('Bridge hat das Schalten nicht bestätigt.');
+    device.state.on=on;renderLights();
+    status((device.name||'Lampe')+(on?' eingeschaltet.':' ausgeschaltet.')+' · Musiklicht bei manueller Bedienung gestoppt.');
+   },
+   onPowerError:(error,lightId)=>{
+    status('Lampe '+(lights[lightId]?.name||lightId)+': '+(error?.message||'Schalten fehlgeschlagen.'));
+   },
    onSelect:id=>{
     if(!engine.group(id))return;
     el('target').value=id;
@@ -595,7 +584,7 @@ const toggleTargetTree=()=>{
 el('targetTreeToggle').addEventListener('click',toggleTargetTree);
 
 el('bridgeIp').value=read('ip','192.168.1.2');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.setItem('luma_live_key',JSON.stringify(''))}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;el('miBridgeStatus').textContent='Bridge-Verbindung getrennt';status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
- try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();groupTree?.updateLampStates();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
  catch(e){status('Gruppenauswahl: '+e.message)}
 };
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
