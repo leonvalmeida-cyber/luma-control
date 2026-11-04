@@ -100,3 +100,12 @@
 #musicPane #miQuickSelection{font-size:11px;opacity:.85}
 @media(max-width:345px){#musicPane .mi-quick #palettes .mi-mood-card{flex-basis:137px;width:137px;height:198px;min-height:198px}}
 @media(prefers-reduced-motion:reduce){#musicPane .mi-mood-card,#musicPane .mi-mood-check{transition:none!important}}
+
+/* Picture-forward music mood cards: four illustrated, bundled SVG micro-scenes.
+   Artwork is decorative; card state and existing RGB palettes stay the source of truth. */
+#musicPane .mi-mood-art img.mi-mood-picture{display:block!important;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:1;opacity:1;pointer-events:none;border-radius:12px;filter:saturate(1.1) contrast(1.07)}
+#musicPane .mi-mood-art .mi-mood-glow{z-index:2;opacity:.16;mix-blend-mode:screen;pointer-events:none}
+#musicPane .mi-mood-art .mi-mood-beam,#musicPane .mi-mood-art .mi-mood-wave{z-index:2;opacity:.12;pointer-events:none}
+#musicPane #miQuickPalettes #palettes .mi-mood-card{height:214px;min-height:214px}
+#musicPane #miQuickPalettes .mi-mood-art{height:127px;min-height:127px}
+#musicPane #miQuickPalettes .mi-mood-card[aria-pressed=true] .mi-mood-art img.mi-mood-picture{filter:saturate(1.25) contrast(1.08)}
