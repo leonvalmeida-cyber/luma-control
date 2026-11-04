@@ -82,7 +82,7 @@ const close=()=>new Promise(resolve=>server.close(resolve));
       sheet:document.querySelector('.quick-sheet').style.transform,
       arm:document.getElementById('ambientLampArm').getAttribute('d'),
       beam:document.getElementById('ambientBeam1').getAttribute('d'),
-      shadeX:shade.x,mountX:mount.x,
+      shadeX:shade.x,mountX:mount.x,physicalPx:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--luma-pull-px')),
       rayPower:getComputedStyle(document.documentElement).getPropertyValue('--ambient-power').trim()};
    });
    console.log('WEBKIT_PULL_'+label+'='+JSON.stringify(observation));
@@ -103,11 +103,10 @@ const close=()=>new Promise(resolve=>server.close(resolve));
    launcher.dispatchEvent(evt);
   });
   const p25=await capture(.25,'25'),p50=await capture(.5,'50');
-  const windowLumaPullQuarter=()=>167.7/4;
   await page.screenshot({path:'/tmp/luma-webkit-half-pulled.png'});
   const p75=await capture(.75,'75');
   assert.ok(p25.shadeX>p50.shadeX&&p50.shadeX>p75.shadeX,'shade actually moves with the thumb');
-  const actualShadeStep=p25.shadeX-p50.shadeX,expectedShadeStep=windowLumaPullQuarter();
+  const actualShadeStep=p25.shadeX-p50.shadeX,expectedShadeStep=p50.physicalPx-p25.physicalPx;
   assert.ok(Math.abs(actualShadeStep-expectedShadeStep)<3,'shade must extend exactly as far as the arm, not 73% because of SVG viewBox scaling: '+actualShadeStep+' vs '+expectedShadeStep);
   assert.ok(Math.abs(p25.mountX-p50.mountX)<1&&Math.abs(p50.mountX-p75.mountX)<1,'wall mount stays fixed');
   assert.notEqual(p25.arm,p50.arm,'arm must grow between progress steps');
