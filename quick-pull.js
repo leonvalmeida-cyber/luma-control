@@ -161,7 +161,9 @@ function attach({doc=root.document,win=root}={}){
   }
   session.dx=dx;
   const p=progressFromDistance(dx,limits(getDims().width).drag);
-  queue(p);
+  // Paint synchronously with the thumb, without waiting for WebKit's next RAF.
+  // Four cheap SVG paths and one transform are faster and feel physically coupled.
+  paint(p);
   if(event?.cancelable)event.preventDefault();
  }
  function finish(x,y,id,event,cancel=false){
