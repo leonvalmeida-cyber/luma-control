@@ -7,6 +7,9 @@ on:
       - 'flow/**'
       - 'tests/flow-noise-guard.test.cjs'
       - 'tests/lamp-icons.test.cjs'
+      - 'tests/visual-mood-tree.test.cjs'
+      - 'music-immersive-v1.css'
+      - 'groups-v1-tree.css'
       - 'lamp-icons.js'
       - 'lamp-icons.css'
       - 'groups-v1-tree.js'
@@ -24,4 +27,4 @@ jobs:
       - name: Syntax and signal-processing regressions
         run: |
           node --check flow/noise-guard.js
-          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs
+          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs
