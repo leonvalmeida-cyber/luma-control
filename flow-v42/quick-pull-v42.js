@@ -49,7 +49,7 @@ function armPath(pull,svgWidth=73,design='vintage'){
   +' Q'+x(99)+' '+y(3)+' '+x(103)+' 106'
   +' H86';
 }
-function beamGeometry(width,height,x,y){
+function beamGeometry(width,height,x,y,topOffset=32){
  // A truly symmetrical lamp cone, measured from the *moving shade lip*.
  // Neither outside edge is vertical: the right side mirrors the left side.
  const w=Math.max(1,width),h=Math.max(1,height),cx=round(x),rimY=round(y);
@@ -66,7 +66,7 @@ function beamGeometry(width,height,x,y){
         farB=round(farLeft+(farRight-farLeft)*b);
   bands.push('M'+nearA+' '+rimY+' L'+farA+' '+bottomY+' L'+farB+' '+bottomY+' L'+nearB+' '+rimY+' Z');
  }
- const yTop=round(y-32),span=round(Math.min(w*.24,116)),rise=round(Math.min(h*.22,174));
+ const yTop=round(y-topOffset),span=round(Math.min(w*.24,116)),rise=round(Math.min(h*.22,174));
  const up='M'+round(x-12)+' '+yTop+
   ' L'+round(x-span)+' '+round(yTop-rise)+
   ' Q'+cx+' '+round(yTop-rise*1.18)+' '+round(x+span)+' '+round(yTop-rise)+
@@ -105,13 +105,16 @@ function attach({doc=root.document,win=root}={}){
   // A measured fixed base prevents WebKit from double-counting its own transform.
   const lift=clamp(height*.07,40,59)*p;
   const headX=mirrored()?width-(rect.right-(.31*svgWidth))-distance:rect.left+(.31*svgWidth)-distance;
-  const rimY=initialTop+(78/124*96)-lift-dock;
-  return {distance,lift,svgWidth,width,height,headX,rimY};
+  const style=doc.documentElement?.dataset?.v42Design||'vintage';
+  const lipSvg=({vintage:78,deco:61,washi:90,halo:87})[style]||78;
+  const topOffset=({vintage:37,deco:23,washi:53,halo:33})[style]||37;
+  const rimY=initialTop+(lipSvg/124*96)-lift-dock;
+  return {distance,lift,svgWidth,width,height,headX,rimY,topOffset};
  }
  function paint(p){
   current=clamp(p);
   const g=position(current);
-  const glow=beamGeometry(g.width,g.height,g.headX,g.rimY);
+  const glow=beamGeometry(g.width,g.height,g.headX,g.rimY,g.topOffset);
   rootStyle.setProperty('--luma-pull-px',round(g.distance)+'px');
   rootStyle.setProperty('--v42-dock-px',round(dock)+'px');
   rootStyle.setProperty('--luma-open-lift-px',round(g.lift)+'px');
