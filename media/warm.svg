@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 210" role="img" aria-label="Abstrakte Lichtstimmung"><defs><linearGradient id="warmRoom" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6c473d"/><stop offset=".65" stop-color="#3b2b36"/><stop offset="1" stop-color="#352a37"/></linearGradient></defs><defs><filter id="blur"><feGaussianBlur stdDeviation="16"/></filter><filter id="soft"><feGaussianBlur stdDeviation="5"/></filter><linearGradient id="floor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b0d22"/><stop offset="1" stop-color="#283057"/></linearGradient></defs>
+<rect width="320" height="210" fill="url(#warmRoom)"/>
+<ellipse cx="110" cy="90" rx="95" ry="73" fill="#ffc46c" opacity=".35" filter="url(#blur)"/>
+<path d="M20 12V159m280-147v147M17 16h286" fill="none" stroke="#5c3f3d" stroke-width="8"/>
+<rect x="191" y="23" width="92" height="88" rx="4" fill="#674b58" stroke="#b17a63" stroke-width="6"/>
+<path d="M237 23v88m-46-41h92" stroke="#b48469" stroke-width="4"/>
+<path d="M0 156l147-28 173 26v56H0Z" fill="#422d36"/>
+<path d="M11 156h297" stroke="#855749" stroke-width="5"/>
+<path d="M15 174v-27q0-15 15-15h108q14 0 14 15v27H15Z" fill="#9d625b" stroke="#d59a70" stroke-width="3"/>
+<path d="M35 139h38v21H35zm44 0h52v21H79z" fill="#ba8273"/>
+<path d="M15 175v12m137-12v12" stroke="#d59a70" stroke-width="4"/>
+<path d="M168 173h49l6-5h-61l6 5Zm20-5v-47" fill="#633d34" stroke="#c58d5b" stroke-width="3"/>
+<path d="M161 122h54l-11-37h-32l-11 37Z" fill="#ffe0a7" stroke="#f4ba78" stroke-width="3"/>
+<ellipse cx="189" cy="106" rx="56" ry="62" fill="#ffd39b" opacity=".32" filter="url(#blur)"/>
+<path d="M255 169h37v3h-37zm18 0v-40" fill="#533c35" stroke="#a77351" stroke-width="3"/>
+<path d="M256 132h32l-5-23h-22l-5 23Z" fill="#f8d49c" stroke="#ecad67" stroke-width="2"/>
+<path d="M10 194q146-20 300 2" fill="none" stroke="#b4774c" stroke-width="3" opacity=".4"/></svg>
