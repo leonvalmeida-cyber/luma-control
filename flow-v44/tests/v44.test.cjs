@@ -18,9 +18,9 @@ test('V4.4 remains isolated and keeps all existing Hue UI assets',()=>{
 });
 test('compact closed lamp is controlled by real 0..1 pull progress and safely positioned',()=>{
  assert.match(css,/--v44-launcher-top:clamp\(104px,17dvh,158px\)/);
- assert.match(css,/--v44-open-progress:0/);
- assert.match(css,/scale\(calc\(\.73 \+ var\(--v44-open-progress\)\*\.27\)\)/);
- assert.match(pull,/setProperty\('--v44-open-progress',String\(current\)\)/);
+ assert.match(css,/--v44-lamp-scale:\.73/);
+ assert.match(css,/scale\(var\(--v44-lamp-scale\)\)/);
+ assert.match(pull,/setProperty\('--v44-lamp-scale',String\(round\(\.73\+\.27\*current\)\)\)/);
  assert.match(pull,/const fixedY=\(\)=>launcher\.getBoundingClientRect\(\)\.top/);
 });
 test('reserved real master card gutter avoids an overlapping invisible grip',()=>{
