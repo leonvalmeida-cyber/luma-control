@@ -58,7 +58,7 @@ function attach({doc=root.document,win=root}={}){
  const listeners=[], listen=(node,name,fn,opts)=>{node.addEventListener(name,fn,opts);listeners.push([node,name,fn,opts])};
  const raf=win.requestAnimationFrame?.bind(win)||((fn)=>win.setTimeout(fn,16));
  const caf=win.cancelAnimationFrame?.bind(win)||win.clearTimeout?.bind(win)||(()=>{});
- const now=()=>win.performance?.now?.()||Date.now();
+ const now=()=>win.performance?.now?.()??Date.now();
  let current=0,session=null,animation=0,frame=0,queued=null,preview=false,ignoreClickUntil=0;
  const getDims=()=>({width:Math.max(1,win.innerWidth||390),height:Math.max(1,win.innerHeight||844)});
  function position(p){
@@ -133,15 +133,17 @@ function attach({doc=root.document,win=root}={}){
   // No bounce: all four objects share the same easing, ending in the same frame.
   function step(t){
    const u=duration?clamp((t-t0)/duration):1;
+   launcher.dataset.pullPhase='settling-'+round(u);
    const eased=1-Math.pow(1-u,3);
    paint(start+(end-start)*eased);
    if(u<1){animation=raf(step);return}
    animation=0;
    if(shouldOpen){
+    launcher.dataset.pullPhase='opened';
     clearPreview();
     overlay.dataset.pulledOpen='true';
     win.lumaQuickControl?.open?.();
-   }else rollback();
+   }else{launcher.dataset.pullPhase='retracted';rollback()}
   }
   animation=raf(step);
  }
@@ -175,6 +177,7 @@ function attach({doc=root.document,win=root}={}){
   const p=progressFromDistance(dx,limits(getDims().width).drag);
   paint(p);
   ignoreClickUntil=Date.now()+550;
+  launcher.dataset.pullPhase='released-'+round(p);
   if(event?.cancelable)event.preventDefault();
   event?.stopPropagation?.();
   settle(!cancel&&snap(p,dx,now()-item.started));
