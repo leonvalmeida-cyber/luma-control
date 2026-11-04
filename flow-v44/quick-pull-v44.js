@@ -133,12 +133,18 @@ function attach({doc=root.document,win=root}={}){
   const magnetic=p*magnet;
   const distance=limit.pull*p*(1-.93*magnetic),svgWidth=73;
   const lift=clamp(height*.07,40,59)*p*(1-.99*magnetic);
-  const headX=mirrored()?width-(rect.right-(.31*svgWidth))-distance:rect.left+(.31*svgWidth)-distance;
+  // The SVG scales to 73% only while parked. Apply the same scale to
+  // the ray origin so the light still starts at the real, smaller shade.
+  const scale=.73+.27*p,artOriginX=svgWidth*.90;
+  const scaledHeadX=artOriginX+(.31*svgWidth-artOriginX)*scale;
+  const headX=mirrored()?width-(rect.right-scaledHeadX)-distance*scale:rect.left+scaledHeadX-distance*scale;
   const style=doc.documentElement?.dataset?.v42Design||'vintage';
   const lipSvg=({vintage:78,deco:61,washi:90,halo:87})[style]||78;
   const topOffset=({vintage:37,deco:23,washi:53,halo:33})[style]||37;
-  const rimY=fixedY()+(lipSvg/124*96)-lift-dock;
-  return {distance,lift,svgWidth,width,height,headX,rimY,topOffset};
+  const lipPx=lipSvg/124*96,artOriginY=96*.37;
+  const scaledLipY=artOriginY+(lipPx-artOriginY)*scale;
+  const rimY=fixedY()+scaledLipY-(lift+dock)*scale;
+  return {distance,lift,scale,svgWidth,width,height,headX,rimY,topOffset};
  }
  function paint(p){
   current=clamp(p);
