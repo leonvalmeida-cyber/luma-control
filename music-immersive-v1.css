@@ -122,3 +122,8 @@
 #musicPane #miQuickPalettes .mi-mood-art[data-image-failed=true] img.mi-mood-picture{display:none!important}
 #musicPane #miQuickPalettes .mi-mood-card:focus-visible{outline:2px solid #ebd8ff;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){#musicPane #miQuickPalettes img.mi-mood-picture{filter:saturate(1.1) contrast(1.1)!important}}
+
+/* Local in-DOM SVG artwork fallback: stays visible even if a separate image request fails. */
+#musicPane #miQuickPalettes .mi-mood-fallback{position:absolute;inset:0;z-index:1;display:block;overflow:hidden;pointer-events:none}
+#musicPane #miQuickPalettes .mi-mood-fallback>svg{display:block;width:100%;height:100%;min-width:100%;min-height:100%;object-fit:cover}
+#musicPane #miQuickPalettes .mi-mood-art[data-image-failed=true] .mi-mood-fallback{z-index:2}
