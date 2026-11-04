@@ -1,0 +1,107 @@
+/* Luma Flow V4 – isolated preview styles. Legacy controls stay untouched. */
+:root{--v4-glow:.62}
+.quick-launcher .ambient-lamp-silhouette{transition:fill .28s ease,stroke .28s ease}
+.quick-launcher .ambient-lamp-arm{
+ stroke:#d9c0d2!important;stroke-width:4.7!important;
+ stroke-linecap:round;stroke-linejoin:round;
+ filter:drop-shadow(0 1px 2px #090815b8)
+}
+.quick-launcher .ambient-lamp-joint{fill:#e3c7d2;stroke:#44344f;stroke-width:.6}
+.quick-launcher .ambient-lamp-rim{stroke:#e6d4c0;stroke-width:2.9}
+.quick-launcher .ambient-lamp-diffuser{stroke-width:1.7;filter:drop-shadow(0 0 8px rgb(var(--ambient-rgb)/.65))}
+.quick-launcher .ambient-lamp-silhouette{
+ fill:url(#v4ClothGradient)!important;stroke:#ceb8d6;stroke-width:1.95!important;
+ filter:drop-shadow(0 1px 5px rgb(var(--ambient-rgb)/.2));
+}
+.quick-launcher .v4-pleats{
+ fill:none;stroke:#2e1a42;stroke-opacity:.44;stroke-width:2.4;
+ stroke-linecap:round;pointer-events:none;
+ filter:drop-shadow(0 0 1px #fff8);
+}
+:root[data-v4-design=modern] .quick-launcher .v4-pleats{display:none}
+:root[data-v4-design=modern] .quick-launcher .ambient-lamp-silhouette{
+ fill:rgb(var(--ambient-rgb)/ .26)!important;stroke:#e1cfee!important;stroke-width:2.2!important
+}
+:root[data-v4-design=modern] .quick-launcher .ambient-lamp-reflection{opacity:.2}
+:root[data-v4-design=retro] .quick-launcher .v4-pleats{opacity:.22;stroke-width:1.8}
+:root[data-v4-design=retro] .quick-launcher .ambient-lamp-silhouette{
+ fill:rgb(var(--ambient-ray-2)/.25)!important;stroke:#f0bfa3!important;
+}
+.quick-launcher .v4-luna{
+ font-size:14px;font-weight:650;letter-spacing:1.1px;
+ fill:rgb(var(--ambient-rgb) / .96);
+ stroke:#131022;stroke-width:.7px;paint-order:stroke;
+ filter:drop-shadow(0 0 4px rgb(var(--ambient-rgb)/.55));
+ pointer-events:none;transition:opacity .1s linear;
+}
+:root[data-v4-luna=false] .quick-launcher .v4-luna{opacity:0!important}
+/* The live Hue-derived colour is visible while dragged and after opening.
+   Never turn a dark/off lamp into a fake "on" lamp. */
+.quick-launcher[data-ambient-state=on] .ambient-lamp-silhouette{
+ stroke:rgb(var(--ambient-ray-1)/.92)!important;
+ filter:drop-shadow(0 0 5px rgb(var(--ambient-rgb)/.46));
+}
+.quick-launcher[data-ambient-state=on] .ambient-lamp-diffuser{
+ fill:rgb(var(--ambient-rgb)/.8)!important;opacity:1;
+ filter:drop-shadow(0 0 11px rgb(var(--ambient-ray-1)/.88));
+}
+.quick-launcher[data-ambient-state=on][aria-expanded=true] .ambient-lamp-top-opening,
+.quick-launcher[data-ambient-state=on].quick-pulling .ambient-lamp-top-opening{
+ fill:rgb(var(--ambient-ray-1)/.42)!important;
+ filter:drop-shadow(0 0 8px rgb(var(--ambient-ray-1)/.56))
+}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-silhouette{filter:none}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-diffuser{filter:none!important;fill:#51445a!important}
+.quick-launcher[data-ambient-state=disconnected] .ambient-lamp-silhouette{filter:none}
+.ambient-beam-canvas .ambient-beam-up{opacity:.54!important;filter:blur(7px)}
+/* Slight brighter upward cone, without altering the calculated physical geometry. */
+#ambientBeamGradientUp stop:first-child{stop-opacity:.25}
+#ambientBeamGradientUp stop:nth-child(2){stop-opacity:.075}
+.ambient-room-glow{transition:opacity .28s ease}
+
+/* Quick slider is a compact first row; existing complete lamp tree stays below. */
+.v4-master{
+ margin:0 0 12px;padding:13px 12px 12px;
+ border:1px solid #9778c27d;border-radius:16px;
+ background:linear-gradient(120deg,#3c2c5b99,#182139c4);
+}
+.v4-master-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;font-weight:750}
+.v4-master-top output{color:#f0ceff;font-variant-numeric:tabular-nums}
+.v4-master input[type=range]{width:100%;accent-color:#d4a4e8;margin:13px 0 3px;min-height:30px;touch-action:pan-x}
+.v4-master input[type=range]:disabled{opacity:.45}
+.v4-help{font-size:11px;line-height:1.3;color:#d8cbe4;min-height:18px;margin:2px 0 4px}
+.v4-master details{border-top:1px solid #9d85c243;margin-top:10px;padding-top:4px}
+.v4-master summary{font-size:11px;padding:9px 2px;color:#d9c5fb;font-weight:600}
+.v4-individual-row{display:grid;grid-template-columns:1fr 110px 40px;gap:7px;align-items:center;font-size:12px;padding:5px 0}
+.v4-individual-row>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v4-individual-row input[type=range]{min-height:35px;margin:0}
+.v4-individual-row output{font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+.v4-prefs{width:100%;padding:12px;background:#20192f;border:1px solid #9c7cb360;border-radius:13px;display:grid;gap:8px}
+.v4-pref-title{font-weight:800;font-size:14px}
+.v4-pref-title small{font-size:10px;color:#bea9d5;margin-left:8px}
+.v4-designs{display:flex;gap:6px;flex-wrap:wrap}
+.g-settings-menu .v4-designs button{flex:1;min-width:72px;font-size:11px;padding:7px 8px;border:1px solid #8263a3;background:#3a3053}
+.g-settings-menu .v4-designs button[aria-pressed=true]{border-color:#f9dbf2;background:#85569d;color:#fff}
+.v4-check{display:flex;align-items:center;gap:9px;font-size:12px;color:#e8dff8;line-height:1.4;min-height:35px}
+.v4-check input{width:19px!important;height:19px!important;accent-color:#b987e9}
+.v4-hint{font-size:10px;color:#c0b5d2;margin:3px 0 0}
+
+/* Real left-hand mode: launcher and pull mechanics physically mirror, without
+   mirroring words, menus or brightness controls. */
+:root[data-v4-hand=left] .quick-launcher{
+ right:auto!important;left:max(6px,env(safe-area-inset-left))!important;transform-origin:center left;
+}
+:root[data-v4-hand=left] .quick-launcher svg.ambient-lamp-art{transform:scaleX(-1)}
+:root[data-v4-hand=left] .quick-lamp-grip{
+ right:auto!important;
+ left:calc(max(6px,env(safe-area-inset-left)) + 21px + var(--luma-pull-px))!important;
+}
+:root[data-v4-hand=left] .quick-overlay{justify-content:flex-start!important}
+:root[data-v4-hand=left] .quick-overlay:not([hidden]) .quick-titlebar{padding-left:57px;padding-right:17px}
+:root[data-v4-hand=left] .quick-sheet{animation:v4-drawer-left .24s cubic-bezier(.2,.8,.25,1) both}
+:root[data-v4-hand=left] .quick-overlay[data-pulled-open=true] .quick-sheet{animation:none!important}
+:root[data-v4-hand=left] .quick-overlay.quick-preview .quick-sheet{animation:none!important}
+:root[data-v4-hand=left] .ambient-beam-canvas{transform:scaleX(-1)}
+@keyframes v4-drawer-left{from{transform:translate3d(-34px,0,0);opacity:.74}to{transform:translate3d(0,0,0);opacity:1}}
+@media(max-width:370px){.v4-individual-row{grid-template-columns:1fr 90px 34px;gap:4px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){:root[data-v4-hand=left] .quick-sheet{animation:none!important}.quick-launcher .v4-luna,.quick-launcher .ambient-lamp-silhouette{transition:none!important}}
