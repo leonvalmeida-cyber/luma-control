@@ -97,6 +97,7 @@ function attach({doc=root.document,win=root}={}){
   if(preview)return;
   preview=true;
   overlay.hidden=false;
+  sheet.inert=true; // During the partial drag the drawer is a visual preview, not a focusable modal.
   overlay.classList.add('quick-preview');
   overlay.classList.remove('quick-retract');
   overlay.dataset.pulledOpen='false';
@@ -108,6 +109,7 @@ function attach({doc=root.document,win=root}={}){
  }
  function clearPreview(){
   preview=false;
+  sheet.inert=false;
   overlay.classList.remove('quick-preview','quick-retract');
   overlay.style.pointerEvents='';
   sheet.style.animation='';
