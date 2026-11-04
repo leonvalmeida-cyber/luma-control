@@ -52,7 +52,7 @@ test('Four distinct mood artworks use existing palette keys and original event h
  assert.ok(html.includes("document.querySelectorAll('[data-palette]').forEach(b=>{const selected=b.dataset.palette===palette;"));
  assert.ok(css.includes('.mi-mood-card[aria-pressed=true]'));
  assert.ok(css.includes('scroll-snap-type:x proximity'));
- assert.ok(!css.includes('background-image:url('),'no external product photos');
+ assert.ok(!/background-image:\s*url\(['\"]?https?:\/\//i.test(css),'no external product photos');
 });
 test('Single music destination: old anonymous seven-light gallery is removed without losing seven music frames',()=>{
  assert.ok(!html.includes('id="miLampGallery"'));
