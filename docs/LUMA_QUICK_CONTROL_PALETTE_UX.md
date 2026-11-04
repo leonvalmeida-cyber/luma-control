@@ -133,3 +133,16 @@ Nächster eigentlicher Entwicklungsschritt nach diesem abgestimmten Konzept: die
 - **Tests:** 26 statische/DOM-simulierte UI- und Datenintegritätschecks für den separaten Live-Pfad lokal im JS-Harness bestanden. Github Actions auf Feature-Branch: Flow DSP, Groups v1 und Music Immersive alle erfolgreich (Stand Feature-Commit `5cae01db00b276efbe8e91bea3a6ee7000e26376`). Echte Hue Bridge und iPhone-Safari-Darstellung **nicht** durch den Assistenten geprüft.
 - **Test-URL:** https://leonvalmeida-cyber.github.io/luma-control/flow-live/?v=5
 - **Absichtliche Grenze:** Hue API v1 Transport und Musik-Noise-Guard bleiben unverändert. LED-Glow ist eine grobe zustandsbasierte UI-Darstellung, keine genaue Messung der Lampenfarbwirkung.
+
+## Luma Flow 1.0 · Fingergeführte ausziehbare Wandlampe
+
+Die feste Position und Marke des Launchers wurden bewusst beibehalten; die frühere „Swipe erkannt → Button öffnet“ - Mechanik wurde in `flow-live/` vollständig ersetzt durch `quick-pull.js`:
+
+- **Stehendes Wandelement rechts:** Wandfuß und horizontal nach links führender, subtil L-förmiger Arm; der Kopf ist eine stilisierte, oben minimal geöffnete Leuchte, ohne Label „Licht“.
+- **Sofortige echte Fingerverfolgung:** 0–100 % über reale Touch-/Pointer-Position, nicht ein nachgelagertes Preset. Ein synchronisierter Progress treibt Schirmposition (SVG viewBox-korrigiert), SVG-Armendpunkt, vier Lichtkeile und den Transform des bereits bestehenden, nicht geklonten Gruppen-Panels.
+- **Physikalischer Lichtursprung:** drei getrennte Hue-/Musik-Farbstreifen starten direkt an der wandernden unteren Schirmkante, weiten sich diagonal links **und deutlich nach unten** und verblassen; schwacher zusätzlicher Spill aus der oberen Öffnung. Der Farbmischer und die Helligkeitsberechnung aus `ambient-lamp.js` bleiben unverändert.
+- **Interaktionslogik:** kurzer Tap bleibt schnelles Öffnen. Ziehen nach links ab 7 px beginnt die Vorschau, früh loslassen lässt alles zurückfahren; ab 43 % Öffnungsweg oder schneller eindeutiger Zug rastet die volle 94-vw-Gruppensteuerung ein. Der Finger kann vor dem Loslassen jederzeit zurückziehen; das Fenster folgt. Schließen via X und Backdrop; die Seite erhält Scrollposition und Fokus zurück.
+- **Safari-Sicherheit:** native Touch Events, passives Start-Event und bewusst nicht-passives Move-Event; keine körperweite Scrollsperre während der Vorschau, die Gruppen-UI ist vor dem Einrasten inert. Snap-Ende besitzt einen Timer-Fallback, falls WebKit bei Touch-Ende AnimationFrames drosselt; `prefers-reduced-motion` wird respektiert.
+- **Kein Risiko für Hue:** dieser Mechanismus sendet keine Hue-Befehle. Der echte Tree wird nur gezeigt/verdeckt, nicht neu aufgebaut. Produktives `main:index.html` bleibt geschützt.
+
+**Verifikation:** `tests/quick-pull-v10.test.cjs` kontrolliert 25/50/75 % Zwischenstände, echtes Verschieben von Lampenschirm und Strahl, fixe Wandhalterung, Zurückziehen, vorzeitiges Loslassen und Tap. `tests/browser-webkit-smoke.cjs` rendert die echte UI unter iPhone-Viewport und zeichnet Screenshots für Mood-Bilder, halbausgezogene Lampe und offenes Panel auf. Ein Browser-Simulationstest ist kein echter iPhone-/Hue-Hardwaretest.
