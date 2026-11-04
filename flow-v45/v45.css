@@ -194,7 +194,7 @@ body:has(#settingsMenu:not([hidden])) .quick-launcher:not([aria-expanded=true]){
  #targetFastTree .v45-group-value{min-width:38px;font-size:11px}
 }
 /* Let the groups look native; nonselected groups retain old compact lines. */
-#targetFastTree .g-tree-node>.g-tree-line{align-items:center}
+#targetFastTree .g-tree-node>.g-tree-line:not(.g-tree-lamp-line){align-items:center}
 
 /* Old custom brightness card/socket are never used in this isolated build. */
 #quickOverlay .v41-master,
