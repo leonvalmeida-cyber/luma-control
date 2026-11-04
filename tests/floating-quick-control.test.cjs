@@ -34,7 +34,7 @@ test('Both close surfaces and Escape restore current page and dialog focus',()=>
    append(x){this.children.push(x)},querySelector(){return make('quickSheet')},querySelectorAll(){return []}};
   nodes.set(id,n);return n;
  };
- for(const id of ['quickLauncher','quickOverlay','quickSheet','quickPanelBody','targetCard','quickStatus','quickClose','quickBackdrop','target'])make(id);
+ for(const id of ['quickLauncher','quickOverlay','quickSheet','quickPanelBody','targetCard','quickStatus','quickClose','quickSwipeClose','quickBackdrop','target'])make(id);
  nodes.get('target').selectedOptions=[{textContent:'Küche'}];
  const fakeDocument={body:{classList:{add(){},remove(){}},style:{top:''}},activeElement:null};
  const fakeWindow={scrollY:320,pageYOffset:320,scrollTo(x,y){this.restored=y},addEventListener(){}};
