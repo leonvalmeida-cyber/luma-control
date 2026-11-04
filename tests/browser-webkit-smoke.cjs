@@ -61,6 +61,22 @@ const close=()=>new Promise(resolve=>server.close(resolve));
   }
   await page.locator('#miQuickPalettes').scrollIntoViewIfNeeded();
   await page.screenshot({path:'/tmp/luma-webkit-music.png'});
+  // Lighting state below is test-only, never sent to the Hue Bridge or saved.
+  await page.evaluate(()=>{
+   window.lumaAmbientLightState=()=>({connected:true,devices:[
+    {state:{on:true,reachable:true,bri:240,hue:47000,sat:254,colormode:'hs'}},
+    {state:{on:true,reachable:true,bri:210,hue:0,sat:254,colormode:'hs'}},
+    {state:{on:true,reachable:true,bri:180,hue:20000,sat:254,colormode:'hs'}}]});
+   window.__smokeLamp=window.LumaAmbientLamp.attach();
+  });
+  await page.waitForTimeout(100);
+  const rayState=await page.evaluate(()=>({
+   power:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ambient-power')),
+   rays:[1,2,3].map(n=>getComputedStyle(document.documentElement).getPropertyValue('--ambient-ray-'+n).trim())
+  }));
+  console.log('WEBKIT_LIGHT_COLOR_SIM='+JSON.stringify(rayState));
+  assert.ok(rayState.power>.3,'the real-colored light fan must illuminate the app in the test');
+  assert.equal(new Set(rayState.rays).size,3,'mixed Hue lamps must produce three separate real-color rays');
   // Verify the actual rendered mechanics at THREE intermediate finger positions.
   await page.waitForFunction(()=>document.getElementById('quickLauncher')?.dataset.pullReady==='true',{timeout:12000});
   const capture=async(progress,label)=>{
