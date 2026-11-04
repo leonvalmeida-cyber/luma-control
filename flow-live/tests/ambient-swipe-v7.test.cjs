@@ -36,7 +36,9 @@ test('Swipe opens by moving left or up, closes by moving right or down',()=>{
 test('Swipe binds launcher and titlebar only, never scrollable tree',()=>{
  const js=fs.readFileSync(path.join(base,'quick-swipe.js'),'utf8');
  assert.ok(js.includes("const a=bind(launcher,'open'),b=bind(panel,'close')"));
- assert.ok(js.includes("if(kind==='close'&&e.target?.closest?.('button'))return"));
+ assert.ok(js.includes("if(kind==='close'&&event.target?.closest?.('button')&&event.target!==closeGrip)return"));
+ assert.ok(js.includes("on(element,'touchstart'"));
+ assert.ok(js.includes("on(element,'touchend'"));
  assert.ok(css.includes('.quick-titlebar{position:relative;touch-action:none'));
 });
 test('Four illustrated scenes load through both local img and CSS background',()=>{
