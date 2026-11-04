@@ -1,0 +1,150 @@
+/* Luma Flow V4.2 – isolated next generation ambient lamp skins.
+   This file loads AFTER unchanged V4.1 CSS, only on /flow-v42/. */
+:root{--v42-dock-px:0px}
+
+/* 1. The scene is emitted *through* the shade interior, below visible fabric
+   seams and folding lines. All hues come from the existing live Hue/music state. */
+#v42InnerGlow .v42-glow-center{stop-color:rgb(var(--ambient-rgb))}
+#v42InnerGlow .v42-glow-middle{stop-color:rgb(var(--ambient-ray-2))}
+#v42InnerGlow .v42-glow-side{stop-color:rgb(var(--ambient-ray-1))}
+#v42InnerGlow .v42-glow-edge{stop-color:rgb(var(--ambient-ray-3))}
+.quick-launcher .v42-glow-layer{pointer-events:none}
+.quick-launcher .v42-inner-radiance{
+ fill:url(#v42InnerGlow);
+ opacity:clamp(0,calc(var(--ambient-power) * 1.7),.96);
+ transition:opacity .28s ease;
+}
+.quick-launcher .v42-inner-edge{
+ fill:url(#v42InsideSheen);
+ opacity:clamp(0,calc(var(--ambient-power) * .9),.7)
+}
+.quick-launcher .v41-shade-warmth{opacity:calc(var(--ambient-power) * .25)}
+.quick-launcher[data-ambient-state=on] .ambient-lamp-silhouette{
+ filter:drop-shadow(0 0 7px rgb(var(--ambient-rgb) / .38))!important;
+}
+.quick-launcher[data-ambient-state=on] .ambient-lamp-diffuser{
+ fill:color-mix(in srgb,#e5d0aa 54%,rgb(var(--ambient-rgb)) 46%)!important;
+ stroke:#e7ce9a!important;
+ filter:drop-shadow(0 0 7px rgb(var(--ambient-rgb)/.62))!important;
+}
+.quick-launcher[data-ambient-state=off] .v42-inner-radiance,
+.quick-launcher[data-ambient-state=disconnected] .v42-inner-radiance,
+.quick-launcher[data-ambient-state=off] .v42-inner-edge,
+.quick-launcher[data-ambient-state=disconnected] .v42-inner-edge{
+ opacity:0!important;
+}
+/* Keep the entire illuminated fabric and cone visible after pulling open, too.
+   Unlike moving the glow to the header only, the full beam remains visible. */
+body:has(#quickOverlay:not([hidden])) .ambient-room-glow{
+ z-index:39605!important;pointer-events:none!important;opacity:var(--ambient-power)!important;
+}
+body:has(#quickOverlay:not([hidden])) .ambient-beam-canvas .ambient-beam-path{opacity:.64!important}
+
+/* 2. The actual L-shaped metal arm now writes 'Luma'. No SVG text or glyph
+   overlay is used. Gold vintage remains available as the preferred style. */
+.quick-launcher .ambient-lamp-arm{stroke-width:4.2!important}
+.quick-launcher .v41-arm-highlight{stroke-width:1!important;opacity:.36}
+
+/* 3. Three *distinct* alternatives, with their own silhouettes, ornament and
+   separate arm path selection. Linen fabric is identical to V4.1. */
+.quick-launcher .v42-deco-details,
+.quick-launcher .v42-washi-details,
+.quick-launcher .v42-halo-details{display:none;pointer-events:none}
+:root[data-v42-design=deco] .quick-launcher .ambient-lamp-silhouette{
+ fill:url(#v42DecoGlass)!important;
+ stroke:#cbbf94!important;stroke-width:2.5!important;
+ fill-rule:nonzero!important;
+}
+:root[data-v42-design=deco] .quick-launcher .ambient-lamp-arm{
+ stroke:#d6cab1!important;stroke-width:5.7!important;
+}
+:root[data-v42-design=deco] .quick-launcher .ambient-lamp-base{
+ fill:#897253!important;stroke:#d8c6a0!important;
+}
+:root[data-v42-design=deco] .quick-launcher .v42-deco-details{display:block;fill:#f3d79f;stroke:#c6a676;stroke-width:1.7}
+:root[data-v42-design=deco] .quick-launcher .v42-deco-details circle{stroke:none}
+:root[data-v42-design=deco] .quick-launcher .v41-shade-details .v41-pleat-shadows,
+:root[data-v42-design=deco] .quick-launcher .v41-shade-details .v41-pleat-highlights,
+:root[data-v42-design=deco] .quick-launcher .v41-fringe,
+:root[data-v42-design=deco] .quick-launcher .v41-neck-band,
+:root[data-v42-design=deco] .quick-launcher .v41-hem{display:none!important}
+:root[data-v42-design=deco] .quick-launcher .ambient-lamp-diffuser{
+ fill:#d4b37c!important;stroke:#f5d69d!important;
+}
+:root[data-v42-design=deco] .quick-launcher .v42-inner-radiance{opacity:clamp(0,calc(var(--ambient-power)*1.45),.92)}
+
+:root[data-v42-design=washi] .quick-launcher .ambient-lamp-silhouette{
+ fill:url(#v42WashiPaper)!important;stroke:#ae8550!important;stroke-width:2.2!important;
+}
+:root[data-v42-design=washi] .quick-launcher .ambient-lamp-arm{
+ stroke:#ba965c!important;stroke-width:5.5!important;
+}
+:root[data-v42-design=washi] .quick-launcher .ambient-lamp-base{
+ fill:#5b452e!important;stroke:#bf9e6e!important;
+}
+:root[data-v42-design=washi] .quick-launcher .v42-washi-details{
+ display:block;stroke:#ba8854;stroke-width:1.9;fill:none;opacity:.86
+}
+:root[data-v42-design=washi] .quick-launcher .v41-shade-details .v41-pleat-shadows,
+:root[data-v42-design=washi] .quick-launcher .v41-shade-details .v41-pleat-highlights,
+:root[data-v42-design=washi] .quick-launcher .v41-fringe,
+:root[data-v42-design=washi] .quick-launcher .v41-neck-band,
+:root[data-v42-design=washi] .quick-launcher .v41-hem{display:none!important}
+:root[data-v42-design=washi] .quick-launcher .ambient-lamp-diffuser{opacity:0!important}
+:root[data-v42-design=washi] .quick-launcher .ambient-lamp-reflection{opacity:.2}
+
+/* Ring-lamp cutout must really be transparent, not filled by a second cloth layer. */
+:root[data-v42-design=halo] #v41ClothClip path{clip-rule:evenodd}
+:root[data-v42-design=halo] .quick-launcher .v41-shade-edge-shadow,
+:root[data-v42-design=halo] .quick-launcher .v41-shade-top-shadow{
+ display:none!important
+}
+:root[data-v42-design=halo] .quick-launcher .v42-inner-edge{fill-rule:evenodd}
+:root[data-v42-design=halo] .quick-launcher .ambient-lamp-silhouette{
+ fill:url(#v42HaloFinish)!important;
+ fill-rule:evenodd!important;
+ stroke:#c4def6!important;stroke-width:2.5!important;
+ filter:drop-shadow(0 0 4px rgb(var(--ambient-rgb)/.34))!important;
+}
+:root[data-v42-design=halo] .quick-launcher .v42-inner-radiance{
+ fill-rule:evenodd!important;
+}
+:root[data-v42-design=halo] .quick-launcher .ambient-lamp-arm{
+ stroke:#afd1e7!important;stroke-width:3.5!important;
+}
+:root[data-v42-design=halo] .quick-launcher .ambient-lamp-base{
+ fill:#4b5d70!important;stroke:#e0eafa!important;
+}
+:root[data-v42-design=halo] .quick-launcher .v42-halo-details{
+ display:block;fill:none;stroke:#e5f4ff;stroke-width:1.4;opacity:.58;
+}
+:root[data-v42-design=halo] .quick-launcher .v41-shade-details .v41-pleat-shadows,
+:root[data-v42-design=halo] .quick-launcher .v41-shade-details .v41-pleat-highlights,
+:root[data-v42-design=halo] .quick-launcher .v41-shade-warmth,
+:root[data-v42-design=halo] .quick-launcher .v41-fringe,
+:root[data-v42-design=halo] .quick-launcher .v41-neck-band,
+:root[data-v42-design=halo] .quick-launcher .v41-hem,
+:root[data-v42-design=halo] .quick-launcher .ambient-lamp-diffuser{display:none!important}
+:root[data-v42-design=halo] .quick-launcher .ambient-lamp-top-opening{opacity:.35}
+
+/* 4. Dock lamp into safe upper screen region as user scrolls the open drawer.
+   A scroll does not change the horizontal pull progress or close grip alignment. */
+.quick-launcher{
+ transform:translate3d(0,calc(0px - var(--luma-open-lift-px) - var(--v42-dock-px)),0)!important;
+}
+.quick-launcher.quick-pulling{transition:none!important}
+.quick-lamp-grip{
+ top:calc(clamp(135px,22dvh,238px) - var(--luma-open-lift-px) - var(--v42-dock-px) + 3px)!important;
+}
+:root[data-v4-hand=left] .quick-launcher{
+ transform:translate3d(0,calc(0px - var(--luma-open-lift-px) - var(--v42-dock-px)),0)!important;
+}
+
+/* 5. All V4.1 quick brightness controls remain unchanged. */
+.g-settings-menu .v41-style-choices button{
+ min-width:65px;font-size:11px;padding:9px 6px;
+}
+@media(max-width:370px){.g-settings-menu .v41-style-choices button{flex-basis:43%}}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher .v42-inner-radiance{transition:none}
+}
