@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><title>Luma Control Szenenlabor 1.0 – Entwurf</title><style>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><title>Luma Flow · Störschutz LIVE Beta</title><style>
 :root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0b0e18;color:#f7f5ff}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 17px 34px;max-width:700px;margin:auto}header{padding:25px 0 10px}h1{margin:3px 0;font-size:32px;letter-spacing:-1px}.sub{color:#a8b1c9;font-size:13px}.card{background:#1a2032;border:1px solid #2c3550;border-radius:19px;margin:15px 0;padding:18px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{border-radius:20px;padding:5px 10px;font-size:12px;background:#353b57;color:#e0e4ff}button{border:0;background:#7160e8;color:white;font-size:16px;padding:13px 17px;border-radius:12px;font-weight:600;cursor:pointer}button.alt{background:#303951}button:disabled{opacity:.45}.buttons{display:flex;gap:8px;flex-wrap:wrap}h2{font-size:17px;margin:0 0 12px}.muted{color:#a9b1ca;font-size:13px;line-height:1.5}.meter{margin:14px 0}.meter-top{display:flex;justify-content:space-between;font-size:14px;margin:0 0 5px}.track{height:12px;background:#323a52;border-radius:20px;overflow:hidden}.fill{height:100%;width:0%;background:linear-gradient(90deg,#5ccfea,#a16dff,#f281c0);border-radius:20px;transition:width .09s linear}#lamps{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin:18px 0} .lamp{height:73px;border-radius:10px;background:#5e6185;transition:background .15s,opacity .15s;box-shadow:0 0 14px #0003}.controls{display:grid;gap:15px}label.range{display:block;font-size:14px}input[type=range]{width:100%;accent-color:#9186ff;margin-top:10px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{background:#303951;padding:9px 12px;font-size:13px}.chip.on{background:#6556d4}.error{color:#ffb0b0}.good{color:#97edc9}footer{color:#9ea8bf;font-size:12px;line-height:1.5;padding-bottom:20px}
 
 [hidden]{display:none!important}.tabs{display:flex;gap:6px;overflow:auto;position:sticky;top:0;background:#0b0e18f5;padding:10px 0;z-index:5}.tabs button{font-size:13px;padding:12px 10px;white-space:nowrap}.tabs button[aria-selected="false"]{background:#303951}select,input[type=text],input[type=password]{font:inherit;width:100%;padding:12px;border-radius:12px;background:#12182a;border:1px solid #454c68;color:white;margin:8px 0}input[type=checkbox]{width:20px;height:20px;accent-color:#9186ff}.scenegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sceneitem{border:1px solid #343c50;background:#1a2032;border-radius:15px;padding:10px;min-width:0}.sceneitem button.pick{font-size:13px;background:transparent;padding:0;text-align:left;width:100%;min-height:60px}.swatches{display:flex;height:26px;border-radius:7px;overflow:hidden;margin-bottom:8px}.swatches i{flex:1}.star{background:transparent;color:#ffce6c;float:right;padding:5px 8px}.lightrow{border-bottom:1px solid #343b57;padding:12px 0}.groupcheck{display:flex;gap:12px;align-items:center;margin:12px 0}.note{font-size:12px;line-height:1.5;color:#a9b1ca}.rangeval{float:right}body{padding-bottom:calc(35px + env(safe-area-inset-bottom))}button{min-height:44px}#globalStatus{position:relative;padding:10px;background:#1a2032;border-radius:12px}
@@ -41,7 +41,7 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 .g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
 #groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
 @media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
-</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js"></script><link rel="stylesheet" href="lamp-icons.css"></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsLamps">💡 Lampensymbole</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row mi-target-head"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span><button id="targetTreeToggle" type="button" aria-controls="targetFastTree" aria-expanded="true" aria-label="Gruppenauswahl einklappen">▴</button></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden>
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js"></script><link rel="stylesheet" href="lamp-icons.css"><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsLamps">💡 Lampensymbole</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row mi-target-head"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span><button id="targetTreeToggle" type="button" aria-controls="targetFastTree" aria-expanded="true" aria-label="Gruppenauswahl einklappen">▴</button></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden><div class="mi-bridge-banner" role="note"><b>● LUMA FLOW · LIVE BETA</b><span>Diese Testversion steuert echte Lampen. Neuer Störschutz ist standardmäßig aus und experimentell. Die Haupt-App bleibt unverändert.</span><span id="miBridgeStatus" role="status">Bridge-Verbindung wird geprüft …</span></div>
 <section class="mi-hero" aria-label="Luma Music Immersive">
  <div class="mi-row"><span class="mi-label">✦ LUMA IMMERSIVE · MUSIK</span><span id="status" class="pill">Bereit</span></div>
  <h2>Fühl die Musik.<br>Sieh das Licht.</h2>
@@ -62,14 +62,6 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
   <div class="mi-quick-block"><div class="mi-quick-label"><span>Schnellstart</span></div><div id="miQuickPresets"></div></div>
   <p class="mi-microphone-note">Apple Music spielt weiter in deiner Musik-App. Luma analysiert den Klang über das Mikrofon, nicht den geschützten Audiostream.</p>
  </section>
-<details id="miLampGallery" class="mi-lamp-gallery">
- <summary class="mi-gallery-summary"><span class="mi-gallery-summary-left"><strong>💡 Deine Lichtvorschau</strong><small id="miLampCount">7 Vorschaukanäle</small></span><span class="mi-gallery-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mi-gallery-chevron" aria-hidden="true">⌄</span></summary>
- <div class="mi-gallery-body">
-  <p class="mi-gallery-intro" id="miLampIntro">Kompakte Vorschau der Lichteffekte. Nach dem Verbinden werden deine echten Lampennamen angezeigt.</p>
-  <div id="lamps" aria-label="Farbvorschau der ausgewählten Lampen"></div>
-  <p class="mi-gallery-caption">Die Symbole zeigen Lampentypen schematisch, keine Produktfotos. Farben sind berechnete Effekte – keine Messung des tatsächlichen Lampenzustands.</p>
- </div>
-</details>
 <section class="flow-guard" aria-label="Optionaler Störschutz">
  <div class="flow-guard-heading"><h3>◈ Störschutz</h3><small>BETA</small></div>
  <p class="flow-guard-description">Optionaler Schutz vor gleichmäßigen Störgeräuschen, zum Beispiel einem Lüfter oder Staubsauger. Gespräche lassen sich damit nicht zuverlässig herausfiltern.</p>
@@ -86,64 +78,19 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 </section>
 <details class="mi-diagnostic" id="miAdvanced"><summary>⚙ Experteneinstellungen & Diagnose</summary><div class="mi-diagnostic-content"><p class="mi-expert-copy">Die bestehenden Mikrofonfilter, Helligkeitsregler und Diagnosedaten bleiben verfügbar. Die Bridge-Befehlsrate wird hier nicht erhöht.</p><div id="miOutputHost"></div><section class="card"><div class="row"><h2>Audioeingang · vor Filter</h2><span id="beat" class="pill">Beat: –</span></div><div class="buttons"><button id="noiseLearn" class="alt">Raumgeräusche einmessen · 2 s</button><button id="noiseReset" class="alt">Einmessung löschen</button></div><p id="noiseStatus" class="note">Noch kein Raumprofil. Zum Einmessen Musik pausieren und PC/Lüfter weiterlaufen lassen.</p><p class="note" id="effectiveStatus">Musiksignal nach Filter: –</p><p class="note" id="audioHint">Bass = Mikrofonenergie von 35–210 Hz. Raumgeräusche können ebenfalls Bass enthalten.</p><div class="meter"><div class="meter-top"><span>Bass</span><span id="bassNum">0%</span></div><div class="track"><div id="bass" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Mitten</span><span id="midNum">0%</span></div><div class="track"><div id="mid" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Höhen</span><span id="highNum">0%</span></div><div class="track"><div id="high" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Gesamtpegel</span><span id="volumeNum">0%</span></div><div class="track"><div id="volume" class="fill"></div></div></div></section>
 <section class="card"><h2>Feinabstimmung</h2><p class="muted">Zusätzliche Einstellungen für Helligkeit und Mikrofonempfindlichkeit.</p><div class="controls"><label class="range">Empfindlichkeit <span id="gainNum">50%</span><input id="gain" type="range" min="0" max="100" value="50" step="1"></label><label class="range">Tempo & Direktheit <span id="speedNum">60%</span><input id="speed" type="range" min="0" max="100" value="60" step="1"></label><label class="range">Helligkeit bei Ruhe <span id="lightNum">10%</span><input id="light" type="range" min="0" max="100" value="10" step="1"></label><label class="range">Maximale Musikhelligkeit <span id="peakNum">100%</span><input id="peak" type="range" min="0" max="100" value="100" step="1"></label><p class="note">Ruhe legt den Mindestwert fest, Maximum die obere Grenze. Empfindlichkeit: links nur laute Töne, rechts auch leise. Tempo: links weiche Übergänge, rechts direkte Reaktion und schnellere Farbwechsel.</p></div><h2 style="margin-top:20px">Farbstimmung</h2><p id="musicSelection" class="note" aria-live="polite"></p><div id="paletteSwatches" class="swatches" aria-label="Gewählte Farbpalette"></div><div id="palettes" class="chips"><button class="chip on" data-palette="neon">Neon</button><button class="chip" data-palette="sunset">Sonnenuntergang</button><button class="chip" data-palette="ocean">Ozean</button><button class="chip" data-palette="warm">Warm</button></div><h2 style="margin-top:20px">Reaktionsfokus</h2><div class="buttons" id="focusPresets"></div><label class="range">Takt ↔ Gesang <span id="focusNum">Mischung · 50%</span><input id="focus" type="range" min="0" max="100" value="50" step="1"></label><p class="note">Links: Bassimpulse und Anschläge. Rechts: Energie im Stimmenbereich (250–3500 Hz), auch Instrumente in diesem Bereich. Mitte: Mischung. Keine isolierte Gesangserkennung.</p><label class="range">Geräuschgrenze <span id="gateNum">−85 dB</span><input id="gate" type="range" min="-95" max="-40" value="-85" step="1"></label><p class="note">Bei zu wenig Reaktion nach links, bei störenden Raumgeräuschen nach rechts. Die dB-Werte sind digitale Mikrofonpegel, keine gemessene Raumlautstärke.</p><h2 style="margin-top:20px">Schnelleinstellungen</h2><div class="buttons" id="musicPresets"></div><h2 style="margin-top:20px">Lichtmodus</h2><div id="modes" class="chips"><button class="chip on" data-mode="bass">Bass-Puls</button><button class="chip" data-mode="wave">Raumwelle</button><button class="chip" data-mode="spectrum">Frequenzen</button><button class="chip" data-mode="beatcolor">Beat-Farbwechsel</button><button class="chip" data-mode="fast">Schneller Farbfluss</button></div></section></div></details>
-<footer>Apple Music: Dieser Prototyp erkennt den hörbaren Klang deiner externen Lautsprecher. Er liest keine geschützten Apple-Music-Audiodaten aus. Eine spätere Apple-Music-Verbindung für Titel- und Coverinformationen benötigt eine eigene MusicKit-Autorisierung. Die Musikreaktion benötigt eine aktive Mikrofonanalyse. Ob sie im Hintergrund weiterläuft, hängt von iOS ab.</footer>
+<footer>Apple Music: Diese Live-Testversion erkennt den hörbaren Klang deiner externen Lautsprecher. Er liest keine geschützten Apple-Music-Audiodaten aus. Eine spätere Apple-Music-Verbindung für Titel- und Coverinformationen benötigt eine eigene MusicKit-Autorisierung. Die Musikreaktion benötigt eine aktive Mikrofonanalyse. Ob sie im Hintergrund weiterläuft, hängt von iOS ab.</footer>
 <script>
 'use strict';
 const $=x=>document.getElementById(x);const lumaFlowGuard=window.LumaFlowNoiseGuard?new window.LumaFlowNoiseGuard.NoiseGuard():null;let guardUIUpdate=0;
-const miLampGlyphs={
- bulb:'<path d="M30 53v-4c-7-5-12-12-12-21a22 22 0 0 1 44 0c0 9-5 16-12 21v4"/><path d="M31 55h18m-16 7h14m-11 6h8"/><path d="M31 29c0-6 5-11 11-11" opacity=".5"/>',
- iris:'<path d="M15 51c3-18 15-29 25-29s22 11 25 29Z"/><ellipse cx="40" cy="53" rx="27" ry="6"/><path d="M22 57v5c6 4 30 4 36 0v-5"/><path d="M28 43c3-8 7-12 12-14" opacity=".5"/>',
- twilight:'<path d="M34 11h12v47H34z"/><path d="M30 58h20m-22 5h24m-31 6h38"/><path d="M40 16v37" opacity=".5"/>',
- strip:'<path d="M14 56c10-28 26 8 36-14s12-16 17-20" stroke-width="7" stroke-linecap="round"/><path d="M12 66h56" opacity=".4"/>'
-};
-function miLampIcon(kind){
- const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
- svg.setAttribute('class','mi-lamp-svg');svg.setAttribute('viewBox','0 0 80 80');
- svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
- svg.innerHTML=miLampGlyphs[kind]||miLampGlyphs.bulb;
- return svg
-}
-function miLampType(item){
- const name=(String(item?.name||'')+' '+String(item?.modelid||'')+' '+String(item?.type||'')).toLowerCase();
- if(name.includes('twilight'))return 'twilight';
- if(name.includes('iris'))return 'iris';
- if(name.includes('strip'))return 'strip';
- return 'bulb';
-}
-const lamps=Array.from({length:7},(_,i)=>{
- const card=document.createElement('div');card.className='lamp mi-lamp-card';
- const avatar=document.createElement('div');avatar.className='mi-lamp-avatar';avatar.append(miLampIcon(i===1?'iris':i===3?'twilight':'bulb'));
- const top=document.createElement('div');top.className='mi-lamp-top';top.append(avatar);
- const label=document.createElement('strong');label.className='mi-lamp-name';label.textContent='Kanal '+(i+1);
- const meta=document.createElement('span');meta.className='mi-lamp-meta';meta.textContent='Effekt '+(i+1);
- card.append(top,label,meta);$('lamps').append(card);return card
-});
-window.lumaUpdateMusicPreview=function(items){
- const known=Array.isArray(items);
- const visible=known?items.slice(0,lamps.length):lamps.map((_,i)=>({name:'Kanal '+(i+1),type:'Vorschau'}));
- const total=known?items.length:7;
- $('miLampCount').textContent=known?(total+' '+(total===1?'Lampe':'Lampen')+(total>7?' · erste 7':'') ):'7 Vorschaukanäle';
- $('miLampIntro').textContent=known?(total?'Echte Lampennamen · dynamische Vorschau der berechneten Musikeffekte.':'Keine erreichbaren Lampen im ausgewählten Lichtbereich.'):'Beispielkanäle · nach dem Verbinden erscheinen die echten Lampennamen.';
- lamps.forEach((card,i)=>{
-  const item=visible[i];card.hidden=!item;if(!item)return;
-  const kind=miLampType(item);
-  const icon=card.querySelector('.mi-lamp-svg');
-  if(icon&&icon.dataset.kind!==kind){const next=miLampIcon(kind);next.dataset.kind=kind;icon.replaceWith(next)}
-  card.querySelector('.mi-lamp-name').textContent=String(item.name||'Lampe '+(i+1));
-  card.querySelector('.mi-lamp-meta').textContent=known?'Kanal '+(i+1):'Beispiel';
-  card.title=String(item.name||'Lampe '+(i+1))+' · schematisches Symbol'
- })
-};
-window.lumaUpdateMusicPreview(null);
 const palettes={neon:[[242,28,94],[141,36,230],[251,82,26],[76,84,246],[243,34,185],[73,218,244],[254,74,49]],sunset:[[255,99,49],[248,170,58],[233,66,129],[250,193,81],[167,44,164],[255,117,83],[255,219,113]],ocean:[[13,95,161],[53,196,209],[38,127,177],[54,224,179],[71,76,183],[95,197,245],[40,169,202]],warm:[[221,112,46],[255,184,99],[241,142,61],[255,212,146],[185,82,43],[245,157,81],[235,194,132]]};
 let stream=null,context=null,analyser=null,data=null,raf=0,palette='neon',mode='bass',phase=0,last=performance.now(),bassSmooth=0,levelSmooth=0,prevBass=0,lastBeat=0,beats=0;
 function meter(id,n){const v=Math.max(0,Math.min(100,Math.round(n*100)));$(id).style.width=v+'%';$(id+'Num').textContent=v+'%'}
 // Measure the strongest quarter of FFT bins in each band; stay in dB for display scaling.
 let noisePower=null,calibration=null,priorEnergy=0,lastInput=0,audioSource=null,silentSink=null,audioStarting=false,audioEpoch=0,emptyFrames=0;
 function subtractNoise(db,power){if(!Number.isFinite(db))return -120;const excess=Math.pow(10,db/10)-(power||0)*4;return excess>1e-12?10*Math.log10(excess):-120}
-function processNoise(f,now){if(calibration){for(let i=0;i<f.length;i++)calibration.sums[i]+=Number.isFinite(f[i])?Math.pow(10,f[i]/10):0;calibration.count++;if(now-calibration.start>=2000){if(calibration.count<10){calibration=null;$('noiseStatus').textContent='Zu wenige Audiodaten. Bitte im Vordergrund erneut einmessen.'}else{noisePower=Array.from(calibration.sums,x=>x/calibration.count);try{localStorage.setItem('luma_noise012',JSON.stringify({sampleRate:context.sampleRate,power:noisePower}))}catch{}calibration=null;$('noiseStatus').textContent='Raumprofil aktiv · stationäre Hintergrundgeräusche werden reduziert.'}$('noiseLearn').disabled=false;}else{$('noiseStatus').textContent='Einmessen: bitte ruhig bleiben und Musik pausieren …'}f.fill(-120);return true}if(noisePower)for(let i=0;i<f.length;i++)f[i]=subtractNoise(f[i],noisePower[i]);return false}
+function processNoise(f,now){if(calibration){for(let i=0;i<f.length;i++)calibration.sums[i]+=Number.isFinite(f[i])?Math.pow(10,f[i]/10):0;calibration.count++;if(now-calibration.start>=2000){if(calibration.count<10){calibration=null;$('noiseStatus').textContent='Zu wenige Audiodaten. Bitte im Vordergrund erneut einmessen.'}else{noisePower=Array.from(calibration.sums,x=>x/calibration.count);try{localStorage.setItem('luma_live_noise012',JSON.stringify({sampleRate:context.sampleRate,power:noisePower}))}catch{}calibration=null;$('noiseStatus').textContent='Raumprofil aktiv · stationäre Hintergrundgeräusche werden reduziert.'}$('noiseLearn').disabled=false;}else{$('noiseStatus').textContent='Einmessen: bitte ruhig bleiben und Musik pausieren …'}f.fill(-120);return true}if(noisePower)for(let i=0;i<f.length;i++)f[i]=subtractNoise(f[i],noisePower[i]);return false}
 $('noiseLearn').onclick=()=>{if(!analyser){$('noiseStatus').textContent='Zuerst Mikrofon starten.';return}window.lumaStopMusic?.();calibration={start:performance.now(),count:0,sums:new Float64Array(data.length)};$('noiseLearn').disabled=true;$('noiseStatus').textContent='2 Sekunden Ruhe: PC/Lüfter weiterlaufen lassen.';beatPulse=0;focusSmooth=0;priorEnergy=0};
-$('noiseReset').onclick=()=>{noisePower=null;calibration=null;$('noiseLearn').disabled=false;try{localStorage.removeItem('luma_noise012')}catch{}$('noiseStatus').textContent='Raumprofil gelöscht. Ohne Einmessung aktiv.'};
+$('noiseReset').onclick=()=>{noisePower=null;calibration=null;$('noiseLearn').disabled=false;try{localStorage.removeItem('luma_live_noise012')}catch{}$('noiseStatus').textContent='Raumprofil gelöscht. Ohne Einmessung aktiv.'};
 function band(f,min,max){const step=context.sampleRate/2/f.length,a=Math.max(1,Math.floor(min/step)),b=Math.min(f.length,Math.max(a+1,Math.ceil(max/step))),values=[];for(let i=a;i<b;i++)if(Number.isFinite(f[i]))values.push(f[i]);if(!values.length)return -120;values.sort((a,b)=>b-a);const n=Math.max(1,Math.ceil(values.length*.25));let sum=0;for(let i=0;i<n;i++)sum+=Math.pow(10,values[i]/10);return 10*Math.log10(Math.max(1e-12,sum/n))}
 let lastFrame=0,beatColor=0,beatPulse=0,focusSmooth=0,currentBands=[0,0,0],analysisErrors=0,lastAnalysisTick=-Infinity,lastUiTick=-Infinity;
 const musicFrames=Array.from({length:7},()=>({rgb:[242,28,94],brightness:0}));window.lumaMusicFrames=musicFrames;
@@ -180,7 +127,7 @@ if(now-lastUiTick>=200){lastUiTick=now;$('audioHint').textContent=(noisePower?'N
 const impulse=Math.max(b-prevBass,v-priorEnergy,conv?(flowResult?.transient||0)*.26:0);if(!learning&&impulse>.07&&Math.max(b,v)>.1&&now-lastBeat>280){lastBeat=now;beats++;beatColor++;beatPulse=Math.min(1,.45+Math.max(b,v)*.8);$('beat').textContent='Impulse: '+beats;}prevBass+=(b-prevBass)*(1-Math.exp(-dt/.35));priorEnergy+=(v-priorEnergy)*(1-Math.exp(-dt/.35));if(v>.035)lastInput=now;const pulseAge=now-lastBeat;if(pulseAge>250)beatPulse*=Math.exp(-dt/(.18+(1-speed)*.4));const quiet=learning||v<.035&&now-lastInput>350;if(quiet){beatPulse=0;bassSmooth=0;levelSmooth=0;focusSmooth=0}const focus=Number($('focus').value)/100,driven=quiet?0:focusSignal(b,m,beatPulse,focus);focusSmooth+=(driven-focusSmooth)*blend;
 
 currentBands=[b,m,h];composeMusicFrames();}
-function composeMusicFrames(){const [b,m,h]=currentBands,focus=Number($('focus').value)/100;lamps.forEach((el,i)=>{let signal=focusSmooth,shift=0;if(mode==='wave')signal=Math.max(0,Math.sin(phase*2-i*.95))*focusSmooth;else if(mode==='spectrum')signal=[b*(1-focus),m*focus,h*.3][i%3];else if(mode==='beatcolor'){shift=beatColor;}else if(mode==='fast'){shift=Math.floor(phase*2);}if(signal<.035)signal=0;const intensity=musicBrightness(signal,Number($('light').value)/100,Number($('peak').value)/100),col=palettes[palette][(i+shift)%7];musicFrames[i]={rgb:col,brightness:intensity};if(performance.now()-(el._lumaPaintTime||-Infinity)>90){el._lumaPaintTime=performance.now();el.style.setProperty('--mi-lamp-color','rgb('+col.join(',')+')');el.style.setProperty('--mi-lamp-level',String(intensity))}})}
+function composeMusicFrames(){const [b,m,h]=currentBands,focus=Number($('focus').value)/100;musicFrames.forEach((frame,i)=>{let signal=focusSmooth,shift=0;if(mode==='wave')signal=Math.max(0,Math.sin(phase*2-i*.95))*focusSmooth;else if(mode==='spectrum')signal=[b*(1-focus),m*focus,h*.3][i%3];else if(mode==='beatcolor'){shift=beatColor;}else if(mode==='fast'){shift=Math.floor(phase*2);}if(signal<.035)signal=0;const intensity=musicBrightness(signal,Number($('light').value)/100,Number($('peak').value)/100),col=palettes[palette][(i+shift)%7];musicFrames[i]={rgb:col,brightness:intensity}})}
 
 function render(now){if(!analyser)return;if(now-lastAnalysisTick<33){raf=requestAnimationFrame(render);return}lastAnalysisTick=now;try{analyseFrame(now);analysisErrors=0}catch(e){analysisErrors++;$('status').textContent='Analysefehler';$('message').textContent='Audioanalyse: '+e.message;if(analysisErrors>=3){window.lumaStopMusic?.();stop();$('message').textContent='Audioanalyse angehalten: '+e.message;return}}if(analyser)raf=requestAnimationFrame(render)}
 function syncMusicControls(){const paletteNames={neon:'Neon',sunset:'Sonnenuntergang',ocean:'Ozean',warm:'Warm'},modeNames={bass:'Bass-Puls',wave:'Raumwelle',spectrum:'Frequenzen',beatcolor:'Beat-Farbwechsel',fast:'Schneller Farbfluss'};document.querySelectorAll('[data-palette]').forEach(b=>{const selected=b.dataset.palette===palette;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});document.querySelectorAll('[data-mode]').forEach(b=>{const selected=b.dataset.mode===mode;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});$('musicSelection').textContent=paletteNames[palette]+' · '+modeNames[mode];$('paletteSwatches').replaceChildren();palettes[palette].forEach(col=>{const sw=document.createElement('i');sw.style.background='rgb('+col.join(',')+')';$('paletteSwatches').append(sw)});composeMusicFrames()}
@@ -190,10 +137,9 @@ function timed(promise,ms,text){return new Promise((resolve,reject)=>{const t=se
 async function start(){if(audioStarting)return false;if(analyser&&stream?.getTracks().some(t=>t.readyState==='live')&&context?.state==='running')return true;stop();const epoch=++audioEpoch;audioStarting=true;$('start').disabled=true;$('status').textContent='Mikrofon wird aktiviert …';try{if(!navigator.mediaDevices?.getUserMedia)throw Error('Mikrofon nicht verfügbar. Bitte in Safari über HTTPS öffnen.');
 // Create/resume the AudioContext within the original tap, before awaiting permission.
 const ctx=new (window.AudioContext||window.webkitAudioContext)();context=ctx;const resumed=timed(ctx.resume(),5000,'Audio konnte nicht aktiviert werden. Musik stoppen und erneut starten.');resumed.catch(()=>{});
-const acquired=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});if(epoch!==audioEpoch){acquired.getTracks().forEach(t=>t.stop());return false}stream=acquired;await resumed;if(epoch!==audioEpoch)return false;if(ctx.state!=='running')throw Error('Audio ist pausiert. Bitte erneut starten.');audioSource=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=2048;analyser.minDecibels=-110;analyser.maxDecibels=-10;analyser.smoothingTimeConstant=.05;silentSink=ctx.createGain();silentSink.gain.value=0;audioSource.connect(analyser);analyser.connect(silentSink);silentSink.connect(ctx.destination);data=new Float32Array(analyser.frequencyBinCount);noisePower=null;try{const profile=JSON.parse(localStorage.getItem('luma_noise012')||'null');if(profile?.sampleRate===ctx.sampleRate&&profile.power?.length===data.length&&profile.power.every(x=>Number.isFinite(x)&&x>=0&&x<=1)){noisePower=profile.power;$('noiseStatus').textContent='Gespeichertes Raumprofil aktiv.'}}catch{}emptyFrames=0;lastAnalysisTick=-Infinity;lastUiTick=-Infinity;last=performance.now();lastFrame=last;render(last);$('status').textContent='Mikrofon aktiv';$('status').className='pill good';$('stop').disabled=false;return true}catch(e){if(epoch===audioEpoch){stop();$('status').textContent='Start fehlgeschlagen';$('message').textContent=e.message;$('message').className='error'}return false}finally{if(epoch===audioEpoch){audioStarting=false;$('start').disabled=false}}}
+const acquired=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});if(epoch!==audioEpoch){acquired.getTracks().forEach(t=>t.stop());return false}stream=acquired;await resumed;if(epoch!==audioEpoch)return false;if(ctx.state!=='running')throw Error('Audio ist pausiert. Bitte erneut starten.');audioSource=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=2048;analyser.minDecibels=-110;analyser.maxDecibels=-10;analyser.smoothingTimeConstant=.05;silentSink=ctx.createGain();silentSink.gain.value=0;audioSource.connect(analyser);analyser.connect(silentSink);silentSink.connect(ctx.destination);data=new Float32Array(analyser.frequencyBinCount);noisePower=null;try{const profile=JSON.parse(localStorage.getItem('luma_live_noise012')||'null');if(profile?.sampleRate===ctx.sampleRate&&profile.power?.length===data.length&&profile.power.every(x=>Number.isFinite(x)&&x>=0&&x<=1)){noisePower=profile.power;$('noiseStatus').textContent='Gespeichertes Raumprofil aktiv.'}}catch{}emptyFrames=0;lastAnalysisTick=-Infinity;lastUiTick=-Infinity;last=performance.now();lastFrame=last;render(last);$('status').textContent='Mikrofon aktiv';$('status').className='pill good';$('stop').disabled=false;return true}catch(e){if(epoch===audioEpoch){stop();$('status').textContent='Start fehlgeschlagen';$('message').textContent=e.message;$('message').className='error'}return false}finally{if(epoch===audioEpoch){audioStarting=false;$('start').disabled=false}}}
 function stop(){lumaFlowGuard?.cancelCalibration();audioEpoch++;audioStarting=false;cancelAnimationFrame(raf);raf=0;audioSource?.disconnect();silentSink?.disconnect();audioSource=null;silentSink=null;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const ctx=context;context=null;if(ctx)Promise.resolve(ctx.close()).catch(()=>{});analyser=null;calibration=null;$('noiseLearn').disabled=false;bassSmooth=0;levelSmooth=0;focusSmooth=0;beatPulse=0;prevBass=0;priorEnergy=0;for(const id of ['bass','mid','high','volume'])meter(id,0);$('start').disabled=false;$('stop').disabled=true;$('start').textContent='Musik starten';$('status').textContent='Gestoppt';currentBands=[0,0,0];composeMusicFrames()}
 window.lumaStartAudio=start;window.lumaStopAudio=stop;
-
 function flowStatus(message,state=''){
  const element=$('flowStatus');element.textContent=message;element.dataset.state=state;
 }
@@ -216,19 +162,48 @@ if(lumaFlowGuard){
  $('flowReset').onclick=()=>{lumaFlowGuard.resetProfile();flowStatus('Raumprofil gelöscht. Schutz vor gleichbleibenden Geräuschen ist bis zur nächsten Einmessung nicht aktiv.')};
 }
 
+
 $('start').onclick=async()=>{if(audioStarting)return;const ok=await start();if(!ok)return;try{$('start').disabled=true;$('start').textContent='Verbinde Lampen …';await window.lumaEnsureConnection();await window.lumaStartMusic();$('start').textContent='Musik läuft';$('message').textContent='Eingangsbalken = Mikrofon. Musiksignal = nach Filter.';$('start').disabled=true;$('stop').disabled=false}catch(e){window.lumaStopMusic?.();stop();$('message').textContent=e.message;$('status').textContent='Start fehlgeschlagen'}};
 $('stop').onclick=()=>{window.lumaStopMusic?.();stop()};
-for(const b of document.querySelectorAll('[data-palette]'))b.onclick=()=>{palette=b.dataset.palette;musicSave();syncMusicControls()};for(const b of document.querySelectorAll('[data-mode]'))b.onclick=()=>{mode=b.dataset.mode;musicSave();syncMusicControls()};function musicSave(){try{localStorage.setItem('luma_music08',JSON.stringify({gain:$('gain').value,speed:$('speed').value,light:$('light').value,peak:$('peak').value,palette,mode,focus:$('focus').value,gate:$('gate').value}))}catch{}}
+const moodPresentation={
+ neon:{name:'Neon',subtitle:'Electric Night',motif:'neon'},
+ sunset:{name:'Sunset',subtitle:'Beach Glow',motif:'sunset'},
+ ocean:{name:'Ocean',subtitle:'Blue Waves',motif:'ocean'},
+ warm:{name:'Warm',subtitle:'Cozy Light',motif:'warm'}
+};
+for(const button of document.querySelectorAll('#palettes [data-palette]')){
+ const id=button.dataset.palette,detail=moodPresentation[id];
+ if(!detail||!palettes[id])continue;
+ const colors=palettes[id].map(rgb=>'rgb('+rgb.join(',')+')');
+ button.classList.add('mi-mood-card');
+ button.setAttribute('aria-label','Farbstimmung '+detail.name+' auswählen');
+ button.style.setProperty('--mood-c1',colors[0]);button.style.setProperty('--mood-c2',colors[1]);
+ button.style.setProperty('--mood-c3',colors[3]);button.style.setProperty('--mood-c4',colors[5]);
+ button.dataset.moodArt=detail.motif;
+ const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
+ const glow=document.createElement('span');glow.className='mi-mood-glow';artwork.append(glow);
+ const beam=document.createElement('span');beam.className='mi-mood-beam';artwork.append(beam);
+ const wave=document.createElement('span');wave.className='mi-mood-wave';artwork.append(wave);
+ const caption=document.createElement('span');caption.className='mi-mood-caption';
+ const name=document.createElement('strong');name.textContent=detail.name;
+ const subtitle=document.createElement('small');subtitle.textContent=detail.subtitle;
+ caption.append(name,subtitle);
+ const dots=document.createElement('span');dots.className='mi-mood-pips';dots.setAttribute('aria-hidden','true');
+ for(const color of colors.slice(0,5)){const dot=document.createElement('i');dot.style.background=color;dots.append(dot)}
+ const check=document.createElement('span');check.className='mi-mood-check';check.textContent='✓';check.setAttribute('aria-hidden','true');
+ button.replaceChildren(artwork,caption,dots,check);
+}
+for(const b of document.querySelectorAll('[data-palette]'))b.onclick=()=>{palette=b.dataset.palette;musicSave();syncMusicControls()};for(const b of document.querySelectorAll('[data-mode]'))b.onclick=()=>{mode=b.dataset.mode;musicSave();syncMusicControls()};function musicSave(){try{localStorage.setItem('luma_live_music08',JSON.stringify({gain:$('gain').value,speed:$('speed').value,light:$('light').value,peak:$('peak').value,palette,mode,focus:$('focus').value,gate:$('gate').value}))}catch{}}
 function musicLabels(){for(const key of ['gain','speed','light','peak'])$(key+'Num').textContent=$(key).value+'%';const f=Number($('focus').value);$('focusNum').textContent=(f<25?'Takt':f>75?'Gesangsbereich':'Mischung')+' · '+f+'%';$('gateNum').textContent=$('gate').value+' dB';syncMusicControls()}
 for(const key of ['gain','speed','light','peak','focus','gate'])$(key).oninput=()=>{musicLabels();musicSave();composeMusicFrames()};
 for(const [name,values] of [['Sanft',[40,10,10,55,'bass']],['Puls',[60,70,0,100,'bass']],['Schnell',[55,100,0,100,'fast']],['Beatfarben',[65,90,5,100,'beatcolor']]]){const btn=document.createElement('button');btn.textContent=name;btn.className='alt';btn.onclick=()=>{['gain','speed','light','peak'].forEach((k,i)=>$(k).value=values[i]);mode=values[4];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x.dataset.mode===mode));musicLabels();musicSave()};$('musicPresets').append(btn)}
-try{const saved=JSON.parse(localStorage.getItem('luma_music08')||'null');if(saved){for(const k of ['gain','speed','light','peak'])if(saved[k]!=null)$(k).value=Math.max(0,Math.min(100,Number(saved[k])));if(saved.focus!=null)$('focus').value=Math.max(0,Math.min(100,+saved.focus));if(saved.gate!=null)$('gate').value=Math.max(-95,Math.min(-40,+saved.gate));if(palettes[saved.palette])palette=saved.palette;if(['bass','wave','spectrum','beatcolor','fast'].includes(saved.mode))mode=saved.mode}}catch{}musicLabels();
+try{const saved=JSON.parse(localStorage.getItem('luma_live_music08')||'null');if(saved){for(const k of ['gain','speed','light','peak'])if(saved[k]!=null)$(k).value=Math.max(0,Math.min(100,Number(saved[k])));if(saved.focus!=null)$('focus').value=Math.max(0,Math.min(100,+saved.focus));if(saved.gate!=null)$('gate').value=Math.max(-95,Math.min(-40,+saved.gate));if(palettes[saved.palette])palette=saved.palette;if(['bass','wave','spectrum','beatcolor','fast'].includes(saved.mode))mode=saved.mode}}catch{}musicLabels();
 for(const b of document.querySelectorAll('[data-palette],[data-mode]'))b.addEventListener('click',musicSave);
 for(const [name,value] of [['Takt',0],['Gesangsbereich',100],['Mischung',50]]){const btn=document.createElement('button');btn.textContent=name;btn.className='alt';btn.onclick=()=>{$('focus').value=value;musicLabels();musicSave()};$('focusPresets').append(btn)}
 window.addEventListener('pagehide',stop);
 </script></main><main id="connectionPane" class="pane"><section class="card" id="hueControl" style="border-color:#5b5794">
 <h2>Verbindung zur Hue Bridge</h2>
-<p class="muted">Einmal pro Sitzung verbinden. Gilt für Licht, Szenen, Dynamik und Musik.</p>
+<p class="muted">Der Live-Test übernimmt, sofern vorhanden, deine bisher gespeicherten Bridge-Daten. Fehlen sie, gib sie hier einmalig ein. Änderungen am Live-Test bleiben getrennt von den Einstellungen der Haupt-App.</p>
 <label for="bridgeIp">Bridge-Adresse <small>– lokale IP im Heimnetz</small></label>
 <input id="bridgeIp" value="192.168.178.177" autocomplete="off" spellcheck="false" style="display:block;width:100%;margin:7px 0 12px;padding:13px;background:#11182c;color:white;border:1px solid #4d5673;border-radius:12px;font-size:16px">
 <label for="hueKey">Application Key <small>– der Wert „username“, nicht „clientkey“</small></label>
@@ -246,7 +221,7 @@ const say=s=>{if(q('musicInfo').textContent!==s)q('musicInfo').textContent=s};
 async function request(method,path,body){return window.lumaRequest(method,path,body,{music:method==='PUT'})}
 
 function end(message){window.lumaCancelMusicRequests?.();q('start').disabled=false;q('start').textContent='Musik starten';active=false;generation++;clearTimeout(timer);busy=false;q('musicOn').disabled=!devices.length;q('musicOff').disabled=true;if(message)say(message)}
-q('musicConnect').onclick=async()=>{end();devices=[];q('musicOn').disabled=true;q('musicConnect').disabled=true;try{const data=await request('GET','/lights');if(!data||Array.isArray(data)||typeof data!=='object')throw Error('Unerwartete Bridge-Antwort.');devices=Object.entries(data).filter(([id,d])=>d.state&&d.state.reachable!==false&&window.lumaTargetIds().includes(id)).map(([id,d])=>({id,color:'hue' in d.state&&'sat' in d.state,name:d.name||'Lampe '+id,type:d.type||'',modelid:d.modelid||''}));window.lumaUpdateMusicPreview?.(devices);say(devices.length+' erreichbare Lampen verbunden.');q('musicOn').disabled=!devices.length}catch(e){say('Verbinden fehlgeschlagen: '+(e.name==='AbortError'?'Zeitüberschreitung':e.message))}finally{q('musicConnect').disabled=false}};
+q('musicConnect').onclick=async()=>{end();devices=[];q('musicOn').disabled=true;q('musicConnect').disabled=true;try{const data=await request('GET','/lights');if(!data||Array.isArray(data)||typeof data!=='object')throw Error('Unerwartete Bridge-Antwort.');devices=Object.entries(data).filter(([id,d])=>d.state&&d.state.reachable!==false&&window.lumaTargetIds().includes(id)).map(([id,d])=>({id,color:'hue' in d.state&&'sat' in d.state,name:d.name||'Lampe '+id,type:d.type||'',modelid:d.modelid||''}));say(devices.length+' erreichbare Lampen verbunden.');q('musicOn').disabled=!devices.length}catch(e){say('Verbinden fehlgeschlagen: '+(e.name==='AbortError'?'Zeitüberschreitung':e.message))}finally{q('musicConnect').disabled=false}};
 function hsv(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0;if(d){if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=(h*60+360)%360}return {hue:Math.round(h/360*65535),sat:Math.round((max?d/max:0)*254),bri:Math.max(1,Math.round(max*254))}}
 function diag(note=''){
  const age=lastFrame?Math.round(performance.now()-lastFrame):null;
@@ -360,7 +335,7 @@ q('musicOn').onclick=()=>{window.lumaStopMotion();if(!analyser){say('Zuerst oben
 
 
 <script>
-(()=>{'use strict';const el=id=>document.getElementById(id),save=(k,v)=>{try{localStorage.setItem('luma07_'+k,JSON.stringify(v))}catch{}},read=(k,f)=>{try{return JSON.parse(localStorage.getItem('luma07_'+k))??f}catch{return f}};
+(()=>{'use strict';const el=id=>document.getElementById(id),save=(k,v)=>{try{localStorage.setItem('luma_live_'+k,JSON.stringify(v))}catch{}},read=(k,f)=>{try{const own=localStorage.getItem('luma_live_'+k);const transferable=['ip','key','groups','order','identity_ip','bridge_identity'].includes(k);return JSON.parse(own??(transferable?localStorage.getItem('luma07_'+k):null))??f}catch{return f}};
 let lights={},bridgeGroups={},groups=read('groups',[]),order=read('order',[]),favorites=read('favorites',[]),selected=read('selected',0),mood=read('mood',{brightness:75,saturation:85,contrast:50}),onlyFav=false,motion=0,motionTimer=0,connected=false,chain=Promise.resolve();
 let groupEngine=null,groupUI=null,groupTree=null,bridgeIdentity='';
 const lampIconPrefs=new window.LumaLampIcons.Store(localStorage);let editLampId=null;
@@ -442,7 +417,7 @@ function ensureGroups(){
   },
   onSelect:id=>{
    const target=el('target');if(!groupEngine.group(id))return;
-   target.value=id;if(target.value===id){target.onchange();tab('light')}
+   target.value=id;if(target.value===id){target.onchange();tab('music')}
   }
  });
  return groupEngine
@@ -453,9 +428,9 @@ window.lumaTargetIds=targetIds;
 window.lumaMusicGroup=()=>{const t=el('target').value;return ['bass','beatcolor','fast'].includes(mode)?t==='all'?'/groups/0/action':t.startsWith('bridge:')?'/groups/'+encodeURIComponent(t.slice(7))+'/action':null:null};
 let musicTransportEpoch=0;const musicControllers=new Set();let transportActive=0;window.lumaCancelMusicRequests=()=>{musicTransportEpoch++;for(const ctrl of musicControllers)ctrl.abort();musicControllers.clear()};window.lumaTransportState=()=>({active:transportActive,musicActive:musicControllers.size});
 async function raw(method,path,body,ip,key,music){const c=new AbortController(),timer=setTimeout(()=>c.abort(),music?1800:6000);if(music)musicControllers.add(c);transportActive++;try{const pending=fetch('https://'+ip+'/api/'+encodeURIComponent(key)+path,{method,mode:'cors',credentials:'omit',cache:'no-store',signal:c.signal,...(body?{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const aborted=new Promise((resolve,reject)=>{c.signal.addEventListener('abort',()=>{const e=Error('Anfrage abgebrochen');e.name='AbortError';reject(e)},{once:true})});const r=await Promise.race([pending,aborted]);if(!r.ok)throw Error('Bridge HTTP '+r.status);const d=await Promise.race([r.json(),aborted]);if(Array.isArray(d)&&d.some(x=>x.error))throw Error(d.filter(x=>x.error).map(x=>x.error.description).join('; '));return d}finally{clearTimeout(timer);musicControllers.delete(c);transportActive--}}
-function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();tab('music');};
+function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaBridgeConnected=()=>connected;window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();if(!connected)throw Error('Bridge ist nicht verbunden. Öffne ⚙ → Bridge & Verbindung.');tab('music');};
 
-async function guard(fn){try{await fn()}catch(e){stopAll();const msg=e.name==='AbortError'?'Zeitüberschreitung: Die Bridge hat nicht rechtzeitig geantwortet.':e instanceof TypeError?'Netzwerkzugriff blockiert: WLAN, IP-Adresse, HTTPS-Zertifikat oder lokale Netzwerkfreigabe prüfen.':e.message;status('Fehler: '+msg);el('hueState').textContent='Verbindung fehlgeschlagen. '+msg;el('hueLoad').disabled=false;el('hueLoad').textContent='Erneut verbinden';tab('connection')}}
+async function guard(fn){try{await fn()}catch(e){el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';stopAll();const msg=e.name==='AbortError'?'Zeitüberschreitung: Die Bridge hat nicht rechtzeitig geantwortet.':e instanceof TypeError?'Netzwerkzugriff blockiert: WLAN, IP-Adresse, HTTPS-Zertifikat oder lokale Netzwerkfreigabe prüfen.':e.message;status('Fehler: '+msg);el('hueState').textContent='Verbindung fehlgeschlagen. '+msg;el('hueLoad').disabled=false;el('hueLoad').textContent='Erneut verbinden';tab('connection')}}
 let connectionTask=null;function connect(){if(!connectionTask)connectionTask=connectInner().finally(()=>{connectionTask=null});return connectionTask}
 async function connectInner(){
  stopAll();connected=false;
@@ -483,9 +458,9 @@ async function connectInner(){
   try{renderGroups();renderOrder()}catch(e){warning+=' · Gruppenansicht: '+e.message}
   progress('Schritt 3/3 · Musikverbindung wird vorbereitet …');
   try{await window.lumaMusicRefresh()}catch(e){warning+=' · Musikstatus: '+e.message}
-  status(Object.keys(lights).length+' Lampen verbunden'+warning);
+  status(Object.keys(lights).length+' Lampen verbunden'+warning);el('miBridgeStatus').textContent='✓ '+Object.keys(lights).length+' Lampen verbunden – Musik bereit';
   el('hueState').textContent='Verbindung erfolgreich: '+Object.keys(lights).length+' Lampen. '+(warning||'Licht und Szenen bereit.');
-  tab('light');
+  tab('music');
  }finally{el('hueLoad').disabled=false;el('hueLoad').textContent='Verbinden'}
 }
 function renderTargets(){
@@ -504,6 +479,20 @@ function renderTree(){
   groupTree=new window.LumaGroupsTree.Tree(engine,el('targetFastTree'),{
    getSelected:()=>el('target').value||engine.currentTarget(),
    getLampIcon:(id,device)=>lampIconPrefs.icon(bridgeIdentity,id,device),
+   onPower:async(lightId,on)=>{
+    if(!connected)throw Error('Bridge nicht verbunden. Unter ⚙ die Bridge verbinden.');
+    const device=lights[lightId];
+    if(!device||device.state?.reachable===false)throw Error('Lampe nicht erreichbar.');
+    // Explicit manual action wins; otherwise running Music would switch it back on.
+    stopAll();
+    const answer=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',{on});
+    if(!Array.isArray(answer)||!answer.some(result=>result.success))throw Error('Bridge hat das Schalten nicht bestätigt.');
+    device.state.on=on;renderLights();
+    status((device.name||'Lampe')+(on?' eingeschaltet.':' ausgeschaltet.')+' · Musiklicht bei manueller Bedienung gestoppt.');
+   },
+   onPowerError:(error,lightId)=>{
+    status('Lampe '+(lights[lightId]?.name||lightId)+': '+(error?.message||'Schalten fehlgeschlagen.'));
+   },
    onSelect:id=>{
     if(!engine.group(id))return;
     el('target').value=id;
@@ -594,8 +583,8 @@ const toggleTargetTree=()=>{
 };
 el('targetTreeToggle').addEventListener('click',toggleTargetTree);
 
-el('bridgeIp').value=read('ip','192.168.178.177');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.removeItem('luma07_key')}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
- try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+el('bridgeIp').value=read('ip','192.168.1.2');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.setItem('luma_live_key',JSON.stringify(''))}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;el('miBridgeStatus').textContent='Bridge-Verbindung getrennt';status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();groupTree?.updateLampStates();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
  catch(e){status('Gruppenauswahl: '+e.message)}
 };
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
@@ -613,7 +602,7 @@ el('motionStart').onclick=async()=>{
   }catch(e){if(token===motion){stopMotion();sceneError(e)}}
  }
  await step();
-};document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMotion()});window.addEventListener('pagehide',stopAll);renderMood();el('hueKey').value=read('key','');if(el('hueKey').value)guard(connect);
+};document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMotion()});window.addEventListener('pagehide',stopAll);renderMood();el('hueKey').value=read('key','');tab('music');if(el('hueKey').value)guard(connect);else el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';
 })();
 </script><script src="scenes-v1.js" defer></script>
 </body></html>
