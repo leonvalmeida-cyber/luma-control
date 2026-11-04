@@ -8,6 +8,9 @@ on:
       - 'tests/flow-noise-guard.test.cjs'
       - 'tests/lamp-icons.test.cjs'
       - 'tests/visual-mood-tree.test.cjs'
+      - 'tests/floating-quick-control.test.cjs'
+      - 'quick-overlay.css'
+      - 'media/**'
       - 'music-immersive-v1.css'
       - 'groups-v1-tree.css'
       - 'lamp-icons.js'
@@ -27,4 +30,4 @@ jobs:
       - name: Syntax and signal-processing regressions
         run: |
           node --check flow/noise-guard.js
-          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs
+          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs tests/floating-quick-control.test.cjs
