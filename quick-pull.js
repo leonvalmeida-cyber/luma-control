@@ -74,6 +74,9 @@ function attach({doc=root.document,win=root}={}){
   const g=position(current);
   const glow=beamGeometry(g.width,g.height,g.headX,g.rimY);
   rootStyle.setProperty('--luma-pull-px',round(g.distance)+'px');
+  // WebKit SVG g translations use viewBox units: convert CSS-pixel travel
+  // so the moving shade stays perfectly joined to the actual arm endpoint.
+  rootStyle.setProperty('--luma-head-svg-px',round(g.distance*100/g.svgWidth)+'px');
   launcher.dataset.pullProgress=current.toFixed(3);
   overlay.dataset.pullProgress=current.toFixed(3);
   arm.setAttribute('d',armPath(g.distance,g.svgWidth));
