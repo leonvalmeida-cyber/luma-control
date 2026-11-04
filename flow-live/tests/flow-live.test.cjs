@@ -19,7 +19,7 @@ test('Inline and external JS compile',()=>{
 test('Störschutz controls are optional and OFF by default',()=>{
  assert.ok(html.includes('data-flow-guard="off" aria-pressed="true"'));
  assert.ok(html.includes('data-flow-guard="ambient" aria-pressed="false"'));
- assert.ok(html.includes('data-flow-guard="conversation" aria-pressed="false"'));
+ assert.ok(!html.includes('data-flow-guard="conversation"'),'Ineffective conversation mode must not be selectable');
  for(const id of ['flowStatus','flowCalibrate','flowReset','miBridgeStatus','start','stop','musicOn','musicOff','hueLoad','target']){
   assert.ok(html.includes('id="'+id+'"'),'missing '+id);
  }
