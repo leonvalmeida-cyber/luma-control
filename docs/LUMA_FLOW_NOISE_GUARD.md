@@ -33,3 +33,13 @@ Der Nutzer möchte Luma Flow von Grund auf neu entwerfen; wichtiges Zusatzkriter
 4. Danach entscheiden, ob VAD-/ML-Trennung nützlich ist oder den unmittelbaren Lichtwechsel zu stark verzögert; gegebenenfalls aus der ersten Version entfernen.
 
 **Akzeptanzkriterium:** Filter verbessert das reale Beleuchtungserlebnis beim Gespräch spürbar, ohne dass Musikreaktionen unbrauchbar werden. Sonst nicht als „intelligent“ oder „Gespräche herausfiltern“ vermarkten.
+
+## Entscheidung nach realem Nutzertest (2026-11-04)
+
+**Testergebnis:** Auch nach Einmessung der Raumgeräusche, während der Nutzer gesprochen hat, haben normale gesprochene Worte weiterhin deutliche Lichtreaktionen ausgelöst. Der experimentelle Gesprächsfilter erfüllt damit das Ziel *Licht reagiert auf Musik statt Personen im Raum* nicht.
+
+**Produktentscheidung:** Gesprächsfilter **vorläufig aus der Bedienoberfläche entfernt** (sowohl `feature/luma-flow-v1:index.html` als auch isolierte `main:flow-live/index.html`). Der prototypische DSP-Code darf als Forschungsgrundlage verbleiben, wird aber nicht als funktionierende Sprachunterdrückung präsentiert. Modus `Umgebung` bleibt optional und OFF by default; auf gleichbleibende Geräusche beschränkt. Beim Einmessen keine Unterhaltungen führen, denn einzelne Sprachsilben sind nicht stationär und ihr gemitteltes Frequenzprofil ist kein verlässlicher Sprachfilter.
+
+**Warum das bisherige Verfahren keine Gespräche entfernt:** Das FFT-Spektrum enthält die Summe aus Raumstimmen und Musik. Frequenzdämpfung unterdrückt auch Instrumente/Gesang und verliert Grundtöne tiefer Stimmen nicht vollständig; spektrales Mittelwertprofil reproduziert niemals beliebige zukünftige Worte. Es gibt keinen magischen Schwellenwert, der diese Quellen trennen würde.
+
+**Nächste Entwicklungsvorgabe:** Nicht weiter iterieren an heuristischen Gesprächs-Dämpfungsreglern. Vorrang hat Hue Entertainment Transport/Entkopplung vom REST-Limit, inklusive echte Latenzmessung und ruhige räumliche Musikmodi. Sprachisolation als separate Forschungsoption nur bei belegbarem, lokalem Quelltrennungsmodell oder rechtlich zulässiger direkter Musik-Audioquelle, mit tatsächlichem Vergleich von Hintergrundgesprächen, Musikgesang, Takt-Erkennung, CPU/Batterie und Verzögerung. Wenn die Ergebnisse schwach bleiben, die Funktion endgültig weglassen.
