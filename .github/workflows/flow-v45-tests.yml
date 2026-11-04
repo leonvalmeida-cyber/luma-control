@@ -1,0 +1,29 @@
+name: Luma Flow V4.5 room and inline dimmer checks
+on:
+  push:
+    paths:
+      - 'flow-v45/**'
+      - '.github/workflows/flow-v45-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v45/**'
+      - '.github/workflows/flow-v45-tests.yml'
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check new scripts
+        run: |
+          node --check flow-v45/v45.js
+          node --check flow-v45/groups-v45-tree.js
+          node --check flow-v45/quick-pull-v45.js
+      - name: V4.5 feature regression checks
+        run: node --test flow-v45/tests/v45.test.cjs
+      - name: Preserve production and earlier previews
+        run: node --test flow-v44/tests/v44.test.cjs flow-v43/tests/v43.test.cjs flow-v42/tests/v42.test.cjs flow-v41/tests/v41.test.cjs flow-live/tests/flow-live.test.cjs flow-live/tests/quick-pull-v10.test.cjs
