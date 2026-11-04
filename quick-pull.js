@@ -59,7 +59,8 @@ function attach({doc=root.document,win=root}={}){
  const raf=win.requestAnimationFrame?.bind(win)||((fn)=>win.setTimeout(fn,16));
  const caf=win.cancelAnimationFrame?.bind(win)||win.clearTimeout?.bind(win)||(()=>{});
  const now=()=>win.performance?.now?.()??Date.now();
- let current=0,session=null,animation=0,frame=0,queued=null,preview=false,ignoreClickUntil=0;
+ let current=0,session=null,animation=0,frame=0,queued=null,preview=false,ignoreClickUntil=0,settleTimer=0;
+ const scheduleTimeout=win.setTimeout?.bind(win)||setTimeout,clearScheduled=win.clearTimeout?.bind(win)||clearTimeout;
  const getDims=()=>({width:Math.max(1,win.innerWidth||390),height:Math.max(1,win.innerHeight||844)});
  function position(p){
   const rect=launcher.getBoundingClientRect(),{width,height}=getDims(),limit=limits(width);
@@ -95,6 +96,7 @@ function attach({doc=root.document,win=root}={}){
  }
  function stopAnimation(){
   if(animation){caf(animation);animation=0}
+  if(settleTimer){clearScheduled(settleTimer);settleTimer=0}
  }
  function markPreview(){
   if(preview)return;
@@ -133,20 +135,30 @@ function attach({doc=root.document,win=root}={}){
   const start=current,end=shouldOpen?1:0,t0=now();
   const reduce=win.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const duration=reduce?0:shouldOpen?210:190;
-  // No bounce: all four objects share the same easing, ending in the same frame.
-  function step(t){
-   const u=duration?clamp((t-t0)/duration):1;
-   launcher.dataset.pullPhase='settling-'+round(u);
-   const eased=1-Math.pow(1-u,3);
-   paint(start+(end-start)*eased);
-   if(u<1){animation=raf(step);return}
-   animation=0;
+  let completed=false;
+  const finish=()=>{
+   if(completed)return;
+   completed=true;
+   stopAnimation();
+   paint(end);
    if(shouldOpen){
     launcher.dataset.pullPhase='opened';
     clearPreview();
     overlay.dataset.pulledOpen='true';
     win.lumaQuickControl?.open?.();
    }else{launcher.dataset.pullPhase='retracted';rollback()}
+  };
+  // Safari may throttle animation frames when leaving a touch interaction.
+  // A bounded timer guarantees the drawer never gets stuck half-open.
+  settleTimer=scheduleTimeout(finish,duration+130);
+  function step(t){
+   if(completed)return;
+   const u=duration?clamp((t-t0)/duration):1;
+   launcher.dataset.pullPhase='settling-'+round(u);
+   const eased=1-Math.pow(1-u,3);
+   paint(start+(end-start)*eased);
+   if(u<1){animation=raf(step);return}
+   finish();
   }
   animation=raf(step);
  }
