@@ -19,13 +19,14 @@ ul{margin:7px 0 0;padding-left:20px;color:#cfd0e3}li{margin:5px 0}
 <body>
 <a href="../flow-live/">← Zur Luma Flow Testversion</a>
 <h1>⚡ Entertainment-Check</h1>
-<p>Schritt A unseres Musik-Tests: Wir prüfen direkt an deiner Hue Bridge Pro, welche Entertainment-Bereiche und streamingfähigen Dienste sie meldet. <strong>Nur Lesen – keine Lampe wird verändert.</strong></p>
+<p>Schritt A unseres Musik-Tests: Erst verwenden wir denselben Lesepfad wie deine funktionierende Luma-App. Optional prüfen wir danach die Entertainment-Dienste über API v2. <strong>Nur Lesen – keine Lampe wird verändert.</strong></p>
 <div class="card">
 <h2>1 · Bridge verbinden</h2>
 <button id="reuse" type="button" class="secondary">Vorhandene Luma-Verbindung übernehmen</button>
 <label for="ip">Lokale Bridge-IP</label><input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.2" autocomplete="off">
 <label for="key">Hue Application Key (wird nicht gespeichert)</label><input id="key" type="password" placeholder="Schlüssel aus Luma Control" autocomplete="off">
-<button id="check" type="button">Entertainment prüfen</button>
+<button id="check" type="button">Verbindung prüfen (wie in Luma)</button>
+<button id="deepCheck" type="button" class="secondary" hidden>Optional: Hue API v2 prüfen</button>
 <p class="note">iPhone und Bridge müssen im selben WLAN sein. Der Test nutzt ausschließlich HTTPS direkt zu deiner Bridge, keinen Cloud-Server. Zugangsdaten werden nicht an GitHub übertragen und nicht neu gespeichert.</p>
 <div id="status" role="status" aria-live="polite">Noch nicht geprüft.</div>
 </div>
@@ -127,10 +128,29 @@ async function legacyReadOnly(ip,key){
 }
 
 $("check").addEventListener("click",async()=>{
+ const ip=$("ip").value.trim(),key=$("key").value.trim();
+ if(!validPrivateIPv4(ip)){status("Bitte die tatsächliche lokale IPv4-Adresse deiner Hue Bridge eintragen (nicht nur den grauen Platzhalter).");$("ip").focus();return;}
+ if(!key){status("Application Key fehlt.");return;}
+ $("check").disabled=true;$("deepCheck").hidden=true;$("resultCard").classList.add("hidden");report="";
+ status("Prüfe zuerst exakt denselben Hue API v1-Lesezugriff wie in deiner funktionierenden Luma-App …");
+ try{
+  await legacyReadOnly(ip,key);
+  $("deepCheck").hidden=false;
+  status("✅ Verbindung über Hue API v1 funktioniert, wie in deiner Luma-App. Die Ergebnisse stehen unten. Optional kannst du die detailliertere API v2 prüfen.");
+ }catch(e){
+  const code=e.name==="AbortError"?"Zeitüberschreitung":
+     e instanceof TypeError?"Der Browser hat die Verbindung zur lokalen Bridge blockiert":String(e.message||e);
+  status("❌ Luma-kompatibler Verbindungstest fehlgeschlagen: "+code+
+      "\n\nWenn dieselben Daten in deiner Luma Flow App funktionieren, liegt der Unterschied am Browser/Tab. Öffne diese Seite bitte direkt in Safari (über das Kompass-Symbol unten rechts im Chat-Browser) und nicht im eingebetteten Fenster."+
+      "\n\nEs wurde nichts an der Hue Bridge geändert.");
+ }finally{$("check").disabled=false;}
+});
+
+$("deepCheck").addEventListener("click",async()=>{
  const ip=$("ip").value.trim();const key=$("key").value.trim();
  if(!validPrivateIPv4(ip)){status(ip ? "Diese Bridge-IP ist ungültig. Bitte die tatsächliche lokale IPv4-Adresse aus Luma Flow → ⚙ Bridge & Verbindung eintragen." : "Die Bridge-IP ist leer. Die graue 192.168.1.2 ist nur ein Beispiel, keine eingetragene Adresse. Öffne Luma Flow → ⚙ Bridge & Verbindung und kopiere die dortige Bridge-IP hierher.");$("ip").focus();return;}
  if(!key){status("Application Key fehlt.");return;}
- $("check").disabled=true;$("resultCard").classList.add("hidden");report="";
+ $("deepCheck").disabled=true;$("resultCard").classList.add("hidden");report="";
  status("Lese Entertainment-Bereiche und Lampendienste …");
  try{
   const [areas,entertainment,lights,devices]=await Promise.all([
@@ -202,7 +222,7 @@ $("check").addEventListener("click",async()=>{
    a.href="https://"+ip+"/";a.target="_blank";a.rel="noopener noreferrer";a.style.display="inline-block";a.style.marginTop="12px";a.style.color="#b7a6ff";
    $("status").append(a);
   }
- }finally{$("check").disabled=false;}
+ }finally{$("deepCheck").disabled=false;}
 });
 $("copy").addEventListener("click",async()=>{
  try{await navigator.clipboard.writeText(report);status("Diagnose ohne Schlüssel kopiert. Jetzt im Chat einfügen.");}
