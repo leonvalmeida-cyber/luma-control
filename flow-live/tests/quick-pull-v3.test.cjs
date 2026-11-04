@@ -96,7 +96,7 @@ test('Shade pull opens and immediately exposes a draggable grip above the panel 
  const t=fixture();open(t);
  assert.equal(t.openCalls,1);
  assert.equal(t.controller.progress,1);
- assert.ok(+t.vars.get('--luma-open-lift-px')>=40);
+ assert.ok(parseFloat(t.vars.get('--luma-open-lift-px'))>=40);
  assert.equal(t.launcher.getAttribute('aria-expanded'),'true');
  t.controller.destroy();
 });
@@ -109,7 +109,7 @@ test('Grabbing opened shade and dragging RIGHT moves arm, light and panel contin
   const state={p,progress:t.controller.progress,panel:t.sheet.style.transform,
    arm:t.elements.get('ambientLampArm').attributes.d,
    light:t.elements.get('ambientBeam1').attributes.d,
-   lift:+t.vars.get('--luma-open-lift-px'),present:!t.overlay.hidden};
+   lift:parseFloat(t.vars.get('--luma-open-lift-px')),present:!t.overlay.hidden};
   values.push(state);
   assert.ok(Math.abs(state.progress-p)<.01,JSON.stringify(state));
   assert.ok(state.panel.startsWith('translate3d('+Math.round((1-p)*100)),state.panel);
