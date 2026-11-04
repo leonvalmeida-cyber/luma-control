@@ -150,7 +150,7 @@ function attach({doc=root.document,win=root}={}){
   };
   // Safari may throttle animation frames when leaving a touch interaction.
   // A bounded timer guarantees the drawer never gets stuck half-open.
-  settleTimer=scheduleTimeout(finish,duration+130);
+  settleTimer=scheduleTimeout(finish,duration+85);
   function step(t){
    if(completed)return;
    const u=duration?clamp((t-t0)/duration):1;
@@ -191,7 +191,7 @@ function attach({doc=root.document,win=root}={}){
   const dx=item.x-x;
   const p=progressFromDistance(dx,limits(getDims().width).drag);
   paint(p);
-  ignoreClickUntil=Date.now()+550;
+  ignoreClickUntil=Date.now()+330;
   launcher.dataset.pullPhase='released-'+round(p);
   if(event?.cancelable)event.preventDefault();
   event?.stopPropagation?.();
