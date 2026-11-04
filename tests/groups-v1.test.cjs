@@ -69,9 +69,9 @@ test('Fast tree exposes All → Wohnzimmer → local groups and individual lamps
  assert.equal(root.children[0].label,'Wohnzimmer');
  const room=root.children[0];
  assert.ok(room.children.some(x=>x.id==='local:old'));
- assert.ok(room.children.some(x=>x.id==='lamp:a'));
+ assert.ok(room.children.find(x=>x.id==='local:old')?.children.some(x=>x.id==='lamp:a'));
  assert.ok(room.children.some(x=>x.id==='lamp:b'));
- assert.ok(root.children.some(x=>x.id==='lamp:c'));
+ assert.ok(root.children.some(x=>x.id==='bridge:3'&&x.children.some(y=>y.id==='lamp:c')));
 });
 test('Fast tree includes new nested local groups without losing lamp targets',()=>{
  require('../groups-v1-tree.js');
@@ -82,7 +82,7 @@ test('Fast tree includes new nested local groups without losing lamp targets',()
  const root=tree.items(),room=root.children.find(x=>x.label==='Wohnzimmer');
  const tv=room.children.find(x=>x.id===parent.id),gaming=tv.children.find(x=>x.id===a.id);
  assert.equal(gaming.label,'Gaming');
- assert.ok(tv.children.some(x=>x.id==='lamp:a'));
+ assert.equal(tv.children.filter(x=>x.id==='lamp:a').length,0,'Nested lamps must not be shown twice at the same level');assert.ok(gaming.children.some(x=>x.id==='lamp:a'));
  assert.equal(root.children[0].id,'bridge:1');
 });
 
@@ -113,5 +113,58 @@ test('Fast tree DOM renders and direct lamp pick updates shared selection',()=>{
   lampButton.onclick();
   assert.equal(engine.currentTarget(),'lamp:a');
   assert.ok(descendants(container).some(x=>x.getAttribute?.('aria-pressed')==='true'&&x.children?.some(y=>y.textContent==='Iris')));
+ }finally{global.document=oldDocument}
+});
+
+test('Disclosure updates child visibility in-place without replacing DOM or scroll position',()=>{
+ require('../groups-v1-tree.js');
+ const {engine}=fixture();const oldDocument=global.document;
+ function node(tag){const attrs={};return {
+  tag,className:'',textContent:'',children:[],disabled:false,hidden:false,replaceCount:0,scrollTop:0,
+  style:{setProperty(){}},classList:{add(){}},setAttribute(k,v){attrs[k]=v},getAttribute(k){return attrs[k]},
+  replaceChildren(...xs){this.replaceCount++;this.children=[...xs]},append(...xs){this.children.push(...xs)}
+ }}
+ try{
+  global.document={createElement:node};
+  const container=node('div');const picker=new global.LumaGroupsTree.Tree(engine,container);
+  picker.render();
+  const walk=x=>[x,...(x.children||[]).flatMap(walk)];
+  const wrap=walk(container).find(x=>x.getAttribute?.('role')==='tree');
+  wrap.scrollTop=88;
+  const roomToggle=walk(container).find(x=>x.tag==='button'&&x.getAttribute('aria-label')==='Einklappen: Wohnzimmer');
+  assert.ok(roomToggle);
+  const before=container.children[1],beforeCount=container.replaceCount;
+  roomToggle.onclick();
+  assert.equal(container.replaceCount,beforeCount,'Collapse must not rebuild the tree');
+  assert.equal(container.children[1],before,'DOM tree must be stable');
+  assert.equal(wrap.scrollTop,88,'Inner panel scroll must remain stable');
+  assert.equal(roomToggle.getAttribute('aria-expanded'),'false');
+  const roomKids=walk(container).find(x=>x.getAttribute?.('role')==='treeitem'&&x.getAttribute('aria-expanded')==='false');
+  assert.ok(roomKids);
+  roomToggle.onclick();
+  assert.equal(roomToggle.getAttribute('aria-expanded'),'true');
+  assert.equal(container.replaceCount,beforeCount);
+ }finally{global.document=oldDocument}
+});
+test('Updating selection does not reset expanded groups or recreate rows',()=>{
+ require('../groups-v1-tree.js');
+ const {engine}=fixture();const oldDocument=global.document;
+ function node(tag){const attrs={};return {
+  tag,className:'',textContent:'',children:[],replaceCount:0,hidden:false,style:{setProperty(){}},
+  classList:{add(){}},setAttribute(k,v){attrs[k]=v},getAttribute(k){return attrs[k]},
+  replaceChildren(...xs){this.replaceCount++;this.children=[...xs]},append(...xs){this.children.push(...xs)}
+ }}
+ try{
+  global.document={createElement:node};const container=node('div');
+  const picker=new global.LumaGroupsTree.Tree(engine,container,{getSelected:()=>engine.currentTarget(),onSelect:id=>engine.setTarget(id)});
+  picker.render();const beforeCount=container.replaceCount;
+  engine.setTarget('lamp:a');picker.updateSelection();
+  assert.equal(container.replaceCount,beforeCount);
+  assert.ok(picker.selectables.some(x=>x.id==='lamp:a'&&x.pick.getAttribute('aria-pressed')==='true'));
+  picker.expandables.find(x=>x.id==='bridge:1').toggle.onclick();
+  assert.equal(picker.expanded.has('bridge:1'),false);
+  engine.setTarget('all');picker.updateSelection();
+  assert.equal(picker.expanded.has('bridge:1'),false);
+  assert.equal(container.replaceCount,beforeCount);
  }finally{global.document=oldDocument}
 });
