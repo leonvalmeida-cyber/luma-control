@@ -16,6 +16,9 @@
  transform:none!important;
  width:73px;height:96px;
 }
+:root[data-v4-hand=left] .quick-launcher svg.ambient-lamp-art{
+ transform:scaleX(-1)!important;transform-origin:center;
+}
 .quick-launcher>.ambient-lamp-device{width:73px;height:98px}
 .quick-launcher:not([aria-expanded=true]) .v43-fixed-rail{
  opacity:.12!important;
@@ -123,6 +126,10 @@ body:has(#settingsMenu:not([hidden])) .quick-launcher:not([aria-expanded=true]){
  border-radius:13px;
  border:1px solid transparent;
  overflow:hidden;
+}
+#targetFastTree .v45-group-shell.v45-dim-attention{
+ outline:2px solid #f6dcb8;outline-offset:3px;
+ box-shadow:0 0 18px #cba3fc82;
 }
 #targetFastTree .v45-group-shell.v45-selected{
  border:1px solid #b99af6aa;
