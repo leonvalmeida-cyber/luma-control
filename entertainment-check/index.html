@@ -78,7 +78,7 @@ async function resource(ip,key,name){
 }
 $("check").addEventListener("click",async()=>{
  const ip=$("ip").value.trim();const key=$("key").value.trim();
- if(!validPrivateIPv4(ip)){status("Bitte eine lokale private IPv4-Adresse der Bridge eingeben.");return;}
+ if(!validPrivateIPv4(ip)){status(ip ? "Diese Bridge-IP ist ungültig. Bitte die tatsächliche lokale IPv4-Adresse aus Luma Flow → ⚙ Bridge & Verbindung eintragen." : "Die Bridge-IP ist leer. Die graue 192.168.1.2 ist nur ein Beispiel, keine eingetragene Adresse. Öffne Luma Flow → ⚙ Bridge & Verbindung und kopiere die dortige Bridge-IP hierher.");$("ip").focus();return;}
  if(!key){status("Application Key fehlt.");return;}
  $("check").disabled=true;$("resultCard").classList.add("hidden");report="";
  status("Lese Entertainment-Bereiche und Lampendienste …");
