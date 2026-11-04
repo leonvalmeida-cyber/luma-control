@@ -29,6 +29,8 @@ function kelvinRGB(k){
  return [byte(r),byte(g),byte(b)];
 }
 function deviceRGB(state={}){
+ if(state.colormode==='ct'&&Number.isFinite(state.ct)&&state.ct>0)return kelvinRGB(1000000/state.ct);
+ if(state.colormode==='hs'&&Number.isFinite(state.hue)&&Number.isFinite(state.sat))return hueRGB(state.hue/65535*360,state.sat/254,1);
  if(Array.isArray(state.xy)&&state.xy.length===2){const c=xyRGB(+state.xy[0],+state.xy[1]);if(c)return c}
  if(Number.isFinite(state.hue)&&Number.isFinite(state.sat))return hueRGB(state.hue/65535*360,state.sat/254,1);
  if(Number.isFinite(state.ct)&&state.ct>0)return kelvinRGB(1000000/state.ct);
