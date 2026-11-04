@@ -140,7 +140,7 @@ byId('lampsCount').textContent=count+' von '+list.length+' aktiv';
 byId('lightHero').classList.toggle('off',!count);
 byId('mainPower').setAttribute('aria-pressed',String(count>0));byId('mainPower').setAttribute('aria-label',count?'Licht ausschalten':'Licht einschalten');
 byId('lightOrb').style.setProperty('--orb-scale',String(.62+brightness/180));
-if(demoTree)demoTree.render();
+if(demoTree)demoTree.updateSelection();
 const box=byId('lampGrid');box.replaceChildren();
 list.forEach(function(l){
 const btn=document.createElement('button');btn.type='button';btn.className='lamp-row'+(l.on?'':' off');btn.setAttribute('aria-label',l.name+(l.on?' ausschalten':' einschalten'));btn.innerHTML='<span class="lamp-top"><span class="lamp-icon" style="--lamp-color:'+l.color+'">'+l.icon+'</span><span class="tiny-toggle'+(l.on?' on':'')+'"></span></span><span><strong>'+l.name+'</strong><small>'+l.subtitle+'</small></span>';
@@ -215,10 +215,11 @@ demoTree=new window.LumaGroupsTree.Tree(demoEngine,byId('demoFastTree'),{
  onSelect:id=>{pickDemoTarget(id)}
 });
 const demoUI=new window.LumaGroupsUI.UI(demoEngine,byId('groupsV1Root'),{
- onChange:()=>{renderLights()},
+ onChange:()=>{demoTree.render();renderLights()},
  onSelect:id=>{pickDemoTarget(id);go('Light');toast('Aktiver Lichtbereich: '+demoEngine.group(id).name)}
 });
 byId('groupBack').addEventListener('click',()=>go('Light'));
+demoTree.render();
 renderLights();renderScenes();
 })();
 </script>
