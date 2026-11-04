@@ -77,7 +77,7 @@ class NoiseGuard{
    bands={bass:raw.bass,mid:raw.mid*.13,high:raw.high*.12};
    signal=clamp(raw.bass*.53+transient*.4+raw.mid*.035);
   }
-  return {bands,signal:clamp(signal),transient,profileReady:matched?true:false,
+  return {bands,signal:clamp(signal),transient,filteredSpectrum:bins,profileReady:matched?true:false,
     protectionActive:this.mode!==MODES.OFF&&Boolean(matched),
     suppression:total>1e-12?clamp(1-clean/total):0,
     mode:this.mode,calibrating:this.calibrating};
