@@ -85,10 +85,10 @@ const close=()=>new Promise(resolve=>server.close(resolve));
       shadeX:shade.x,mountX:mount.x,
       rayPower:getComputedStyle(document.documentElement).getPropertyValue('--ambient-power').trim()};
    });
-   assert.ok(observation.visible&&observation.preview,label+' must display drawer before finger release');
-   assert.ok(Math.abs(observation.pull-progress)<.025,label+' drawer progress follows thumb');
-   assert.ok(observation.sheet.includes(Math.round((1-progress)*100)+'%'),label+' panel must move proportionately');
    console.log('WEBKIT_PULL_'+label+'='+JSON.stringify(observation));
+   assert.ok(observation.visible&&observation.preview,label+' must display drawer before finger release');
+   assert.ok(Math.abs(observation.pull-progress)<.025,label+' drawer progress follows thumb (actual '+observation.pull+')');
+   assert.ok(observation.sheet.includes(Math.round((1-progress)*100)+'%'),label+' panel must move proportionately');
    return observation;
   };
   await page.evaluate(()=>{
