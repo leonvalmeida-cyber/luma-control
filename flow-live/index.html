@@ -631,11 +631,12 @@ const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost')
 
 const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
 el('quickPanelBody').append(el('targetCard'));
-let quickClosing=false,quickCloseAnimation=null;
+let quickClosing=false,quickCloseAnimation=null,quickFinishTimer=0;
 const quickClose=()=>{
  if(quickOverlay.hidden||quickClosing)return;
  quickClosing=true;
  const finish=()=>{
+  if(quickFinishTimer){clearTimeout(quickFinishTimer);quickFinishTimer=0}
   if(quickOverlay.hidden)return;
   quickOverlay.hidden=true;quickClosing=false;quickCloseAnimation=null;
   quickLauncher.setAttribute('aria-expanded','false');
@@ -653,6 +654,9 @@ const quickClose=()=>{
     {transform:'translate3d(100%,0,0)',opacity:.7}
    ],{duration:210,easing:'cubic-bezier(.45,0,.95,.75)'});
    quickCloseAnimation.finished.then(finish,finish);
+   // WebKit sometimes keeps a finished promise pending while touch-scrolling.
+   // Guaranteed dismissal prevents a drawer that appears to ignore the right swipe.
+   quickFinishTimer=window.setTimeout(finish,235);
   }catch{finish()}
  }else finish();
 };
