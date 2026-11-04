@@ -111,7 +111,8 @@ test('no new Hue, microphone or network requests in the mechanical controller',(
 });
 
 test('the fixed rail and carriage are actually distinct SVG groups',()=>{
- const svg=html.slice(html.indexOf('<svg class="ambient-lamp-art"'),html.indexOf('</svg>')+6);
+ const begin=html.indexOf('<svg class="ambient-lamp-art"');
+ const svg=html.slice(begin,html.indexOf('</svg>',begin)+6);
  assert.equal((svg.match(/<g\b/g)||[]).length,(svg.match(/<\/g>/g)||[]).length);
  assert.match(svg,/<g id="v43FixedWall"/);
  assert.match(svg,/<g id="v43MovingAssembly"/);
