@@ -1,0 +1,108 @@
+/* LUMA FLOW V4.3 · mechanical wall rail.
+ * Only included by /flow-v43/. In particular the wall plate never scrolls.
+ * The SVG carriage group, arm and shade travel together on one transform. */
+:root{
+ --v43-dock-px:0px;
+ --v43-metal-a:#f4d6a0;
+ --v43-metal-b:#9a7744;
+ --v43-groove:#241c25;
+}
+/* V4.2 translated the entire launcher, dragging the fixed wall with it.
+   Cancel that transformation: the SVG slider alone travels. */
+.quick-launcher,
+:root[data-v4-hand=left] .quick-launcher{
+ transform:none!important;
+}
+.quick-launcher .v43-fixed-wall,
+.quick-launcher .v43-fixed-rail{
+ transform:none!important;
+ pointer-events:none;
+}
+/* Long stationary track; it stays anchored to the decorative wall
+   escutcheon while the carriage physically slides beside it. */
+.quick-launcher .v43-fixed-rail{
+ opacity:.3;
+ transition:opacity .24s ease;
+}
+.quick-launcher[data-pull-progress]:not([data-pull-progress="0.000"]) .v43-fixed-rail,
+.quick-launcher[aria-expanded=true] .v43-fixed-rail{
+ opacity:.91;
+}
+.quick-launcher .v43-rail-shadow{
+ fill:#12111e;stroke:var(--v43-metal-b);
+ stroke-width:1.25;filter:drop-shadow(-2px 2px 3px #090711a9);
+}
+.quick-launcher .v43-rail-channel{
+ fill:none;stroke:var(--v43-groove);stroke-width:4.6;stroke-linecap:round;
+}
+.quick-launcher .v43-rail-left,
+.quick-launcher .v43-rail-right{
+ fill:none;stroke:var(--v43-metal-b);stroke-width:1.95;stroke-linecap:round;
+}
+.quick-launcher .v43-rail-lip{
+ fill:none;stroke:var(--v43-metal-a);stroke-width:1.4;opacity:.7;
+}
+.quick-launcher .v43-rail-top-cap{
+ fill:var(--v43-metal-b);stroke:var(--v43-metal-a);stroke-width:1.3;
+}
+.quick-launcher .v43-rail-endstop{
+ fill:none;stroke:var(--v43-metal-a);stroke-width:2;opacity:.8;
+}
+.quick-launcher .v43-rail-top-rivet{
+ fill:#f8deb0;stroke:#493521;stroke-width:.8;
+}
+.quick-launcher .v43-carriage-body{
+ fill:url(#v41Brass);stroke:var(--v43-metal-a);stroke-width:1.5;
+ filter:drop-shadow(-1px 1px 2px #0b0b19ae);
+}
+.quick-launcher .v43-carriage-highlight{
+ fill:none;stroke:#fff1cc;stroke-width:1.25;
+}
+.quick-launcher .v43-carriage-band{
+ fill:none;stroke:var(--v43-metal-b);stroke-width:2.2;
+}
+.quick-launcher .v43-carriage-bolt{
+ fill:var(--v43-metal-a);stroke:#7e5e3a;stroke-width:1.1;
+}
+.quick-launcher .v43-moving-assembly{
+ /* Motion applied via transform ATTRIBUTE in SVG user units, not CSS:
+    avoids Safari's inconsistent translation scaling in an SVG <g>. */
+ will-change:transform;
+}
+/* Keep the close hit area attached to the moving lampshade even though
+   the visible button/wall are now absolutely stationary. */
+.quick-lamp-grip{
+ top:calc(clamp(135px,22dvh,238px) - var(--luma-open-lift-px) - var(--v43-dock-px) + 3px)!important;
+}
+:root[data-v4-hand=left] .quick-lamp-grip{
+ top:calc(clamp(135px,22dvh,238px) - var(--luma-open-lift-px) - var(--v43-dock-px) + 3px)!important;
+}
+/* The rails have a cohesive matching material, but every lamp shares
+   precisely the same Luma metal-stroke geometry. */
+:root[data-v42-design=deco]{
+ --v43-metal-a:#f2e5c0;--v43-metal-b:#998968;--v43-groove:#343843;
+}
+:root[data-v42-design=washi]{
+ --v43-metal-a:#ead1a0;--v43-metal-b:#7b5639;--v43-groove:#302323;
+}
+:root[data-v42-design=halo]{
+ --v43-metal-a:#e8f4fa;--v43-metal-b:#718caa;--v43-groove:#1c2735;
+}
+:root[data-v42-design=deco] .quick-launcher .v43-carriage-body{
+ fill:#7d786c;stroke:#ded8b8;
+}
+:root[data-v42-design=washi] .quick-launcher .v43-carriage-body{
+ fill:#795634;stroke:#ddbd89;
+}
+:root[data-v42-design=halo] .quick-launcher .v43-carriage-body{
+ fill:#718fa9;stroke:#e4f2f9;
+}
+/* The base is stationary even during a swipe preview; the lit shade stays
+   readable against Quick Control and its cone never blocks touches. */
+body:has(#quickOverlay:not([hidden])) .ambient-room-glow{
+ pointer-events:none!important;z-index:39605!important;opacity:var(--ambient-power)!important;
+}
+.quick-launcher[data-ambient-state=off] .v42-inner-radiance{opacity:0!important}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher .v43-fixed-rail{transition:none}
+}
