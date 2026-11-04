@@ -151,7 +151,6 @@ if(lumaFlowGuard){
   const value=button.dataset.flowGuard;
   lumaFlowGuard.setMode(value);
   document.querySelectorAll('[data-flow-guard]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-  window.lumaStopMusic?.();
   if(value==='off')flowStatus('Störschutz ist aus. Die normale Musikreaktion bleibt aktiv.');
   else if(lumaFlowGuard.profileReady)flowStatus('✓ '+(value==='ambient'?'Umgebung':'Gespräche')+' aktiviert. Raumprofil aktiv.','ready');
   else flowStatus((value==='ambient'?'Umgebungs-':'Gesprächs-')+'Störschutz gewählt. Bitte zuerst bei pausierter Musik Raumgeräusche einmessen.');
