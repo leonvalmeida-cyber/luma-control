@@ -50,3 +50,80 @@
 #musicPane #miPreviewStrip i{flex:1;height:7px;border-radius:6px;background:#7e67a1;opacity:.9}
 @media(max-width:360px){#musicPane .mi-hero{padding:16px 12px}#musicPane .mi-visual{min-height:205px}#musicPane .mi-actions button{padding:11px 10px;font-size:12px}#musicPane .mi-quick{padding:13px 10px}}
 @media(prefers-reduced-motion:reduce){#musicPane .mi-orb,#musicPane .mi-bars i{transition:none!important}}
+
+/* Groups shrink to a one-line control when the user closes the chooser. */
+.target-card .mi-target-head{display:flex;align-items:center;flex-wrap:nowrap;gap:8px;min-width:0}
+.target-card .mi-target-head .target-label{font-size:12px;white-space:nowrap;flex:0 0 auto}
+.target-card .mi-target-head #targetSummary{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;text-align:right}
+.target-card #targetTreeToggle{width:42px;min-width:42px;min-height:42px;border:1px solid #a58fcb5c;border-radius:12px;font-size:21px;line-height:1;background:#312747;color:#dbc9ff;display:grid;place-items:center;padding:0}
+.target-card #targetTreeToggle:focus-visible{outline:2px solid #e2cbff;outline-offset:2px}
+.target-card #targetFastTree[hidden],.target-card #targetHelp[hidden]{display:none!important}
+.target-card:has(#targetFastTree[hidden]){padding-top:5px;padding-bottom:5px;margin-top:7px;margin-bottom:7px}
+
+/* MUSIC MOODS · actual palette preview (not a second device gallery).
+ * CSS color sources are loaded directly from the existing palette RGB arrays. */
+#musicPane .mi-quick #miQuickPalettes #palettes{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scroll-snap-type:x proximity;scrollbar-width:none;scroll-padding-left:1px;padding:5px 3px 12px;margin-top:3px;touch-action:pan-x}
+#musicPane #miQuickPalettes #palettes::-webkit-scrollbar{display:none}
+#musicPane .mi-quick #palettes .mi-mood-card{position:relative;display:flex;flex-direction:column;gap:7px;flex:0 0 clamp(142px,44vw,180px);width:clamp(142px,44vw,180px);max-width:none;height:202px;min-height:202px;min-width:0;margin:0;padding:7px;border:1px solid #ffffff2a;border-radius:18px;background:linear-gradient(145deg,#2f2947,#151d30);box-shadow:0 8px 18px #06051545;text-align:left;color:#f6edff;scroll-snap-align:start;overflow:hidden;transition:border-color .15s ease,box-shadow .15s ease}
+#musicPane .mi-quick #palettes .mi-mood-card[aria-pressed=true]{border-color:#d8baff;background:linear-gradient(145deg,#393051,#20233c);box-shadow:0 0 0 2px #ab87f76d,0 10px 28px #7253c63f}
+#musicPane .mi-quick #palettes .mi-mood-card:focus-visible{outline:2px solid #e2d0ff;outline-offset:2px}
+#musicPane .mi-quick #palettes .mi-mood-card:active{transform:scale(.99)}
+#musicPane .mi-mood-art{height:116px;min-height:116px;display:block;position:relative;border-radius:13px;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 19% 29%,var(--mood-c1),transparent 47%),radial-gradient(ellipse at 77% 70%,var(--mood-c2),transparent 52%),linear-gradient(145deg,#120d2d,#111d36);box-shadow:inset 0 -21px 25px #09091966}
+#musicPane .mi-mood-art::before{content:"";position:absolute;inset:-32% -10%;background:radial-gradient(ellipse at 30% 60%,var(--mood-c1),transparent 44%),radial-gradient(ellipse at 78% 34%,var(--mood-c3),transparent 45%);opacity:.65;filter:blur(19px);pointer-events:none}
+#musicPane .mi-mood-glow,#musicPane .mi-mood-beam,#musicPane .mi-mood-wave{position:absolute;display:block;pointer-events:none}
+#musicPane .mi-mood-glow{width:69px;height:69px;top:22px;left:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffffffb9,var(--mood-c1) 26%,var(--mood-c2) 61%,transparent 77%);box-shadow:0 0 27px var(--mood-c1),0 0 38px var(--mood-c2);opacity:.83}
+#musicPane .mi-mood-beam{width:90px;height:11px;top:25px;left:-12px;transform:rotate(-32deg);border-radius:20px;background:linear-gradient(90deg,transparent,var(--mood-c4),#ffffff90,var(--mood-c2),transparent);box-shadow:0 0 18px var(--mood-c4);opacity:.9}
+#musicPane .mi-mood-wave{width:130px;height:45px;left:12px;bottom:-18px;border:4px solid var(--mood-c4);border-bottom:0;border-left:0;border-right:0;border-radius:50%;box-shadow:0 -6px 14px var(--mood-c4);opacity:.8}
+#musicPane .mi-mood-card[data-mood-art=neon] .mi-mood-glow{left:60px;top:30px;width:70px;height:70px;border-radius:30% 70% 45% 55%}
+#musicPane .mi-mood-card[data-mood-art=neon] .mi-mood-beam{left:-12px;top:28px;width:130px;height:7px;transform:rotate(-52deg);background:linear-gradient(90deg,transparent,var(--mood-c4),#9bf8ff,var(--mood-c2),transparent)}
+#musicPane .mi-mood-card[data-mood-art=neon] .mi-mood-wave{left:34px;bottom:12px;transform:rotate(-19deg);width:105px;border-top-color:var(--mood-c1);opacity:.8}
+#musicPane .mi-mood-card[data-mood-art=sunset] .mi-mood-art{background:linear-gradient(180deg,#5f2860 1%,#d55c74 48%,#f5a35b 76%,#322044 100%)}
+#musicPane .mi-mood-card[data-mood-art=sunset] .mi-mood-glow{top:22px;left:43px;width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,#fff0bd,#ffae5d 55%,#ff6b56 80%);box-shadow:0 0 38px #f6a664c9}
+#musicPane .mi-mood-card[data-mood-art=sunset] .mi-mood-beam{top:85px;transform:none;width:200%;height:3px;left:0;background:linear-gradient(90deg,#ef9d95,#f6d49e,#db668d);opacity:.8}
+#musicPane .mi-mood-card[data-mood-art=sunset] .mi-mood-wave{bottom:-24px;border-top-color:#6d3f66;box-shadow:0 -8px 21px #a34871;opacity:.9}
+#musicPane .mi-mood-card[data-mood-art=ocean] .mi-mood-art{background:linear-gradient(150deg,#0c2858 10%,#176e9b 50%,#119eab 100%)}
+#musicPane .mi-mood-card[data-mood-art=ocean] .mi-mood-glow{left:42px;top:14px;width:90px;height:80px;background:radial-gradient(circle,#69e7f4b0,#3a9bd2 44%,transparent 75%);box-shadow:0 0 32px #36a5f1a9}
+#musicPane .mi-mood-card[data-mood-art=ocean] .mi-mood-beam{width:143px;left:10px;top:71px;height:44px;transform:rotate(-8deg);background:transparent;border:3px solid #8bffffa1;border-left:0;border-bottom:0;border-right:0;border-radius:60% 50%;box-shadow:0 -5px 12px #54d3d7a1}
+#musicPane .mi-mood-card[data-mood-art=ocean] .mi-mood-wave{width:140px;left:-12px;bottom:-12px;border-top:4px solid #59edeb;box-shadow:0 -6px 14px #3fe6e88a}
+#musicPane .mi-mood-card[data-mood-art=warm] .mi-mood-art{background:radial-gradient(ellipse at 50% 48%,#f5ca8b80,transparent 67%),linear-gradient(160deg,#5a331d,#2e2430 79%)}
+#musicPane .mi-mood-card[data-mood-art=warm] .mi-mood-glow{width:96px;height:92px;left:24px;top:8px;background:radial-gradient(ellipse,#fff4c9,#ffc16e9c 48%,transparent 77%);box-shadow:0 0 45px #f7ac5270}
+#musicPane .mi-mood-card[data-mood-art=warm] .mi-mood-beam{width:80px;height:56px;top:34px;left:40px;transform:none;border-radius:50% 50% 0 0;background:linear-gradient(180deg,#fff2b6aa,transparent);filter:blur(12px);box-shadow:none}
+#musicPane .mi-mood-card[data-mood-art=warm] .mi-mood-wave{border-top:2px solid #ffdb9a66;left:16px;bottom:0;box-shadow:none}
+#musicPane .mi-mood-caption{display:grid;gap:1px;min-height:32px;padding:0 3px;line-height:1.15}
+#musicPane .mi-mood-caption strong{font-size:14px;font-weight:760;color:#faf2ff}
+#musicPane .mi-mood-caption small{font-size:10px;color:#c7b9df;letter-spacing:.15px}
+#musicPane .mi-mood-pips{display:flex;gap:4px;padding:0 3px 4px}
+#musicPane .mi-mood-pips i{display:block;width:11px;height:11px;border-radius:50%;box-shadow:0 0 8px #ffffff26;border:1px solid #ffffff55}
+#musicPane .mi-mood-check{position:absolute;right:13px;top:13px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#f1e1ff;color:#2e1a47;font-size:14px;line-height:1;font-weight:900;opacity:0;transform:scale(.7);transition:opacity .15s ease,transform .15s ease}
+#musicPane .mi-mood-card[aria-pressed=true] .mi-mood-check{opacity:1;transform:scale(1)}
+#musicPane #miQuickSwatches{display:none}
+#musicPane #miQuickSelection{font-size:11px;opacity:.85}
+@media(max-width:345px){#musicPane .mi-quick #palettes .mi-mood-card{flex-basis:137px;width:137px;height:198px;min-height:198px}}
+@media(prefers-reduced-motion:reduce){#musicPane .mi-mood-card,#musicPane .mi-mood-check{transition:none!important}}
+
+/* Picture-forward music mood cards: four illustrated, bundled SVG micro-scenes.
+   Artwork is decorative; card state and existing RGB palettes stay the source of truth. */
+#musicPane .mi-mood-art img.mi-mood-picture{display:block!important;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:1;opacity:1;pointer-events:none;border-radius:12px;filter:saturate(1.1) contrast(1.07)}
+#musicPane .mi-mood-art .mi-mood-glow{z-index:2;opacity:.16;mix-blend-mode:screen;pointer-events:none}
+#musicPane .mi-mood-art .mi-mood-beam,#musicPane .mi-mood-art .mi-mood-wave{z-index:2;opacity:.12;pointer-events:none}
+#musicPane #miQuickPalettes #palettes .mi-mood-card{height:214px;min-height:214px}
+#musicPane #miQuickPalettes .mi-mood-art{height:127px;min-height:127px}
+#musicPane #miQuickPalettes .mi-mood-card[aria-pressed=true] .mi-mood-art img.mi-mood-picture{filter:saturate(1.25) contrast(1.08)}
+
+/* v0.7 · Strong visible picture layer and local background fallback, including iPhone Safari. */
+#musicPane #miQuickPalettes .mi-mood-art{display:block!important;position:relative;overflow:hidden!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=neon] .mi-mood-art{background-image:url('media/neon.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=sunset] .mi-mood-art{background-image:url('media/sunset.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=ocean] .mi-mood-art{background-image:url('media/ocean.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=warm] .mi-mood-art{background-image:url('media/warm.svg?v=7')!important}
+#musicPane #miQuickPalettes img.mi-mood-picture{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;opacity:1!important;visibility:visible!important;z-index:2!important;object-fit:cover!important;mix-blend-mode:normal!important;filter:saturate(1.17) contrast(1.13)!important}
+#musicPane #miQuickPalettes .mi-mood-glow,#musicPane #miQuickPalettes .mi-mood-beam,#musicPane #miQuickPalettes .mi-mood-wave{opacity:.07;z-index:3!important}
+#musicPane #miQuickPalettes .mi-mood-art-tag{position:absolute;left:8px;bottom:7px;z-index:4;display:block;padding:4px 6px;border:1px solid #ffffff61;background:#0d142482;color:#fff5ff;font-size:9px;font-weight:850;letter-spacing:.95px;line-height:1.2;border-radius:6px;text-shadow:0 1px 3px #0009;box-shadow:0 2px 8px #0005}
+#musicPane #miQuickPalettes .mi-mood-art[data-image-failed=true] img.mi-mood-picture{display:none!important}
+#musicPane #miQuickPalettes .mi-mood-card:focus-visible{outline:2px solid #ebd8ff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#musicPane #miQuickPalettes img.mi-mood-picture{filter:saturate(1.1) contrast(1.1)!important}}
+
+/* Local in-DOM SVG artwork fallback: stays visible even if a separate image request fails. */
+#musicPane #miQuickPalettes .mi-mood-fallback{position:absolute;inset:0;z-index:1;display:block;overflow:hidden;pointer-events:none}
+#musicPane #miQuickPalettes .mi-mood-fallback>svg{display:block;width:100%;height:100%;min-width:100%;min-height:100%;object-fit:cover}
+#musicPane #miQuickPalettes .mi-mood-art[data-image-failed=true] .mi-mood-fallback{z-index:2}

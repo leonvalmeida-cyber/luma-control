@@ -1,0 +1,258 @@
+/* Luma Flow floating light controls: a single movable tree, not a cloned second picker. */
+.quick-launcher{position:fixed;z-index:39000;top:clamp(135px,22dvh,238px);right:max(9px,env(safe-area-inset-right));width:56px;height:62px;min-width:56px;padding:7px 4px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border-radius:18px;color:#f8efff;background:linear-gradient(155deg,#7651c9,#30264c 80%);border:1px solid #dabaffaf;box-shadow:0 9px 30px #050412a8,0 0 15px #7d43b75c;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);touch-action:manipulation}
+.quick-launcher span{font-size:26px;line-height:29px;filter:drop-shadow(0 0 8px #ffd8a493)}
+.quick-launcher small{font-size:10px;line-height:1.1;font-weight:800;letter-spacing:.2px}
+.quick-launcher[aria-expanded=true]{visibility:hidden;pointer-events:none}
+.quick-launcher:focus-visible,.quick-sheet button:focus-visible{outline:2px solid #f4ddff;outline-offset:2px}
+.quick-overlay[hidden]{display:none!important}
+.quick-overlay{position:fixed;inset:0;z-index:39500;display:flex;align-items:flex-start;justify-content:flex-end;padding: max(env(safe-area-inset-top),12px) max(env(safe-area-inset-right),9px) max(env(safe-area-inset-bottom),12px);isolation:isolate;overscroll-behavior:contain}
+.quick-backdrop{position:absolute;inset:0;z-index:-1;border:0;border-radius:0;background:#060715cf;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);width:100%;height:100%;padding:0}
+.quick-sheet{position:relative;z-index:1;display:flex;flex-direction:column;width:min(94vw,560px);height:calc(100dvh - max(env(safe-area-inset-top),12px) - max(env(safe-area-inset-bottom),12px));max-height:95dvh;min-height:0;background:linear-gradient(165deg,#251d3b 0%,#161c32 54%,#101a2b 100%);border:1px solid #a98cc477;border-radius:26px;box-shadow:0 22px 80px #03020ded,0 0 35px #5d33a225;overflow:hidden}
+.quick-titlebar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 17px 5px;flex:0 0 auto}
+.quick-titlebar>div{min-width:0}.quick-titlebar small{font-size:10px;letter-spacing:1.3px;font-weight:800;color:#d6bcfa}
+.quick-titlebar h2{font-size:27px;letter-spacing:-.5px;margin:3px 0;line-height:1.12;color:#fcf3ff}
+.quick-titlebar button{width:46px;height:46px;flex:0 0 46px;min-height:46px;display:grid;place-items:center;border-radius:15px;padding:0;font-size:20px;background:#49335f;color:#f9eafd;border:1px solid #d7bdf48c}
+.quick-subtitle{font-size:11px;color:#d6c2ee;line-height:1.5;margin:4px 17px 13px;flex:0 0 auto}
+.quick-panel-body{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 12px 14px;scrollbar-width:thin;scrollbar-color:#80699c transparent}
+.quick-overlay #targetCard{display:block!important;position:static!important;margin:0;padding:10px;border:1px solid #9f86c554;border-radius:19px;background:#241f3f88;box-shadow:none;width:100%;min-width:0}
+.quick-overlay #targetCard .mi-target-head{min-height:42px}
+.quick-overlay #targetCard .target-help{font-size:10px}
+.quick-overlay .g-fast-tree{box-shadow:none;padding:10px 5px 12px}
+.quick-overlay .g-tree-inner{max-height:none!important;min-height:0;overflow:visible!important;contain:none!important}
+.quick-overlay .g-tree-kids{margin-left:9px}
+.quick-overlay .g-tree-lamp-grid{margin-left:8px;padding-left:9px}
+.quick-overlay .g-tree-lamp-line .g-tree-lamp-card{min-height:147px}
+.quick-overlay .g-tree-lamp-line{min-height:147px}
+.quick-overlay .g-tree-lamp-line .g-lamp-status{display:block}
+.quick-status{flex:0 0 auto;margin:0;min-height:46px;padding:11px 17px max(env(safe-area-inset-bottom),13px);border-top:1px solid #9a84c236;background:#151a2deb;font-size:11px;color:#badddf;line-height:1.4;max-height:68px;overflow:hidden}
+.quick-page-lock{position:fixed!important;left:0!important;right:0!important;margin-inline:auto!important;width:100%!important;max-width:700px!important;overflow:hidden!important}
+@media(max-width:370px){.quick-sheet{width:calc(100vw - 13px);border-radius:20px}.quick-panel-body{padding-left:7px;padding-right:7px}.quick-titlebar{padding-left:12px;padding-right:12px}.quick-overlay .g-tree-lamp-grid{padding-left:5px;margin-left:5px}}
+@media(prefers-reduced-motion:reduce){.quick-launcher,.quick-sheet{transition:none!important;animation:none!important}}
+
+/* v0.7 · Ambient Lamp — one custom light object and one *directional* wash across the app.
+   No box button. Wash sits above content but below controls, always pointer-events:none. */
+:root{--ambient-rgb:188 126 238;--ambient-power:0;--ambient-symbol:.12}
+.ambient-room-glow{position:fixed;inset:0;z-index:720;pointer-events:none;overflow:hidden;isolation:isolate;opacity:var(--ambient-power);transition:opacity .38s ease,background-color .45s ease;
+background:radial-gradient(ellipse 85vw 41vh at calc(100% - 26px) clamp(145px,22dvh,246px),rgb(var(--ambient-rgb) / .26) 0%,rgb(var(--ambient-rgb) / .105) 38%,transparent 81%);mix-blend-mode:screen}
+.ambient-room-glow::before{content:"";position:absolute;right:-5px;top:clamp(145px,22dvh,246px);width:min(96vw,720px);height:37vh;background:linear-gradient(268deg,rgb(var(--ambient-rgb) / .23),rgb(var(--ambient-rgb) / .07) 52%,transparent 98%);clip-path:polygon(100% 0,100% 36%,0 100%,0 78%);opacity:.59;filter:blur(17px)}
+.quick-launcher{width:64px;min-width:64px;height:83px;padding:2px 4px 5px;right:max(6px,env(safe-area-inset-right));border:0!important;border-radius:25px;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;isolation:isolate;overflow:visible;touch-action:none}
+.quick-launcher::before{content:"";position:absolute;width:96px;height:96px;right:-9px;top:-1px;background:radial-gradient(circle,rgb(var(--ambient-rgb) / .70),rgb(var(--ambient-rgb) / .24) 35%,transparent 73%);filter:blur(19px);opacity:var(--ambient-power);pointer-events:none;z-index:-1}
+.quick-launcher::after{content:"";position:absolute;width:135px;height:75px;right:31px;top:15px;background:linear-gradient(270deg,rgb(var(--ambient-rgb) / .23),rgb(var(--ambient-rgb) / .075) 56%,transparent);transform:skewY(-13deg);filter:blur(14px);opacity:var(--ambient-power);pointer-events:none;z-index:-1}
+.quick-launcher>.ambient-lamp-device{display:grid;place-items:center;position:relative;width:62px;height:69px;min-height:69px;line-height:1;z-index:1;filter:none}
+.quick-launcher .ambient-lamp-art{width:63px;height:76px;display:block;overflow:visible;filter:drop-shadow(0 5px 8px #08091dbb)}
+.quick-launcher .ambient-lamp-silhouette{fill:#332b4a;stroke:#d2c5e3;stroke-width:2.6;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-reflection{stroke:#f5e8ff;stroke-width:3.4;opacity:.35;stroke-linecap:round;fill:none}
+.quick-launcher .ambient-lamp-diffuser{fill:rgb(var(--ambient-rgb) / var(--ambient-symbol));stroke:rgb(var(--ambient-rgb) / .95);stroke-width:2.7;filter:drop-shadow(0 0 9px rgb(var(--ambient-rgb) / .82))}
+.quick-launcher .ambient-lamp-stem{stroke:#cfc1e5;stroke-width:5;stroke-linecap:round;fill:none}
+.quick-launcher .ambient-lamp-base{fill:#5c4f7a;stroke:#d1c3e1;stroke-width:2.3;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-detail{stroke:#ffffff9c;stroke-width:2;fill:none}
+.quick-launcher>small{font-size:10px;line-height:1.1;font-weight:780;letter-spacing:.3px;display:block;z-index:2;position:relative;top:-7px;text-shadow:0 1px 6px #0b071d,0 0 15px #22143b;color:#f4eaff}
+.quick-launcher[data-ambient-state=disconnected] .ambient-lamp-art{filter:drop-shadow(0 4px 6px #070b16)}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-diffuser{stroke:#947cae;fill:#6c61845c;filter:none}
+.quick-launcher[aria-expanded=true]{visibility:hidden;pointer-events:none}
+.quick-launcher:focus-visible{outline:2px solid #ddbcff;outline-offset:2px}
+.quick-titlebar{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;padding-top:23px;cursor:grab}
+.quick-swipe-grip{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:44px;height:4px;border-radius:8px;background:#c8b8e1a8;pointer-events:none}
+.quick-sheet{transform:translate3d(0,0,0);animation:quick-drawer-enter .24s cubic-bezier(.2,.8,.25,1) both}
+@keyframes quick-drawer-enter{from{transform:translate3d(34px,0,0);opacity:.74}to{transform:translate3d(0,0,0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.ambient-room-glow,.quick-launcher .ambient-lamp-art{transition:none!important}.quick-sheet{animation:none!important}}
+
+/* v0.9 · LEFT-FACING FLOOR LAMP / SPLIT-COLOR LIGHT CAST
+   Each beam comes from a distinct on lamp or fresh live-music channel, not a decorative preset.
+   The entire layer is hit-test transparent, with a subtle fan aimed LEFT + DOWN. */
+:root{
+ --ambient-ray-1:255 199 126;
+ --ambient-ray-2:255 199 126;
+ --ambient-ray-3:255 199 126;
+ --ambient-beam-count:0;
+}
+.ambient-room-glow{
+ position:fixed;inset:0;z-index:720;pointer-events:none;opacity:var(--ambient-power);
+ background:radial-gradient(ellipse 90vw 54vh at calc(100% - 45px) clamp(180px,28dvh,315px),
+ rgb(var(--ambient-rgb) / .13),rgb(var(--ambient-rgb) / .045) 42%,transparent 76%);
+ mix-blend-mode:screen;transition:opacity .33s ease
+}
+.ambient-room-glow::before{
+ content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
+ background:radial-gradient(ellipse 75vw 65vh at 90% 34%,rgb(var(--ambient-rgb) / .20),transparent 83%);
+ filter:blur(22px);clip-path:none
+}
+.ambient-room-glow .ambient-ray{
+ position:absolute;top:calc(clamp(135px,22dvh,238px) + 45px);right:28px;
+ width:min(94vw,745px);height:min(67vh,565px);
+ background:linear-gradient(251deg,rgb(var(--ray-color) / .40) 0%,rgb(var(--ray-color) / .22) 33%,rgb(var(--ray-color) / .09) 65%,transparent 100%);
+ filter:blur(14px);pointer-events:none;
+ transform:translateZ(0);will-change:opacity
+}
+.ambient-room-glow .ambient-ray-1{
+ --ray-color:var(--ambient-ray-1);
+ clip-path:polygon(100% 0%,100% 2%,0 99%,0 78%)
+}
+.ambient-room-glow .ambient-ray-2{
+ --ray-color:var(--ambient-ray-2);
+ clip-path:polygon(100% 0%,100% 2%,0 77%,0 54%)
+}
+.ambient-room-glow .ambient-ray-3{
+ --ray-color:var(--ambient-ray-3);
+ clip-path:polygon(100% 0%,100% 2%,0 56%,0 34%)
+}
+.quick-launcher{width:67px;min-width:67px;height:91px;min-height:91px;top:clamp(135px,22dvh,238px);right:max(6px,env(safe-area-inset-right));padding:0 3px 0;touch-action:none;-webkit-user-select:none;user-select:none}
+.quick-launcher>.ambient-lamp-device{width:65px;height:83px;min-height:83px}
+.quick-launcher svg.ambient-lamp-art{width:67px;height:83px;overflow:visible;filter:drop-shadow(0 6px 9px #090817a4)}
+.quick-launcher .ambient-lamp-silhouette{fill:url(#lumaLampMetal);stroke:#bcb0d2;stroke-width:3.1;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-stem{fill:none;stroke:#9b92b1;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+.quick-launcher .ambient-lamp-reflection{stroke:#e3d9fc;stroke-width:3.6;fill:none;opacity:.55;stroke-linecap:round}
+.quick-launcher .ambient-lamp-diffuser{fill:rgb(var(--ambient-rgb) / var(--ambient-symbol));stroke:rgb(var(--ambient-rgb) / .96);stroke-width:2.1;filter:drop-shadow(0 0 9px rgb(var(--ambient-rgb) / .7))}
+.quick-launcher .ambient-lamp-lumen{fill:none;stroke-width:3.9;stroke-linecap:round;opacity:var(--ambient-power);filter:drop-shadow(0 0 3px currentColor)}
+.quick-launcher .ambient-lamp-lumen-one{stroke:rgb(var(--ambient-ray-1))}
+.quick-launcher .ambient-lamp-lumen-two{stroke:rgb(var(--ambient-ray-2))}
+.quick-launcher .ambient-lamp-lumen-three{stroke:rgb(var(--ambient-ray-3))}
+.quick-launcher .ambient-lamp-joint{stroke:#d7cbe4;stroke-width:6;stroke-linecap:round}
+.quick-launcher .ambient-lamp-base{fill:#635678;stroke:#c7b8d7;stroke-width:2.7}
+.quick-launcher .ambient-lamp-detail{stroke:#e7d9f0;stroke-width:2;fill:none;opacity:.55}
+.quick-launcher>small{position:relative;top:-11px;text-shadow:0 2px 7px #131023,0 0 11px #1c1425;font-size:9px}
+.quick-launcher::after{right:45px;top:38px;transform:rotate(17deg);width:200px;height:85px;opacity:calc(var(--ambient-power) * .48)}
+.quick-launcher::before{right:29px;top:24px;opacity:calc(var(--ambient-power) * .65)}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-lumen{opacity:0}
+.quick-swipe-close{
+ position:fixed;z-index:4;top:clamp(135px,22dvh,238px);right:0;display:grid;place-items:center;
+ width:34px;min-width:34px;height:92px;min-height:92px;padding:0;
+ border:1px solid #bda9db80;border-right:0;border-radius:15px 0 0 15px;
+ background:linear-gradient(130deg,#716192b3,#2f284caf);color:#fff4ff;font-size:31px;
+ box-shadow:-6px 0 19px #281b4052;touch-action:none;-webkit-user-select:none;user-select:none
+}
+.quick-swipe-close>span{pointer-events:none}
+.quick-swipe-close:focus-visible{outline:2px solid #fae4ff;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){
+ .ambient-room-glow{transition:none}
+ .ambient-room-glow .ambient-ray{will-change:auto}
+}
+
+/* v1.0 · Finger-driven pull-to-open Luma wall lamp.
+   A fixed wall mount + translating lamp head + one continuously extended SVG arm.
+   The light rays share the moving lampshade lip as their only physical origin. */
+:root{--luma-pull-px:0px;--luma-head-svg-px:0px}
+.quick-launcher{width:73px;min-width:73px;height:99px;min-height:99px;padding:0;border:0!important;overflow:visible!important;touch-action:none!important}
+.quick-launcher>.ambient-lamp-device{width:73px;height:98px;min-height:98px;overflow:visible!important}
+.quick-launcher svg.ambient-lamp-art{width:73px;height:96px;max-width:none;overflow:visible!important;filter:drop-shadow(0 5px 8px #10102aab)}
+.quick-launcher .ambient-moving-head{
+ transform:translate3d(calc(0px - var(--luma-head-svg-px)),0,0);
+ will-change:transform
+}
+.quick-launcher .ambient-lamp-silhouette{
+ fill:url(#lumaLampMetal);stroke:#c9bedb;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.quick-launcher .ambient-lamp-base{
+ fill:url(#lumaLampMetal);stroke:#c9b9d9;stroke-width:2.5;stroke-linejoin:round
+}
+.quick-launcher .ambient-lamp-mount-line{stroke:#cfc4df;stroke-width:2;fill:none;opacity:.45}
+.quick-launcher .ambient-lamp-arm{stroke:#bdb1d2;stroke-width:5.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-rim{stroke:#fff0e5;stroke-width:3;stroke-linecap:round;opacity:.78}
+.quick-launcher .ambient-lamp-top-opening{fill:rgb(var(--ambient-ray-1) / .12);stroke:rgb(var(--ambient-ray-1) / .55);stroke-width:1.7}
+.quick-launcher .ambient-lamp-diffuser{
+ fill:rgb(var(--ambient-rgb) / var(--ambient-symbol));
+ stroke:rgb(var(--ambient-rgb) / .94);stroke-width:2.2;
+ filter:drop-shadow(0 0 8px rgb(var(--ambient-rgb) / .6))
+}
+.quick-launcher .ambient-lamp-lumen{stroke-width:3.5;opacity:var(--ambient-power)}
+.quick-launcher .ambient-lamp-reflection{stroke:#f5edff;stroke-width:3;fill:none;stroke-linecap:round;opacity:.38}
+.quick-launcher .ambient-lamp-joint{stroke:#d1c3e6;stroke-width:5.4;stroke-linecap:round}
+.quick-launcher::after,.quick-launcher::before{display:none!important}
+.quick-launcher>small{display:none!important}
+/* The lamp stays above the opening panel while the thumb is dragging; touch capture
+   stays on its original 73px element and the shade follows beyond it. */
+.quick-launcher.quick-pulling{z-index:39620!important}
+.quick-launcher.quick-pulling .ambient-moving-head{transition:none!important}
+.quick-launcher:not(.quick-pulling) .ambient-moving-head{transition:transform .23s cubic-bezier(.2,.78,.26,1)}
+/* Replace the old absolute full-screen color washes and offset polygons. */
+.ambient-room-glow{
+ position:fixed!important;inset:0!important;z-index:720!important;opacity:var(--ambient-power);
+ background:none!important;overflow:hidden!important;mix-blend-mode:screen;pointer-events:none!important;
+ transition:opacity .25s ease
+}
+.ambient-room-glow::before{display:none!important}
+.ambient-room-glow .ambient-ray{display:none!important}
+.ambient-beam-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.ambient-beam-path{stroke:none;filter:blur(10px)}
+.ambient-beam-1{fill:url(#ambientBeamGradient1)}
+.ambient-beam-2{fill:url(#ambientBeamGradient2)}
+.ambient-beam-3{fill:url(#ambientBeamGradient3)}
+.ambient-beam-up{fill:url(#ambientBeamGradientUp);stroke:none;filter:blur(8px)}
+#ambientBeamGradient1 stop{stop-color:rgb(var(--ambient-ray-1))}
+#ambientBeamGradient2 stop{stop-color:rgb(var(--ambient-ray-2))}
+#ambientBeamGradient3 stop{stop-color:rgb(var(--ambient-ray-3))}
+#ambientBeamGradientUp stop{stop-color:rgb(var(--ambient-ray-1))}
+/* During the drag, the actual Hue tree is visible but completely noninteractive.
+   No body scroll lock until the action has snapped to the open state. */
+.quick-overlay.quick-preview{pointer-events:none!important}
+.quick-overlay.quick-preview .quick-sheet{animation:none!important;transition:none}
+.quick-overlay.quick-preview .quick-backdrop{pointer-events:none;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.quick-overlay.quick-preview .quick-swipe-close{display:none!important}
+.quick-overlay.quick-preview .quick-panel-body{overflow:hidden}
+.quick-overlay.quick-preview.quick-retract .quick-sheet{
+ transition:transform .22s cubic-bezier(.36,.02,.62,.98),opacity .22s ease!important
+}
+.quick-overlay.quick-preview.quick-retract .quick-backdrop{transition:opacity .22s ease!important}
+.quick-overlay[data-pulled-open=true] .quick-sheet{animation:none!important}
+.quick-overlay[data-pulled-open=true] .quick-backdrop{transition:opacity .2s ease}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher .ambient-moving-head{transition:none!important}
+ .quick-overlay.quick-preview.quick-retract .quick-sheet{transition:none!important}
+ .ambient-beam-path,.ambient-beam-up{filter:none!important}
+}
+
+/* V3 · User-drawn L: shade stem drops vertically then runs horizontally right
+   to the wall mount. While expanded the entire lamp moves into the header strip
+   above the tree, and the *moving shade*, not the right-edge button, is draggable. */
+:root{--luma-open-lift-px:0px}
+.quick-launcher{
+ transform:translate3d(0,calc(0px - var(--luma-open-lift-px)),0);
+ transform-origin:center right;
+ transition:transform .14s ease-out;
+}
+.quick-launcher.quick-pulling{transition:none!important}
+.quick-launcher[aria-expanded=true]{
+ visibility:visible!important;
+ opacity:1!important;
+ z-index:39620!important;
+ pointer-events:none!important;
+}
+.quick-launcher .ambient-lamp-arm{
+ stroke:#c9bddb;
+ stroke-width:5.5;
+ filter:drop-shadow(0 2px 2px #100d1f7a);
+}
+.quick-launcher .ambient-lamp-joint{fill:#d3bddb;stroke:none}
+.quick-launcher .ambient-lamp-mount-line{stroke:#f4e4ff;opacity:.5}
+.quick-launcher .ambient-lamp-top-opening{
+ fill:rgb(var(--ambient-ray-1) / .14);
+ stroke:rgb(var(--ambient-ray-1) / .67)
+}
+.quick-lamp-grip{
+ position:fixed;z-index:39630;
+ top:calc(clamp(135px,22dvh,238px) - var(--luma-open-lift-px) + 3px);
+ right:calc(max(6px,env(safe-area-inset-right)) + 21px + var(--luma-pull-px));
+ width:76px;min-width:76px;height:75px;min-height:75px;
+ border:0;background:transparent;box-shadow:none;padding:0;margin:0;
+ border-radius:35px;cursor:grab;
+ touch-action:none;-webkit-user-select:none;user-select:none;
+ -webkit-tap-highlight-color:transparent;
+}
+.quick-lamp-grip[hidden]{display:none!important}
+.quick-lamp-grip:active{cursor:grabbing}
+.quick-lamp-grip:focus-visible{outline:2px solid #f8e5ff;outline-offset:2px}
+.quick-swipe-close{display:none!important}
+/* Better readability under a shade that now lives in the header area. */
+.quick-overlay:not([hidden]) .quick-titlebar{padding-right:57px}
+.quick-overlay.quick-preview .quick-titlebar{pointer-events:none}
+.ambient-beam-canvas .ambient-beam-path{
+ filter:blur(8px);
+ opacity:.8;
+}
+.ambient-beam-canvas .ambient-beam-up{filter:blur(9px);opacity:.38}
+.ambient-room-glow{mix-blend-mode:screen}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher{transition:none!important}
+ .quick-lamp-grip{transition:none!important}
+ .ambient-beam-canvas .ambient-beam-path,.ambient-beam-canvas .ambient-beam-up{filter:none}
+}
