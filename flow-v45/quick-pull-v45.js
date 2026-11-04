@@ -150,6 +150,11 @@ function attach({doc=root.document,win=root}={}){
   railCarriage.setAttribute('data-offset',String(carriageY));
   launcher.dataset.railOffset=String(carriageY);
   rootStyle.setProperty('--luma-open-lift-px',round(g.lift)+'px');
+  // The hit target follows the REAL moving shade bounding position.
+  // This removes the old offset-dependent invisible blocker in front of
+  // unrelated Quick Control buttons and works identically on both hands.
+  rootStyle.setProperty('--v45-grip-left',round(g.headX-38)+'px');
+  rootStyle.setProperty('--v45-grip-top',round(g.rimY-58)+'px');
   // WebKit SVG g translations use viewBox units: convert CSS-pixel travel
   // so the moving shade stays perfectly joined to the actual arm endpoint.
   rootStyle.setProperty('--luma-head-svg-px',round(g.distance*100/g.svgWidth)+'px');
