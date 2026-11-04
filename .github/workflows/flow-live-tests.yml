@@ -18,6 +18,6 @@ jobs:
         with:
           node-version: '22'
       - name: Real Hue preview integrity
-        run: node --test flow-live/tests/flow-live.test.cjs flow-live/tests/lamp-icons.test.cjs flow-live/tests/visual-mood-tree.test.cjs flow-live/tests/floating-quick-control.test.cjs flow-live/tests/ambient-lamp-swipe.test.cjs
+        run: node --test flow-live/tests/flow-live.test.cjs flow-live/tests/lamp-icons.test.cjs flow-live/tests/visual-mood-tree.test.cjs flow-live/tests/floating-quick-control.test.cjs flow-live/tests/ambient-lamp-swipe.test.cjs flow-live/tests/ambient-swipe-v7.test.cjs flow-live/tests/mood-lamp-swipe-v9.test.cjs
       - name: Parse sound protection module
         run: node --check flow-live/flow/noise-guard.js
