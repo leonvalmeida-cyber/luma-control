@@ -241,7 +241,7 @@ async function tick(){
   if(!devices.length){end('Keine Lampen ausgewählt.');return}
   const group=window.lumaMusicGroup();
   const i=group?0:cursor++%devices.length;
-  const d=devices[i],frame=musicFrames[i%lamps.length],v=hsv(...frame.rgb);
+  const d=devices[i],frame=musicFrames[i%musicFrames.length],v=hsv(...frame.rgb);
   const speed=Number($('speed').value)/100;
   const body=frame.brightness<=.001?{on:false,transitiontime:0}:{on:true,bri:Math.max(1,Math.min(254,Math.round(frame.brightness*254/5)*5)),transitiontime:speed>.7?0:Math.max(0,Math.round(5*(1-speed)))};
   if(body.on&&(group||d.color)){
