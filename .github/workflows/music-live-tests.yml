@@ -1,0 +1,27 @@
+name: Luma Music LIVE safety checks
+on:
+  push:
+    paths:
+      - 'music-live/**'
+      - '.github/workflows/music-live-tests.yml'
+  pull_request:
+    paths:
+      - 'music-live/**'
+jobs:
+  live-music-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate real Hue Music preview
+        run: node --test music-live/tests/music-live.test.cjs
+      - name: Parse all bundled JavaScript
+        run: |
+          node --check music-live/groups-v1.js
+          node --check music-live/music-immersive-v1.js
+          node --check music-live/scenes-v1.js
+          node --check music-live/groups-v1-tree.js
