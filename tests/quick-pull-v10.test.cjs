@@ -14,7 +14,8 @@ test('Wall fixture stays still: moving shade is independent of the fixed mount',
  assert.ok(css.includes('var(--luma-head-svg-px)'),'WebKit renders SVG group transforms in viewBox units');
  assert.ok(css.includes('.ambient-moving-head'));
  assert.ok(css.includes('quick-pulling'));
- assert.ok(pull.armPath(160).includes('H82 Q88 33 88 39 V53'));
+ assert.ok(pull.armPath(160).includes('78 V100 Q'),'L downstroke preserved');
+ assert.ok(pull.armPath(160).endsWith('106 H86'),'L foot connects to right wall');
  assert.notEqual(pull.armPath(0),pull.armPath(160));
 });
 test('Progress maps thumb distance to continuous physical extension',()=>{
@@ -33,11 +34,11 @@ test('All beams originate at moving lower rim and diverge downward; weak seconda
  assert.equal(a.bands.length,3);
  assert.equal(b.bands.length,3);
  assert.deepEqual(a.origin,[335,245]);assert.deepEqual(b.origin,[205,245]);
- assert.ok(a.bands.every(d=>d.startsWith('M323 ')));
- assert.ok(b.bands.every(d=>d.startsWith('M193 ')));
- assert.ok(a.edges[3][1]>a.edges[2][1]&&a.edges[2][1]>a.edges[0][1]);
- assert.ok(a.edges[3][1]>844,'downward beam should open past viewport floor');
- assert.ok(a.up.includes('213')||a.up.includes('207'));
+ assert.ok(a.bands[0].startsWith('M320 245'));
+ assert.ok(b.bands[0].startsWith('M190 245'));
+ assert.equal(a.wallEdgeX,350,'rightmost cone edge is vertical below shade rim');
+ assert.ok(a.edges.every(edge=>edge[1]>844),'all ray segments finish below viewport');
+ assert.equal(a.topEndpoints[0]+a.topEndpoints[1],670,'top spill perfectly symmetrical');
  assert.ok(css.includes('.ambient-beam-up'));
  assert.ok(css.includes('url(#ambientBeamGradientUp)'));
 });
@@ -61,7 +62,7 @@ function fixture(){
   };
   elements.set(name,el);return el;
  }
- const launcher=make('quickLauncher'),overlay=make('quickOverlay'),sheet=make('quickSheet'),backdrop=make('quickBackdrop'),arm=make('ambientLampArm'),canvas=make('ambientBeamCanvas'),up=make('ambientBeamUp');
+ const launcher=make('quickLauncher'),grip=make('quickLampGrip'),overlay=make('quickOverlay'),sheet=make('quickSheet'),backdrop=make('quickBackdrop'),arm=make('ambientLampArm'),canvas=make('ambientBeamCanvas'),up=make('ambientBeamUp');
  for(let i=1;i<=3;i++)make('ambientBeam'+i);
  const rootStyle={setProperty(k,v){styles.set(k,v)},getPropertyValue:k=>styles.get(k)};
  const win={innerWidth:390,innerHeight:844,TouchEvent:function TouchEvent(){},
@@ -78,7 +79,7 @@ function fixture(){
   const entries=[...raf.entries()];raf.clear();
   for(const [,fn]of entries)fn(clock);
  }
- return {controller,launcher,overlay,sheet,backdrop,arm,canvas,up,elements,styles,win,step,get opened(){return openCount}};
+ return {controller,launcher,grip,overlay,sheet,backdrop,arm,canvas,up,elements,styles,win,step,get opened(){return openCount}};
 }
 test('Real finger movement at 25%, 50%, 75% moves arm, lamp, cone and drawer together before release',()=>{
  const t=fixture(),drag=pull.limits(390).drag;
