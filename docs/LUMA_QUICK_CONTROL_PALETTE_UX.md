@@ -1,6 +1,6 @@
 # Luma Flow · Quick Control + visuelle Musikstimmungen
 **UX-Konzept / Implementierungsplan · 04.11.2026**
-**Status: Designentwurf; noch keine Änderungen an der Live-Oberfläche.**
+**Status (04.11.2026): beide UI-Korrekturen im getrennten `main:flow-live/`-Testpfad und auf `feature/luma-flow-v1` implementiert; produktives `main:index.html` unverändert.**
 **Basis:** \`flow-live/index.html\` auf \`main\` (separater Test-Unterordner); Produktions-\`main/index.html\` v0.23 ist geschützt.
 
 ## 1. Korrektur des Missverständnisses
@@ -123,3 +123,13 @@ Zwei strikt unterschiedliche Bausteine:
 **Nicht** eine zweite Lampenliste unten mit der Gruppenauswahl synchronisieren. **Stattdessen eine einzige visuelle Quelle für Geräte**: den Gruppenbaum mit Mini-Lampenkarten und direkter Power-Aktion. Und **ein separater visueller Ort für Musiklooks**: kleine Farbpaletten-Karten. Dadurch entsteht Übersicht ohne doppelten Platzbedarf.
 
 Nächster eigentlicher Entwicklungsschritt nach diesem abgestimmten Konzept: die alte Lampengalerie gezielt aus dem Musikbereich herausnehmen, Baum-Power/Auswahl voneinander trennen, und die Palettenkarten in einem isolierten iPhone-Test implementieren.
+
+## Umsetzung / überprüfter Teststand
+
+- **Musik:** Die bestehenden vier Paletten (`neon`, `sunset`, `ocean`, `warm`) sind weiterhin dieselben internen RGB-Paletten und Buttons, jetzt mit unterschiedlichen kompakten, horizontal scrollbaren Art-Karten (Electric Night, Beach Glow, Blue Waves, Cozy Light). Die bestehenden Klickhandler und gespeicherten Musikwerte werden weiterverwendet.
+- **Geräte:** Einzige sichtbare Lampe-Kartenansicht ist der gemeinsame Gruppenbaum. Lampen als 2-Spalten-Glow-Karten mit 15 anpassbaren Icon-Typen, Namen, aktuellem Bridge-Ein/Aus-Status, Auswahl und eigenständigem Power-Knopf. Auf-/Zuklappen und Statusänderung ohne vollständige Baum-Rekonstruktion. Einzelnes Power betätigen stoppt bewusst konkurrierende Musikbefehle und sendet ausschließlich an `/lights/<lampId>/state`. Lampenauswahl sendet keinen Lampenbefehl.
+- **Entfernt:** Die redundante `miLampGallery` im Musikbereich und ihre 7 gerenderten Kacheln. Die 7 internen Frame-Berechnungen für die Audio/Hue-Engine wurden **nicht** entfernt.
+- **Dateien:** `flow-live/index.html`, `flow-live/music-immersive-v1.css`, `flow-live/groups-v1-tree.js`, `flow-live/groups-v1-tree.css` plus `flow-live/tests/visual-mood-tree.test.cjs`, bestehende Tests aktualisiert; äquivalent auf `feature/luma-flow-v1`.
+- **Tests:** 26 statische/DOM-simulierte UI- und Datenintegritätschecks für den separaten Live-Pfad lokal im JS-Harness bestanden. Github Actions auf Feature-Branch: Flow DSP, Groups v1 und Music Immersive alle erfolgreich (Stand Feature-Commit `5cae01db00b276efbe8e91bea3a6ee7000e26376`). Echte Hue Bridge und iPhone-Safari-Darstellung **nicht** durch den Assistenten geprüft.
+- **Test-URL:** https://leonvalmeida-cyber.github.io/luma-control/flow-live/?v=5
+- **Absichtliche Grenze:** Hue API v1 Transport und Musik-Noise-Guard bleiben unverändert. LED-Glow ist eine grobe zustandsbasierte UI-Darstellung, keine genaue Messung der Lampenfarbwirkung.
