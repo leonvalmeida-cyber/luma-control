@@ -93,6 +93,13 @@ body:has(#quickOverlay:not([hidden])) .ambient-beam-canvas .ambient-beam-path{op
 :root[data-v42-design=washi] .quick-launcher .ambient-lamp-diffuser{opacity:0!important}
 :root[data-v42-design=washi] .quick-launcher .ambient-lamp-reflection{opacity:.2}
 
+/* Ring-lamp cutout must really be transparent, not filled by a second cloth layer. */
+:root[data-v42-design=halo] #v41ClothClip path{clip-rule:evenodd}
+:root[data-v42-design=halo] .quick-launcher .v41-shade-edge-shadow,
+:root[data-v42-design=halo] .quick-launcher .v41-shade-top-shadow{
+ display:none!important
+}
+:root[data-v42-design=halo] .quick-launcher .v42-inner-edge{fill-rule:evenodd}
 :root[data-v42-design=halo] .quick-launcher .ambient-lamp-silhouette{
  fill:url(#v42HaloFinish)!important;
  fill-rule:evenodd!important;
