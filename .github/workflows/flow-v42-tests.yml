@@ -1,0 +1,28 @@
+name: Luma Flow V4.2 preview checks
+on:
+  push:
+    paths:
+      - 'flow-v42/**'
+      - '.github/workflows/flow-v42-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v42/**'
+      - '.github/workflows/flow-v42-tests.yml'
+jobs:
+  v42:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse all new V4.2 scripts
+        run: |
+          node --check flow-v42/v42.js
+          node --check flow-v42/quick-pull-v42.js
+      - name: V4.2 symmetry, Luma and styles
+        run: node --test flow-v42/tests/v42.test.cjs
+      - name: Keep previous LIVE and V4.1 regression suites green
+        run: node --test flow-live/tests/flow-live.test.cjs flow-live/tests/quick-pull-v10.test.cjs flow-v41/tests/v41.test.cjs
