@@ -73,6 +73,11 @@ function create(doc=root.document,win=root){
   rim.setAttribute('d',shape[prefs.design].rim);
   opening.setAttribute('d',shape[prefs.design].opening);
   handInput.checked=prefs.hand==='left';
+  const left=prefs.hand==='left';
+  launcher.setAttribute('aria-label',left?'Lichtsteuerung öffnen oder Lampe nach rechts herausziehen':'Lichtsteuerung öffnen oder Lampe nach links herausziehen');
+  const grip=el('quickLampGrip');
+  if(grip)grip.setAttribute('aria-label',left?'Lampenschirm nach links ziehen, um die Lichtsteuerung zu schließen':'Lampenschirm nach rechts ziehen, um die Lichtsteuerung zu schließen');
+  luna.textContent=left?'Luna':'una';
   lunaInput.checked=prefs.luna;
   for(const b of prefsCard.querySelectorAll('[data-v4-choice]')){
    b.setAttribute('aria-pressed',String(b.dataset.v4Choice===prefs.design));
@@ -196,7 +201,12 @@ function create(doc=root.document,win=root){
   const progress=clamp(Number(launcher.dataset.pullProgress||0),0,1);
   const pull=Number(doc.documentElement.style.getPropertyValue('--luma-pull-px').replace('px',''))||0;
   const elbow=43-pull*100/73;
-  luna.setAttribute('x',String(elbow+12));
+  const letterX=elbow+12;
+  luna.setAttribute('x',String(letterX));
+  // The SVG is mirrored for left-hand mode; counter-mirror only the lettering,
+  // not the shade or the articulated L arm.
+  if(prefs.hand==='left')luna.setAttribute('transform','translate('+((letterX+15)*2)+',0) scale(-1 1)');
+  else luna.removeAttribute('transform');
   luna.style.opacity=String(prefs.luna?Math.max(0,Math.min(.9,(progress-.28)/.48)):0);
  }
  const observer=new MutationObserver(()=>paintLettering());
