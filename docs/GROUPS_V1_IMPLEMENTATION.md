@@ -40,7 +40,7 @@ Reason: the previously approved 48-scene library and its fixes already exist in 
 - Music audio analysis and transport loops, scene catalogue and existing bridge credentials were not rewritten.
 
 ## Checks performed
-- 18 initial in-memory core assertions, then 16 named regressions from \`tests/groups-v1.test.cjs\` executed with a compatible assertion harness inside the available JS tool.
+- 18 initial in-memory core assertions, then 21 named regressions from \`tests/groups-v1.test.cjs\` executed with a compatible assertion harness inside the available JS tool.
 - \`new Function\` syntax checks on \`groups-v1.js\`, \`groups-v1-ui.js\`, \`scenes-v1.js\`, and every inline \`index.html\` script. Checked IDs in feature HTML (111 unique).
 - Independent three-tab preview inline-script parsing and duplicate-ID check.
 - GitHub CI workflow created to run \`node --test\` and \`node --check\` on new commits; CI result not yet confirmed.
@@ -67,3 +67,12 @@ Test using demo data (not real lights):
 6. Try export/import on a fresh browser session if desired (preview resets its in-memory changes on reload).
 
 Do not merge until real iPhone + Hue smoke test and explicit user acceptance. Main 0.23 remains rollback option.
+
+## Group-tree collapse fix — 2026-11-04
+- User reported that collapsing groups shifted the page and sometimes showed apparently erroneous entries.
+- Cause identified in code: the disclosure button invoked a full `container.replaceChildren()` rebuild, deleting the focused iOS Safari element. In the demo, every lamp selection/toggle also triggered redundant tree rebuilds. The hierarchy additionally repeated some lamps under a subgroup and its parent.
+- Fix: create the subtree once, toggle its `hidden` property and `aria-expanded` without destroying the clicked button; update only `aria-pressed`/header on target changes.
+- Preserve tree panel geometry with fixed responsive scroll-panel height; avoid page layout shifts on collapse.
+- Remove redundant lamp leaves within parent groups and Hue rooms; multiple group membership in the data model remains supported.
+- Applied on feature branch and in isolated `main:groups-preview/` files. Productive `main:index.html` unchanged.
+- CI passing with 21 named Node regression tests including repeated disclosure and focus-safe DOM checks. Device/real iPhone verification remains open.
