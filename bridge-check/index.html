@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b18">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https:; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Luma · Sicherer Hue Bridge-Test</title>
+<link rel="stylesheet" href="./groups-v1-tree.css">
+<script src="./groups-v1.js" defer></script>
+<script src="./groups-v1-tree.js" defer></script>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#090b18;color:#f7f4ff;--accent:#c6adff;--surface:#1c1b35;--outline:#ffffff23;--muted:#bcb4d0}
+*{box-sizing:border-box}html{background:#090b18}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse 150% 420px at 95% 0%,#6d3b9352,transparent 72%),radial-gradient(ellipse 100% 370px at 0% 74%,#2f50874b,transparent 75%),#090b18}
+button,input,select{font:inherit}button{border:0;cursor:pointer}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #e5d4ff;outline-offset:2px}
+[hidden]{display:none!important}.page{width:min(100%,540px);margin:auto;padding:calc(18px + env(safe-area-inset-top)) 17px calc(40px + env(safe-area-inset-bottom))}
+.brand{display:flex;align-items:center;gap:10px;letter-spacing:2.5px;font-size:18px;font-weight:820}.logo{display:grid;place-items:center;width:36px;height:36px;border-radius:13px;background:linear-gradient(145deg,#f4afd6,#8c63d8 65%,#436fc0);box-shadow:0 0 24px #ae74ff5c}
+.badge{margin-left:auto;background:#9b7ed42c;border:1px solid #a890ce70;border-radius:14px;padding:8px 9px;font-size:9px;letter-spacing:.5px;white-space:nowrap}.eyebrow{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:750;color:#cdbaff;margin:22px 0 8px}
+h1{font-size:clamp(32px,8.5vw,42px);letter-spacing:-1.4px;line-height:1.07;margin:0 0 10px}h2{font-size:20px;margin:0 0 14px}h3{font-size:16px;margin:0 0 12px}p{font-size:13px;line-height:1.6;color:#cfc7e2}.lead{margin:0 0 21px}.muted{color:#c9c0db}.fine{font-size:11px;color:#bcb1d2}.hero{background:radial-gradient(circle at 90% 15%,#9253bf6e,transparent 50%),linear-gradient(145deg,#282044,#15213a);border:1px solid #ffffff2a;border-radius:25px;padding:20px;margin-bottom:16px}
+.card{border:1px solid var(--outline);background:linear-gradient(160deg,#ffffff0c,#ffffff04),var(--surface);border-radius:21px;padding:19px 15px;margin:15px 0;box-shadow:0 10px 32px #0003}
+.field{display:block;margin:14px 0}.field span{display:block;font-size:12px;color:#ded4f6;margin-bottom:6px}.field input,.field select{width:100%;min-height:45px;border-radius:12px;background:#0b1126;color:#fff;border:1px solid #696388;padding:10px 12px;font-size:16px}.field input::placeholder{color:#a49ebc}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.row>*{flex:1}.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.btn{flex:1;min-height:46px;padding:11px 15px;border-radius:13px;font-size:13px;font-weight:750;background:#ffffff1a;color:#f9f4ff;border:1px solid #ffffff32}.btn.primary{background:linear-gradient(135deg,#c6adff,#9370e8);color:#1f1434;border:0}.btn.warn{background:#7e4e5b88;border:1px solid #d38fa1;color:#fff0ef}
+.notice{border-radius:13px;padding:11px 13px;background:#765a9833;border:1px solid #9679b663;font-size:12px;line-height:1.55;color:#e4daf3;margin-top:12px;white-space:pre-wrap;overflow-wrap:anywhere}.notice.error{border-color:#e0858f;background:#793d4b55;color:#ffd5dd}.notice.ok{border-color:#74ad9f;background:#23685840;color:#c3ffeb}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:18px 0}.stat{border-radius:15px;background:#ffffff0d;border:1px solid #ffffff1e;text-align:center;padding:12px 7px}.stat strong{display:block;font-size:25px;color:#eedfff}.stat small{font-size:11px;color:#c7bde0}
+#picker{margin:17px 0}.g-tree-inner{height:min(320px,39dvh)}.g-fast-tree{background:linear-gradient(140deg,#312442f0,#171e35f0)}
+.lamps{display:grid;gap:9px}.lamp{display:flex;align-items:center;gap:10px;border-radius:13px;padding:12px;background:#ffffff0c;border:1px solid #ffffff1b;font-size:12px;line-height:1.4}.lamp::before{content:"";width:12px;height:12px;border-radius:50%;background:#9bf2c5;box-shadow:0 0 12px #65daac80;flex:0 0 auto}.lamp.unreachable::before{background:#aa94ad;box-shadow:none}.lamp strong{display:block;font-size:13px}.lamp small{font-size:11px;color:#c2bad2}.lamp .state{margin-left:auto;white-space:nowrap;color:#baaed5;font-size:11px}
+details{margin-top:16px;background:#ffffff0c;border:1px solid #ffffff20;border-radius:15px;padding:0 12px}summary{min-height:46px;padding:13px 4px;cursor:pointer;font-size:13px;font-weight:740}details .inner{padding:2px 0 15px}
+.check{display:flex;align-items:center;gap:11px;font-size:13px;line-height:1.5;margin:16px 0;color:#ede2f8}.check input{width:21px;height:21px;accent-color:#c6adff;flex:none}
+code{font:12px ui-monospace,Menlo,monospace;color:#d4c8ff}
+#memberNames{margin:10px 0 0}.footer{font-size:11px;line-height:1.6;color:#b4a8c9;margin-top:21px}.footer a{color:#d0bcff}
+@media(max-width:345px){.badge{font-size:8px}.page{padding-left:12px;padding-right:12px}.stats{gap:5px}.stat{padding:10px 4px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="page">
+<header class="brand"><span class="logo" aria-hidden="true">✦</span><span>LUMA</span><span class="badge">BRIDGE-TEST · SEPARAT</span></header>
+<div class="eyebrow">Luma Immersive · Hardwareprüfung</div>
+<h1>Deine echten<br>Lichtbereiche.</h1>
+<p class="lead">Ein kontrollierter Test der Gruppenverwaltung mit deiner Hue Bridge Pro. Erst werden ausschließlich Lampen und Räume gelesen.</p>
+<section class="hero"><strong style="font-size:14px">🔒 Deine Haupt-App bleibt unverändert</strong><p class="fine">Diese Testseite speichert keinen Bridge-Schlüssel und verändert keine lokalen Gruppen. Es werden keine Lampenbefehle gesendet, außer du aktivierst den optionalen Einzeltest ausdrücklich.</p></section>
+<section class="card" aria-labelledby="connectTitle">
+<h2 id="connectTitle">1 · Bridge verbinden</h2>
+<p class="fine">iPhone und Bridge müssen im selben Heimnetz sein. Verwende dieselben Verbindungsdaten wie in deiner bisherigen Luma-Web-App.</p>
+<div class="buttons"><button id="reuse" class="btn" type="button">Vorhandenen Luma-Zugang übernehmen</button></div>
+<label class="field"><span>Lokale Bridge-IP</span><input id="ip" type="text" placeholder="192.168.x.x" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="decimal" aria-label="IP-Adresse der Bridge"></label>
+<label class="field"><span>Hue Application Key</span><input id="key" type="password" placeholder="Schlüssel aus deiner bisherigen App" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Hue Application Key"></label>
+<div class="buttons"><button id="connect" class="btn primary" type="button">Nur Lampen & Räume lesen</button></div>
+<div id="connectionStatus" class="notice" role="status" aria-live="polite">Noch nicht verbunden. Es werden keine Daten automatisch geladen.</div>
+<p class="fine">Bei Zertifikats-/Netzwerkfehlern: Bridge im gleichen WLAN prüfen. Die Seite zeigt eine genaue Fehlermeldung statt automatisch umzuschalten.</p>
+</section>
+<section class="card" id="results" hidden aria-labelledby="groupsTitle">
+<h2 id="groupsTitle">2 · Gruppen überprüfen</h2>
+<div class="stats"><div class="stat"><strong id="countLamps">–</strong><small>Lampen</small></div><div class="stat"><strong id="countRooms">–</strong><small>Räume & Zonen</small></div><div class="stat"><strong id="countLocal">–</strong><small>Lokale Gruppen</small></div></div>
+<p class="fine">Der Gruppenbaum verwendet die tatsächlich gelesenen Bridge-Geräte. Tippe auf All, Wohnzimmer, eine Untergruppe oder eine einzelne Lampe.</p>
+<div id="picker"></div>
+<div class="card" style="margin:12px 0;background:#131a30"><div class="eyebrow" style="margin:0 0 8px">Aktueller Lichtbereich</div><h3 id="selectedTitle">All</h3><p id="selectedSummary" class="fine" style="margin:0">–</p><div id="memberNames" class="lamps"></div></div>
+<div class="buttons"><button id="refresh" class="btn" type="button">↻ Lampenstatus erneut lesen</button></div>
+<div class="notice" id="musicGroupStatus" role="status">Musik-Zielbereich: noch nicht geprüft.</div>
+</section>
+<section class="card" id="singleTest" hidden aria-labelledby="singleTitle">
+<h2 id="singleTitle">3 · Optional: echte Lampe schalten</h2>
+<p class="fine">Nur wenn du die Steuerung ausdrücklich testen möchtest. Es wird niemals eine ganze Gruppe geschaltet.</p>
+<label class="check"><input id="consent" type="checkbox">Ich möchte eine einzelne Lampe testweise ein- oder ausschalten.</label>
+<label class="field"><span>Testlampe auswählen</span><select id="singleLamp" disabled aria-label="Testlampe"></select></label>
+<div class="buttons"><button class="btn primary" id="turnOn" disabled type="button">Eine Lampe einschalten</button><button class="btn warn" id="turnOff" disabled type="button">Eine Lampe ausschalten</button></div>
+<div id="commandStatus" class="notice">Keine Schreibbefehle ausgeführt.</div>
+</section>
+<section class="card">
+<h2>Test-Hinweise</h2>
+<p class="fine">Die Gruppenverwaltung nutzt dieselbe Gruppenauflösung wie die Entwicklungsfassung. Die Bridge-Pro-Anbindung der produktiven App verwendet derzeit Hue API v1; einige Bridge-Pro-Konfigurationen können zusätzliche Hue API v2-Unterstützung erfordern. Ein optionaler API-v2-Lesetest hilft bei der Diagnose, ändert aber keine Geräte.</p>
+<div class="buttons"><button id="v2test" class="btn" type="button">Optional: API v2 lesen</button></div>
+<div id="v2status" class="notice" role="status">API v2 noch nicht geprüft.</div>
+</section>
+<p class="footer">TESTSTATUS: Nur die Geräteprüfung auf deinem iPhone bestätigt die Verbindung mit deiner echten Bridge. <a href="../" aria-label="Produktive Luma-Hauptversion öffnen">Zur produktiven Luma Control</a></p>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const KEY_LOCAL='luma07_',STORAGE_V2='luma_groups_v2';
+let ip='',key='',loaded=false,engine=null,tree=null,lights={},bridgeGroups={},busy=false,writeBusy=false;
+const memory=new Map(),memoryStore={getItem:x=>memory.has(x)?memory.get(x):null,setItem:(x,v)=>memory.set(x,String(v)),removeItem:x=>memory.delete(x)};
+const entry=()=>({ip:$('ip').value.trim(),key:$('key').value.trim()});
+function labelNotice(where,message,kind=''){const elem=$(where);elem.textContent=message;elem.className='notice'+(kind?' '+kind:'')}
+function validIP(ip){if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip))return false;return ip.split('.').every(x=>+x>=0&&+x<=255)}
+function safeRead(keyName,def){try{const x=localStorage.getItem(keyName);return x===null?def:JSON.parse(x)}catch{return def}}
+function useSaved(){
+ try{
+  const savedIP=safeRead(KEY_LOCAL+'ip',''),savedKey=safeRead(KEY_LOCAL+'key','');
+  if(!validIP(savedIP)||typeof savedKey!=='string'||!savedKey.trim())throw Error('Auf diesem iPhone wurden keine vollständigen Luma-Zugangsdaten gefunden. Gib die Bridge-IP und den Schlüssel manuell ein.');
+  $('ip').value=savedIP;$('key').value=savedKey;
+  labelNotice('connectionStatus','Vorhandene Zugangsdaten nur in die Testeingabe übernommen. Es wurde noch keine Verbindung aufgebaut.','ok')
+ }catch(e){labelNotice('connectionStatus',e.message,'error')}
+}
+$('reuse').addEventListener('click',useSaved);
+async function request(method,path,body,apiVersion=1){
+ const data=entry(),addr=data.ip,auth=data.key;
+ if(!validIP(addr))throw Error('Bridge-IP ist ungültig. Prüfe die Adresse aus der Luma-Hauptapp.');
+ if(!auth)throw Error('Application Key fehlt.');
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),7500);
+ try{
+  const url='https://'+addr+(apiVersion===2?'/clip/v2/resource/'+path:'/api/'+encodeURIComponent(auth)+path);
+  const opts={method,cache:'no-store',credentials:'omit',signal:controller.signal};
+  if(apiVersion===2)opts.headers={'hue-application-key':auth};
+  else if(body)opts.headers={'Content-Type':'application/json'};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok)throw Error('Bridge HTTP '+res.status+' ('+ (apiVersion===2?'Hue API v2':'Hue API v1')+')');
+  const json=await res.json();
+  if(apiVersion===1&&Array.isArray(json)&&json.some(x=>x.error))throw Error(json.filter(x=>x.error).map(x=>x.error.description||'Bridge-Fehler').join('; '));
+  if(apiVersion===2&&json.errors?.length)throw Error('Hue API v2 meldet '+json.errors.length+' Fehler.');
+  return json
+ }catch(e){
+  if(e.name==='AbortError')throw Error('Zeitüberschreitung. Ist das iPhone im Heim-WLAN und die Bridge erreichbar?');
+  if(e instanceof TypeError)throw Error('Netzwerkzugriff blockiert. Lokales HTTPS-Zertifikat, WLAN und Browserberechtigungen prüfen.');
+  throw e
+ }finally{clearTimeout(timeout)}
+}
+function bridgeIdFrom(config,addr){
+ if(typeof config?.bridgeid==='string'&&/^[a-zA-Z0-9-]{6,50}$/.test(config.bridgeid))return 'hue:'+config.bridgeid.toLowerCase();
+ // IP-only fallback is a temporary identifier, never silently used to share data across different bridges.
+ return 'ip:'+addr;
+}
+function loadLocalGroupContext(){
+ // Read only — a safe, in-memory copy is used. This tool never changes the production application's localStorage.
+ const existing=localStorage.getItem(STORAGE_V2);if(existing)memory.set(STORAGE_V2,existing);
+ const old=safeRead(KEY_LOCAL+'groups',[]),order=safeRead(KEY_LOCAL+'order',[]);
+ return {oldGroups:Array.isArray(old)?old:[],oldOrder:Array.isArray(order)?order:[]}
+}
+function setBusy(state){busy=state;$('connect').disabled=state;$('refresh').disabled=state;$('v2test').disabled=state;$('reuse').disabled=state}
+async function connect(){
+ if(busy)return;
+ const d=entry();if(!validIP(d.ip)||!d.key){labelNotice('connectionStatus','Bitte gültige Bridge-IP und Application Key angeben.','error');return}
+ setBusy(true);loaded=false;$('results').hidden=true;$('singleTest').hidden=true;
+ labelNotice('connectionStatus','Lese Lampen und Räume von deiner Bridge …');
+ try{
+  const [readLights,readGroups,config]=await Promise.all([
+   request('GET','/lights'),
+   request('GET','/groups'),
+   request('GET','/config').catch(()=>null)
+  ]);
+  if(!readLights||Array.isArray(readLights)||typeof readLights!=='object')throw Error('Ungültige Lampen-Antwort von der Bridge.');
+  if(!readGroups||Array.isArray(readGroups)||typeof readGroups!=='object')throw Error('Ungültige Gruppen-Antwort von der Bridge.');
+  const context=loadLocalGroupContext();
+  ip=d.ip;key=d.key;lights=readLights;bridgeGroups=readGroups;
+  engine=new window.LumaGroupsV1.Engine({storage:memoryStore});
+  engine.sync({bridgeId:bridgeIdFrom(config,ip),lights,bridgeGroups,legacyGroups:context.oldGroups,legacyOrder:context.oldOrder});
+  let selected=engine.currentTarget();
+  // No real Hue commands are sent by selecting a target.
+  tree=new window.LumaGroupsTree.Tree(engine,$('picker'),{getSelected:()=>selected,onSelect:id=>{selected=id;showSelection(id)}});
+  tree.render();
+  $('countLamps').textContent=Object.keys(lights).length;
+  $('countRooms').textContent=engine.bridgeRooms().length;
+  $('countLocal').textContent=engine.localGroups().length;
+  loaded=true;$('results').hidden=false;$('singleTest').hidden=false;
+  fillTestLamps();showSelection(selected);
+  labelNotice('connectionStatus','Verbunden: '+Object.keys(lights).length+' Lampen und '+engine.bridgeRooms().length+' Hue-Räume/Zonen gelesen. Keine Lampe geschaltet.','ok');
+ }catch(e){
+  labelNotice('connectionStatus','Lesetest fehlgeschlagen: '+e.message,'error');
+ }finally{setBusy(false)}
+}
+function escapeElement(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+function showSelection(id){
+ if(!engine)return;
+ const group=engine.group(id),all=engine.resolve(id,{reachableOnly:false}),available=engine.resolve(id);
+ $('selectedTitle').textContent=group?.name||id;
+ $('selectedSummary').textContent=all.length+' insgesamt · '+available.length+' erreichbar. Auswahl ist nur zur Anzeige, ohne Lichtbefehle.';
+ const list=$('memberNames');list.replaceChildren();
+ if(!all.length){list.append(escapeElement('p','fine','Dieser Lichtbereich enthält momentan keine erkannten Lampen.'))}
+ for(const lightId of all){
+  const l=lights[lightId],row=escapeElement('div','lamp'+(l?.state?.reachable===false?' unreachable':''));
+  const info=escapeElement('div');info.append(escapeElement('strong','',l?.name||lightId),escapeElement('small','',l?.type||'Hue Lampe'));
+  const state=escapeElement('span','state',l?.state?.reachable===false?'Nicht erreichbar':l?.state?.on?'Ein':'Aus');
+  row.append(info,state);list.append(row)
+ }
+ const supportsGroup=id==='all'||id.startsWith('bridge:');
+ labelNotice('musicGroupStatus',supportsGroup?
+  'Musik-Ziel: '+(group?.name||id)+' kann in der bestehenden v1-Musiklogik als Bridge-Gruppe angesprochen werden. Das misst keine Latenz.':
+  'Musik-Ziel: '+(group?.name||id)+' verwendet Einzelbefehle. Für sehr schnelle Musikreaktionen ist eine Entertainment-kompatible Lösung separat zu prüfen.');
+ tree?.updateSelection();
+}
+function fillTestLamps(){
+ const input=$('singleLamp');input.replaceChildren();
+ for(const [id,l] of Object.entries(lights)){
+  const option=new Option(l.name||'Lampe '+id,id);input.add(option)
+ }
+ $('consent').checked=false;updateWriteControls();
+}
+function updateWriteControls(){
+ const enabled=loaded&&$('consent').checked&&!writeBusy&&!busy&&$('singleLamp').options.length>0;
+ $('singleLamp').disabled=!enabled;$('turnOn').disabled=!enabled;$('turnOff').disabled=!enabled;
+}
+$('consent').addEventListener('change',updateWriteControls);
+async function singleCommand(on){
+ if(!loaded||!$('consent').checked||writeBusy)return;
+ const id=$('singleLamp').value,l=lights[id];if(!l)return;
+ const name=l.name||'Lampe '+id;
+ if(!window.confirm('Wirklich nur „'+name+'“ '+(on?'einschalten':'ausschalten')+'? Der Zustand wird nicht automatisch zurückgesetzt.'))return;
+ writeBusy=true;updateWriteControls();labelNotice('commandStatus','Sende genau einen Befehl an „'+name+'“ …');
+ try{
+  await request('PUT','/lights/'+encodeURIComponent(id)+'/state',{on});
+  // Hue may take a transition moment; refresh the light status only on user's explicit request.
+  l.state.on=on;
+  labelNotice('commandStatus','Befehl an „'+name+'“ gesendet ('+(on?'Ein':'Aus')+'). Bitte beobachte die echte Lampe.','ok');
+  showSelection(tree.getSelected())
+ }catch(e){labelNotice('commandStatus','Einzeltest fehlgeschlagen: '+e.message,'error')}
+ finally{writeBusy=false;updateWriteControls()}
+}
+$('turnOn').addEventListener('click',()=>singleCommand(true));
+$('turnOff').addEventListener('click',()=>singleCommand(false));
+async function refresh(){
+ if(!loaded||busy)return;setBusy(true);
+ try{
+  const data=await request('GET','/lights');
+  if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Ungültige Lampen-Antwort.');
+  lights=data;engine.sync({bridgeId:engine.bridgeId,lights,bridgeGroups});
+  fillTestLamps();tree.engine=engine;tree.render();showSelection(engine.group(tree.getSelected())?tree.getSelected():'all');
+  labelNotice('connectionStatus','Lampenstatus frisch gelesen. Keine Lichtbefehle gesendet.','ok')
+ }catch(e){labelNotice('connectionStatus','Aktualisierung fehlgeschlagen: '+e.message,'error')}
+ finally{setBusy(false);updateWriteControls()}
+}
+$('connect').addEventListener('click',connect);
+$('refresh').addEventListener('click',refresh);
+$('v2test').addEventListener('click',async()=>{
+ if(busy)return;setBusy(true);labelNotice('v2status','Prüfe Hue API v2 mit einem reinen Lesezugriff …');
+ try{
+  const data=await request('GET','light',null,2);
+  if(!Array.isArray(data?.data))throw Error('Die API-v2-Antwort enthält keine gültige Lichtliste.');
+  labelNotice('v2status','Hue API v2 antwortet: '+data.data.length+' Lichtressourcen. Keine Geräte verändert.','ok')
+ }catch(e){labelNotice('v2status','API-v2-Lesetest fehlgeschlagen: '+e.message,'error')}
+ finally{setBusy(false)}
+});
+})();
+</script>
+</body>
+</html>
