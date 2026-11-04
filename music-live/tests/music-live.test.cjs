@@ -4,8 +4,8 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const folder=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(folder,'index.html'),'utf8');
-const scripts=[...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)];
-const externals=[...html.matchAll(/<(?:script|link)\\b[^>]*?(?:src|href)="([^"]+)"/g)].map(m=>m[1]).filter(p=>/^(?:[\\w-]+\\.(?:js|css))$/.test(p));
+const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
+const externals=[...html.matchAll(/<(?:script|link)\b[^>]*?(?:src|href)="([^"]+)"/g)].map(m=>m[1]).filter(p=>/^(?:[\w-]+\.(?:js|css))$/.test(p));
 test('All published JS and CSS assets exist',()=>{
  assert.equal(externals.length,9);
  for(const file of externals)assert.ok(fs.existsSync(path.join(folder,file)), 'Missing '+file);
@@ -15,7 +15,7 @@ test('Inline scripts and bundled JS compile',()=>{
  for(const file of externals.filter(x=>x.endsWith('.js')))assert.doesNotThrow(()=>new vm.Script(fs.readFileSync(path.join(folder,file),'utf8'),{filename:file}));
 });
 test('Unique element IDs and active music controls',()=>{
- const ids=[...html.matchAll(/\\bid="([^"]+)"/g)].map(m=>m[1]);
+ const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  assert.equal(ids.length,new Set(ids).size);
  for(const id of ['musicPane','miBridgeStatus','miMusicTarget','start','stop','musicOn','musicOff','musicInfo','musicDiagnostics','target','hueLoad','hueKey','bridgeIp'])assert.ok(ids.includes(id),'Missing '+id);
 });
