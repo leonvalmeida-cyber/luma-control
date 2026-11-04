@@ -1,0 +1,28 @@
+name: Luma Flow V4.4 Smart Dock checks
+on:
+  push:
+    paths:
+      - 'flow-v44/**'
+      - '.github/workflows/flow-v44-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v44/**'
+      - '.github/workflows/flow-v44-tests.yml'
+jobs:
+  dock-regressions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check V4.4
+        run: |
+          node --check flow-v44/v44.js
+          node --check flow-v44/quick-pull-v44.js
+      - name: V4.4 UI and docking tests
+        run: node --test flow-v44/tests/v44.test.cjs
+      - name: Regression tests for previous versions
+        run: node --test flow-v43/tests/v43.test.cjs flow-v42/tests/v42.test.cjs flow-v41/tests/v41.test.cjs flow-live/tests/flow-live.test.cjs flow-live/tests/quick-pull-v10.test.cjs
