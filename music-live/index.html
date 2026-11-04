@@ -428,7 +428,7 @@ el('motionStart').onclick=async()=>{
   }catch(e){if(token===motion){stopMotion();sceneError(e)}}
  }
  await step();
-};document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMotion()});window.addEventListener('pagehide',stopAll);renderMood();el('hueKey').value=read('key','');tab('music');if(el('hueKey').value)guard(connect);
+};document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMotion()});window.addEventListener('pagehide',stopAll);renderMood();el('hueKey').value=read('key','');tab('music');if(el('hueKey').value)guard(connect);else el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';
 })();
 </script><script src="scenes-v1.js" defer></script>
 </body></html>
