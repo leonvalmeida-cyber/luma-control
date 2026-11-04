@@ -133,7 +133,8 @@ function attach({doc=root.document,win=root}={}){
  }
  function rollback(){
   clearPreview();
-  if(!win.lumaQuickControl?.isOpen?.())overlay.hidden=true;
+  // A preview is visible, but not an opened modal: never mistake it for isOpen().
+  if(!opened())overlay.hidden=true;
   paint(0);
  }
  function settle(shouldOpen,fromOpen=false){
