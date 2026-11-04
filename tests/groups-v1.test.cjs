@@ -59,3 +59,29 @@ test('Hue room order from metadata controls the actual shared target resolver',(
  const {engine}=fixture();engine.setMeta('bridge:1',{order:['b','a'],positions:{}});
  assert.deepEqual(engine.resolve('bridge:1',{reachableOnly:false}),['b','a']);
 });
+
+test('Fast tree exposes All → Wohnzimmer → local groups and individual lamps',()=>{
+ require('../groups-v1-tree.js');
+ const {engine}=fixture();
+ const tree=new global.LumaGroupsTree.Tree(engine,{});
+ const root=tree.items();
+ assert.equal(root.id,'all');
+ assert.equal(root.children[0].label,'Wohnzimmer');
+ const room=root.children[0];
+ assert.ok(room.children.some(x=>x.id==='local:old'));
+ assert.ok(room.children.some(x=>x.id==='lamp:a'));
+ assert.ok(room.children.some(x=>x.id==='lamp:b'));
+ assert.ok(root.children.some(x=>x.id==='lamp:c'));
+});
+test('Fast tree includes new nested local groups without losing lamp targets',()=>{
+ require('../groups-v1-tree.js');
+ const {engine}=fixture();
+ const a=engine.createLocal({name:'Gaming',lights:['a'],groups:[]});
+ const parent=engine.createLocal({name:'TV Ecke',lights:['a','b'],groups:[a.id]});
+ const tree=new global.LumaGroupsTree.Tree(engine,{});
+ const root=tree.items(),room=root.children.find(x=>x.label==='Wohnzimmer');
+ const tv=room.children.find(x=>x.id===parent.id),gaming=tv.children.find(x=>x.id===a.id);
+ assert.equal(gaming.label,'Gaming');
+ assert.ok(tv.children.some(x=>x.id==='lamp:a'));
+ assert.equal(root.children[0].id,'bridge:1');
+});
