@@ -48,6 +48,25 @@ function weightedSamples(samples){
  return {rgb:weight?rgb.map(v=>byte(v/weight)):[189,145,218],
          level:samples.length?clamp(covered/samples.length):0,on:sun>0};
 }
+function selectBeamColors(samples,fallback){
+ const bright=samples.filter(x=>x&&Array.isArray(x.rgb)&&x.rgb.length===3&&clamp(x.level)>.035)
+   .sort((a,b)=>clamp(b.level)-clamp(a.level));
+ if(!bright.length)return {colors:[fallback,fallback,fallback],count:0};
+ const chosen=[bright[0].rgb.map(byte)];
+ while(chosen.length<3){
+  let winner=null,best=110;
+  for(const item of bright){
+   const color=item.rgb.map(byte);
+   const diff=Math.min(...chosen.map(c=>Math.sqrt(c.reduce((n,v,i)=>n+(v-color[i])**2,0))));
+   if(diff>best){best=diff;winner=color}
+  }
+  if(!winner)break;
+  chosen.push(winner);
+ }
+ const count=chosen.length;
+ while(chosen.length<3)chosen.push(chosen[chosen.length-1]);
+ return {colors:chosen,count};
+}
 function calculate({music={},hue={}}={}){
  const mood=PALETTES[music?.palette]||PALETTES.neon;
  const connected=Boolean(hue?.connected),active=Boolean(music?.active&&music?.contextState==='running'&&music?.frameAgeMs<1100);
@@ -55,7 +74,7 @@ function calculate({music={},hue={}}={}){
   const samples=music.frames.filter(f=>Array.isArray(f?.rgb)&&f.rgb.length===3).map(f=>({rgb:f.rgb,level:clamp(f.brightness)}));
   if(samples.length){
    const result=weightedSamples(samples);
-   return {...result,source:'music',connected,colorMood:music.palette||'neon'};
+   return {...result,beams:selectBeamColors(samples,mood),source:'music',connected,colorMood:music.palette||'neon'};
   }
  }
  if(connected){
@@ -67,18 +86,21 @@ function calculate({music={},hue={}}={}){
   });
   if(samples.length){
    const result=weightedSamples(samples);
-   return {...result,rgb:result.on?result.rgb:mood,source:'hue',connected,colorMood:music.palette||'neon'};
+   return {...result,beams:selectBeamColors(samples,mood),rgb:result.on?result.rgb:mood,source:'hue',connected,colorMood:music.palette||'neon'};
   }
-  return {rgb:mood,level:0,on:false,connected,source:'empty',colorMood:music.palette||'neon'};
+  return {rgb:mood,level:0,on:false,beams:selectBeamColors([],mood),connected,source:'empty',colorMood:music.palette||'neon'};
  }
- return {rgb:mood,level:0,on:false,connected:false,source:'disconnected',colorMood:music.palette||'neon'};
+ return {rgb:mood,level:0,on:false,beams:selectBeamColors([],mood),connected:false,source:'disconnected',colorMood:music.palette||'neon'};
 }
 function visuals(info){
  const rgb=Array.isArray(info.rgb)?info.rgb:[200,150,240];
  const level=clamp(info.level);
  // Light spread obeys actual power. When off, the symbol stays visible but emits almost no light.
  const power=info.on?clamp(Math.pow(level,.75)*.85,0,.85):0;
- return {rgb:rgb.map(byte).join(' '),power:Number(power.toFixed(3)),symbol:Number((.12+power*.88).toFixed(3)),on:info.on?'on':'off',source:info.source};
+ const beams=(info.beams?.colors||[rgb,rgb,rgb]).map(c=>c.map(byte).join(' '));
+ return {rgb:rgb.map(byte).join(' '),beams,beamCount:info.beams?.count||0,
+   power:Number(power.toFixed(3)),symbol:Number((.12+power*.88).toFixed(3)),
+   on:info.on?'on':'off',source:info.source};
 }
 function attach({doc=root.document,win=root}={}){
  const lamp=doc?.getElementById?.('quickLauncher'),wash=doc?.getElementById?.('ambientRoomGlow');
@@ -91,10 +113,12 @@ function attach({doc=root.document,win=root}={}){
   try{info=calculate({music:win.lumaMusicState?.()||{},hue:win.lumaAmbientLightState?.()||{}})}
   catch{info={rgb:[160,139,199],level:0,on:false,source:'unknown',connected:false}}
   const v=visuals(info);
-  const sig=[v.rgb,v.power,v.symbol,v.on,v.source,info.connected].join('|');
+  const sig=[v.rgb,...v.beams,v.beamCount,v.power,v.symbol,v.on,v.source,info.connected].join('|');
   if(sig===previous)return;
   previous=sig;
   rootStyle?.setProperty('--ambient-rgb',v.rgb);
+  v.beams.forEach((color,i)=>rootStyle?.setProperty('--ambient-ray-'+(i+1),color));
+  rootStyle?.setProperty('--ambient-beam-count',String(v.beamCount));
   rootStyle?.setProperty('--ambient-power',String(v.power));
   rootStyle?.setProperty('--ambient-symbol',String(v.symbol));
   lamp.dataset.ambientState=info.connected?v.on:'disconnected';
@@ -107,7 +131,7 @@ function attach({doc=root.document,win=root}={}){
  win.addEventListener?.('pagehide',()=>{if(timer)win.clearInterval(timer)},{once:true});
  return {update,stop(){if(timer)win.clearInterval(timer);doc.removeEventListener?.('visibilitychange',onVisible)}};
 }
-const api={calculate,visuals,deviceRGB,hueRGB,xyRGB,kelvinRGB,weightedSamples,attach,PALETTES};
+const api={calculate,visuals,deviceRGB,hueRGB,xyRGB,kelvinRGB,weightedSamples,selectBeamColors,attach,PALETTES};
 root.LumaAmbientLamp=api;
 if(typeof module==='object'&&module.exports)module.exports=api;
 if(root.document){
