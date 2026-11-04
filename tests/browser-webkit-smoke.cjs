@@ -146,6 +146,73 @@ const close=()=>new Promise(resolve=>server.close(resolve));
   if(pageErrors.length)console.log('WEBKIT_ERRORS_AFTER_PULL='+JSON.stringify(pageErrors));
   assert.ok(opened.open&&!opened.preview&&opened.pageLocked&&opened.expanded==='true','final pull must snap open rather than stay preview');
   await page.screenshot({path:'/tmp/luma-webkit-opened.png'});
+  // New V3 interaction: the SHADE (left), not a right-edge button, pulls
+  // the already opened sheet back with the finger in real intermediate frames.
+  const gripReady=await page.evaluate(()=>{
+   const grip=document.getElementById('quickLampGrip');
+   const shade=document.getElementById('ambientMovingHead').getBoundingClientRect();
+   const room=document.getElementById('targetCard').getBoundingClientRect();
+   return {hidden:grip.hidden,rect:grip.getBoundingClientRect().toJSON(),
+     shadeBottom:shade.bottom,roomTop:room.top};
+  });
+  console.log('WEBKIT_OPEN_SHADE_GRIP='+JSON.stringify(gripReady));
+  assert.equal(gripReady.hidden,false,'open panel must expose the actual left-side shade drag target');
+  assert.ok(gripReady.rect.right<390,'grip must sit left of screen edge, at the shade');
+  const closeFrames=await page.evaluate(async()=>{
+   const grip=document.getElementById('quickLampGrip'),step=window.LumaQuickPull.limits(window.innerWidth).drag;
+   const startX=Math.min(window.innerWidth-40,grip.getBoundingClientRect().left+grip.getBoundingClientRect().width/2);
+   const startY=grip.getBoundingClientRect().top+grip.getBoundingClientRect().height/2;
+   const event=(type,x)=>{
+    const e=new Event(type,{bubbles:true,cancelable:true});
+    const p={identifier:90,clientX:x,clientY:startY};
+    Object.defineProperty(e,'touches',{value:type==='touchend'?[]:[p]});
+    Object.defineProperty(e,'changedTouches',{value:[p]});
+    grip.dispatchEvent(e);
+   };
+   event('touchstart',startX);
+   const states=[];
+   for(const ratio of [.25,.5,.75]){
+    event('touchmove',startX+step*ratio);
+    await new Promise(resolve=>setTimeout(resolve,35));
+    states.push({ratio,progress:+document.getElementById('quickLauncher').dataset.pullProgress,
+      panel:document.querySelector('.quick-sheet').style.transform,
+      arm:document.getElementById('ambientLampArm').getAttribute('d'),
+      light:document.getElementById('ambientBeam1').getAttribute('d'),
+      rise:getComputedStyle(document.documentElement).getPropertyValue('--luma-open-lift-px').trim(),
+      overlayVisible:!document.getElementById('quickOverlay').hidden});
+   }
+   return {states,startX,startY,step};
+  });
+  console.log('WEBKIT_CLOSE_INTERMEDIATE='+JSON.stringify(closeFrames.states));
+  for(let i=0;i<3;i++){
+   const expected=[.75,.5,.25][i],actual=closeFrames.states[i];
+   assert.ok(Math.abs(actual.progress-expected)<.03,'rightward finger must continuously drive drawer closed');
+   assert.ok(actual.overlayVisible,'drawer stays visible until finger releases');
+  }
+  assert.notEqual(closeFrames.states[0].arm,closeFrames.states[2].arm);
+  assert.notEqual(closeFrames.states[0].light,closeFrames.states[2].light);
+  await page.screenshot({path:'/tmp/luma-webkit-half-closed.png'});
+  await page.evaluate(({startX,startY,step})=>{
+   const grip=document.getElementById('quickLampGrip');
+   const e=new Event('touchend',{bubbles:true,cancelable:true});
+   const p={identifier:90,clientX:startX+step*.75,clientY:startY};
+   Object.defineProperty(e,'touches',{value:[]});
+   Object.defineProperty(e,'changedTouches',{value:[p]});
+   grip.dispatchEvent(e);
+  },closeFrames);
+  await page.waitForTimeout(390);
+  const closedByShade=await page.evaluate(()=>({
+   hidden:document.getElementById('quickOverlay').hidden,
+   gripHidden:document.getElementById('quickLampGrip').hidden,
+   progress:document.getElementById('quickLauncher').dataset.pullProgress,
+   pageLocked:document.body.classList.contains('quick-page-lock')
+  }));
+  console.log('WEBKIT_SHADE_CLOSE='+JSON.stringify(closedByShade));
+  assert.deepEqual(closedByShade,{hidden:true,gripHidden:true,progress:'0.000',pageLocked:false});
+  // Test the X fallback separately from shade closing.
+  await page.locator('#quickLauncher').click();
+  assert.equal(await page.locator('#quickOverlay').evaluate(e=>e.hidden),false);
+
   await page.locator('#quickClose').click();
   await page.waitForTimeout(320);
   assert.equal(await page.locator('#quickOverlay').evaluate(e=>e.hidden),true,'close X restores page');
