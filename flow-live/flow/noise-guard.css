@@ -1,0 +1,16 @@
+/* Optional Luma Flow ambient guard — experimental UI, OFF by default. */
+#musicPane .flow-guard{background:linear-gradient(130deg,#24213cae,#151c33ee);border:1px solid #b1a3d948;border-radius:20px;padding:15px 13px;margin:12px 0;overflow-anchor:none}
+#musicPane .flow-guard-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+#musicPane .flow-guard-heading h3{font-size:16px;line-height:1.3;margin:0;letter-spacing:-.1px}
+#musicPane .flow-guard-heading small{font-size:10px;color:#d5bafc;padding:5px 8px;border:1px solid #a287df5e;border-radius:20px;white-space:nowrap}
+#musicPane .flow-guard-description{font-size:11px;color:#cec5e1;line-height:1.55;min-height:3.2em;margin:3px 0 12px}
+#musicPane .flow-guard-switches{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+#musicPane .flow-guard-switches button{flex:1 0 auto;min-height:44px;font-size:12px;padding:9px 11px;border:1px solid #a087c54b;background:#322747ad;color:#f6efff;border-radius:12px}
+#musicPane .flow-guard-switches button[aria-pressed=true]{background:linear-gradient(140deg,#baa0f2,#7f5bca);border-color:#e1c5ff;color:#161126}
+#musicPane .flow-guard-actions{display:flex;gap:8px;margin-top:10px;align-items:center}
+#musicPane .flow-guard-actions button{font-size:11px;flex:1;min-height:43px;padding:8px;border:1px solid #806aad80;background:#26213d;color:#f1e4ff;border-radius:12px}
+#musicPane .flow-guard-status{height:4em;overflow:hidden;font-size:11px;color:#cfc6e1;line-height:1.4;margin:10px 0 0;font-variant-numeric:tabular-nums}
+#musicPane .flow-guard-status[data-state=ready]{color:#b1f2de}
+#musicPane .flow-guard-status[data-state=error]{color:#ffd1d1}
+#musicPane .flow-guard-hint{font-size:10px;color:#b8aacc;line-height:1.5;margin:8px 0 0}
+@media(max-width:350px){#musicPane .flow-guard-switches button{padding:9px 6px;font-size:11px}#musicPane .flow-guard{padding:12px 10px}}
