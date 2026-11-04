@@ -144,7 +144,7 @@ function attach({doc=root.document,win=root}={}){
   // connected lampshade/arm group travel. Use SVG user-space transforms:
   // on Safari the corresponding CSS transform pixels are inconsistent.
   rootStyle.setProperty('--v43-dock-px',round(dock)+'px');
-  const carriageY=round((g.lift+dock)*124/96);
+  const carriageY=round((g.lift+dock)*100/g.svgWidth);
   movingAssembly.setAttribute('transform','translate(0 '+(-carriageY)+')');
   railCarriage.dataset.offset=String(carriageY);
   launcher.dataset.railOffset=String(carriageY);
@@ -208,13 +208,14 @@ function attach({doc=root.document,win=root}={}){
  function settle(shouldOpen,fromOpen=false){
   stopAnimation();
   if(frame){caf(frame);frame=0;paint(queued??current)}
-  const start=current,end=shouldOpen?1:0,t0=now();
+  if(dockFrame){caf(dockFrame);dockFrame=0;}
+ const start=current,end=shouldOpen?1:0,t0=now(),initialDock=dock;
   const reduce=win.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
   const duration=reduce?0:shouldOpen?210:190;
   let completed=false;
   const finish=()=>{
    if(completed)return;
-   completed=true;stopAnimation();paint(end);
+   completed=true;stopAnimation();if(!shouldOpen){dock=0;targetDock=0;}paint(end);
    if(shouldOpen){
     launcher.dataset.pullPhase='opened';
     clearPreview();
@@ -236,7 +237,9 @@ function attach({doc=root.document,win=root}={}){
    if(completed)return;
    const u=duration?clamp((t-t0)/duration):1;
    launcher.dataset.pullPhase='settling-'+round(u);
-   paint(start+(end-start)*(1-Math.pow(1-u,3)));
+   const ease=1-Math.pow(1-u,3);
+   if(!shouldOpen&&fromOpen)dock=round(initialDock*(1-ease));
+   paint(start+(end-start)*ease);
    if(u<1){animation=raf(step);return}
    finish();
   }
