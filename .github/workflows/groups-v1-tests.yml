@@ -25,4 +25,5 @@ jobs:
         run: |
           node --check groups-v1.js
           node --check groups-v1-ui.js
+          node --check groups-v1-tree.js
           node --check scenes-v1.js
