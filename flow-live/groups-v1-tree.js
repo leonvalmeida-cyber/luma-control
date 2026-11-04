@@ -3,7 +3,7 @@
 (function(root){'use strict';
 const make=(tag,cls,txt)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n};
 class Tree{
- constructor(engine,container,{onSelect=()=>{},getSelected=()=>engine.currentTarget()}={}){this.engine=engine;this.container=container;this.onSelect=onSelect;this.getSelected=getSelected;this.expanded=new Set(['all']);this.primed=false;this.selectables=[];this.expandables=[];this.currentLabel=null}
+ constructor(engine,container,{onSelect=()=>{},getSelected=()=>engine.currentTarget(),getLampIcon=()=>null}={}){this.engine=engine;this.container=container;this.onSelect=onSelect;this.getSelected=getSelected;this.getLampIcon=getLampIcon;this.expanded=new Set(['all']);this.primed=false;this.selectables=[];this.expandables=[];this.currentLabel=null}
  items(){
   const engine=this.engine,room=engine.livingRoom(),allIds=engine.globalOrder();
   const locals=engine.localGroups(),children=new Set(locals.flatMap(g=>g.groups||[]));
@@ -60,7 +60,8 @@ class Tree{
    toggle.setAttribute('aria-expanded',String(expanded));toggle.tabIndex=hasChildren?0:-1;
    const pick=make('button','g-tree-select');
    pick.type='button';pick.setAttribute('data-target-id',entry.id);
-   const symbol=make('span','g-tree-symbol',entry.kind==='system'?'◈':entry.kind==='hue-room'?'⌂':entry.kind==='hue-zone'?'◇':entry.kind==='lamp'?'●':'✦');
+   const symbol=make('span','g-tree-symbol',entry.kind==='system'?'◈':entry.kind==='hue-room'?'⌂':entry.kind==='hue-zone'?'◇':entry.kind==='lamp'?'':'✦');
+   if(entry.kind==='lamp'&&root.LumaLampIcons){const type=this.getLampIcon(entry.id.slice(5),this.engine.lights[entry.id.slice(5)])||root.LumaLampIcons.guess(this.engine.lights[entry.id.slice(5)]);symbol.append(root.LumaLampIcons.svg(type,'g-tree-lamp-svg'));symbol.dataset.iconKind=type}
    const label=make('span','g-tree-label',entry.label);
    const count=this.engine.resolve(entry.id,{reachableOnly:false}).length;
    const meta=make('span','g-tree-count',entry.kind==='lamp'?'':String(count));
@@ -69,7 +70,7 @@ class Tree{
    // Do not destroy/recreate the DOM on selection: maintain scroll and focus.
    pick.onclick=()=>{this.onSelect(entry.id);this.updateSelection()};
    line.append(toggle,pick);row.append(line);
-   this.selectables.push({id:entry.id,pick,row});
+   this.selectables.push({id:entry.id,pick,row,symbol});
    if(hasChildren){
     const children=make('div','g-tree-kids');children.setAttribute('role','group');
     for(const child of entry.children)children.append(createNode(child,level+1));
@@ -97,6 +98,16 @@ class Tree{
    toggle.setAttribute('aria-expanded',String(opened));
    toggle.setAttribute('aria-label',(opened?'Einklappen: ':'Ausklappen: ')+label);
    toggle.textContent=opened?'⌄':'›';
+  }
+ }
+ updateLampIcons(){
+  if(!root.LumaLampIcons)return;
+  for(const {id,symbol}of this.selectables){
+   if(!id.startsWith('lamp:'))continue;
+   const lightId=id.slice(5),device=this.engine.lights[lightId];
+   const type=this.getLampIcon(lightId,device)||root.LumaLampIcons.guess(device);
+   if(symbol.dataset.iconKind===type)continue;
+   symbol.replaceChildren(root.LumaLampIcons.svg(type,'g-tree-lamp-svg'));symbol.dataset.iconKind=type;
   }
  }
  updateSelection(){
