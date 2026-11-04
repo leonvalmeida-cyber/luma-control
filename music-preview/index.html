@@ -267,7 +267,7 @@ byId('musicMic').addEventListener('click',async()=>{
   micActive=true;lastAudioFrame=0;byId('musicHero').classList.add('mic-live');button.textContent='■ Mikrofon stoppen';
   byId('musicVisualState').textContent='Live-Mikrofonsignal';byId('musicVisualSource').textContent='Lokal analysiert · keine Aufnahme';setMusicState('● Live','Mikrofon');
   micRaf=requestAnimationFrame(frame)
- }catch(e){byId('musicInputStatus').textContent='Mikrofon konnte nicht gestartet werden: '+e.message;setMusicState('● Fehler','Aus');await stopMic()}
+ }catch(e){await stopMic();byId('musicInputStatus').textContent='Mikrofon konnte nicht gestartet werden: '+e.message;setMusicState('● Fehler','Aus')}
  finally{button.disabled=false}
 });
 byId('musicApple').addEventListener('click',()=>toast('Apple Music ist in der Vorschau noch nicht direkt verbunden; der Mikrofontest funktioniert unabhängig.'));
