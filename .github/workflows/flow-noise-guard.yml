@@ -1,0 +1,23 @@
+name: Luma Flow ambient and conversation guard
+on:
+  push:
+    branches: [feature/luma-flow-v1]
+  pull_request:
+    paths:
+      - 'flow/**'
+      - 'tests/flow-noise-guard.test.cjs'
+      - '.github/workflows/flow-noise-guard.yml'
+jobs:
+  dsp-verification:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and signal-processing regressions
+        run: |
+          node --check flow/noise-guard.js
+          node --test tests/flow-noise-guard.test.cjs
