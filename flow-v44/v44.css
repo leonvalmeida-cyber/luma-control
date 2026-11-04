@@ -3,7 +3,7 @@
  * No selectors affect the stable production/LIVE/V4.1/V4.2/V4.3 pages. */
 :root{
  --v44-launcher-top:clamp(104px,17dvh,158px);
- --v44-open-progress:0;
+ --v44-lamp-scale:.73;
  --v44-magnet:0;
 }
 /* Resting lamp sits visibly higher and becomes a compact 73% model, reducing
@@ -14,7 +14,7 @@
  top:var(--v44-launcher-top)!important;
 }
 .quick-launcher svg.ambient-lamp-art{
- transform:scale(calc(.73 + var(--v44-open-progress)*.27));
+ transform:scale(var(--v44-lamp-scale));
  transform-origin:90% 37%;
  transition:transform .19s cubic-bezier(.2,.78,.3,1);
 }
