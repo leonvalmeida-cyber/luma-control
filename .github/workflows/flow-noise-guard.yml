@@ -9,7 +9,7 @@ on:
       - 'tests/lamp-icons.test.cjs'
       - 'tests/visual-mood-tree.test.cjs'
       - 'tests/floating-quick-control.test.cjs'
-      - 'tests/ambient-lamp-swipe.test.cjs tests/ambient-swipe-v7.test.cjs'
+      - 'tests/ambient-lamp-swipe.test.cjs'
       - 'tests/ambient-swipe-v7.test.cjs'
       - 'tests/mood-lamp-swipe-v9.test.cjs'
       - 'ambient-lamp.js'
@@ -35,4 +35,4 @@ jobs:
       - name: Syntax and signal-processing regressions
         run: |
           node --check flow/noise-guard.js
-          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs tests/floating-quick-control.test.cjs tests/ambient-lamp-swipe.test.cjs
+          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs tests/floating-quick-control.test.cjs tests/ambient-lamp-swipe.test.cjs tests/ambient-swipe-v7.test.cjs tests/mood-lamp-swipe-v9.test.cjs
