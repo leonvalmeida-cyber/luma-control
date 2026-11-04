@@ -78,6 +78,20 @@ Zwei strikt unterschiedliche Bausteine:
 - Kleine CSS-/SVG-Glow-Grafiken statt externer Fotos; lokale Assets, schnell ladend, wenig Daten und robust bei Dark Mode.
 - Die vorhandene Musik-Visualisierung kann die gewählte Palette ergänzend darstellen. Der bisherige große \`miLampGallery\`-Block entfällt vollständig und seine Geräte-Metadaten werden in den Gruppenbaum übernommen.
 
+## 4a. Lampensymbole individuell anpassen – bewusst in Untereinstellungen (neu)
+
+**Nutzerwunsch:** Bei fehlerhafter automatischer Erkennung soll jedes Lampensymbol manuell geändert werden können. Im normalen Gruppenbaum darf dadurch kein zusätzlicher Einstellungsballast entstehen.
+
+**Standard:** Luma wählt ein Symbol automatisch aus dem Hue-Gerätemodell bzw. Typ, z. B. Glühbirne, Iris, Twilight, LED-Strip, Deckenlampe, Tischlampe, Stehlampe, Pendelleuchte, Spot oder indirektes Licht. Ist der Typ unbekannt, neutrales Leuchtmittel verwenden. Diese Zuordnung zeigt nur eine Illustration, keinen behaupteten echten Produktnachweis.
+
+**Bewusst versteckte Anpassung:** `⚙ Einstellungen → Lampen verwalten → [Lampe auswählen] → Darstellung → Symbol ändern`. Alternativ kann ein Kontextmenü/Long-Press auf einer Lampenkarte dorthin führen; kein immer sichtbarer Zahnradknopf auf jeder Karte. Symbolauswahl als kleine, konsistente **SVG-Icon-Bibliothek** (nicht als externer Fotokatalog). Optional lassen sich auch ein verständlicher Kurzname und Raumzuordnung innerhalb von Luma pflegen.
+
+**Einstellungen pro Lampe:** Eingabe `iconOverride` (null = automatisch oder ein Wert aus der erlaubten Icon-Liste), optional `displayNameOverride`, später ggf. Position. Speicherung lokal **pro Bridge-ID + Hue-Lampen-ID**, nicht an veränderliche Lampennamen binden. Produktive Hue-Namen/Typen werden beim bloßen Ändern der Anzeige nicht verändert; keine Bridge-API-Schreibanfrage.
+
+**Verhalten:** Eine Anpassung aktualisiert die kleine Lampenkarte **und den entsprechenden Baumknoten** sofort, ohne die übrigen Knoten neu zu zeichnen. Auch nach Neuladen, Gruppenänderungen oder neuer Lampensuche bleibt sie erhalten. „Zurück auf automatisch“ entfernt nur die Überschreibung. Fehlerhafte Einträge oder neue/gelöschte Lampen dürfen keine anderen Lampensymbole überschreiben.
+
+**Testkriterien:** Iris automatisch → manuell Deckenlampe → Reload → Deckenlampe bleibt → „Automatisch“ → Iris wieder sichtbar. Umbenennung eines Hue-Geräts darf die Einstellung nicht verlieren. Anderen Bridge-Schlüssel/Bridge-ID wählen → keine Übernahme der alten Darstellung. Symbol ändern erzeugt **0** Hue-Light-Befehle.
+
 ## 5. Technische Umsetzung – risikoarm, Schritt für Schritt
 
 1. **UI auf Entwicklungsbranch**, bestehende Produktionsseite unverändert. Gruppenauswahl bleibt Engine \`LumaGroupsV1\` + Tree-Modul mit \`selectedTarget\`.
