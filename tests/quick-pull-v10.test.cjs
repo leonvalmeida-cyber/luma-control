@@ -136,7 +136,7 @@ test('A simple tap remains a tap and never starts a preview or seizes focus',()=
  t.controller.destroy();
 });
 test('The old one-shot quick-swipe script is not active in the live page',()=>{
- assert.ok(html.includes('quick-pull.js?v=10'));
+ assert.ok(html.includes('quick-pull.js?v=11'));
  assert.ok(!html.includes('src="quick-swipe.js?v=9"'));
  assert.ok(html.includes("quickOverlay.dataset.pulledOpen==='true'"));
  assert.ok(html.includes('window.lumaQuickPull?.reset?.()'));
