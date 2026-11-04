@@ -64,7 +64,7 @@ test('Music tick uses retained seven frames after old display cards were removed
 });
 test('Four bundled illustrated moods are visibly picture-based, without remote fetches',()=>{
  for(const name of ['neon','sunset','ocean','warm']){
-  assert.ok(html.includes("sceneImage.src='media/'+id+'.svg'"));
+  assert.ok(html.includes("sceneImage.src='media/'+id+'.svg?v=7'"));
   const art=fs.readFileSync(path.join(base,'media',name+'.svg'),'utf8');
   assert.match(art,/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
   assert.ok(art.includes('viewBox="0 0 320 210"'));
