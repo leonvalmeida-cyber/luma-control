@@ -1,0 +1,27 @@
+/* Luma: icon customization lives under ⚙, not on the fast tree itself */
+#lampSettingsPane .li-settings{background:linear-gradient(145deg,#28213e,#151a31);border:1px solid #866bae66;border-radius:22px;padding:17px}
+#lampSettingsPane .li-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#lampSettingsPane .li-heading h2{font-size:24px;letter-spacing:-.4px;margin:7px 0}
+#lampSettingsPane .li-kicker{font-size:10px;letter-spacing:1.6px;font-weight:800;color:#c5a9f2}
+#lampSettingsPane #liBack{background:#3a3157;font-size:12px;min-height:42px;padding:10px 13px}
+#lampSettingsPane .li-list{display:grid;gap:7px;margin:15px 0}
+#lampSettingsPane .li-light-item{display:flex;align-items:center;gap:12px;width:100%;min-height:59px;text-align:left;padding:8px 12px;background:#ffffff0f;border:1px solid #ffffff25;border-radius:14px;color:#f5f0fc}
+#lampSettingsPane .li-light-item[aria-pressed=true]{background:#865cbc45;border-color:#c7a2f0aa}
+#lampSettingsPane .li-list-svg{width:39px;height:39px;stroke:#cab6f6;fill:#7f5caa20;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+#lampSettingsPane .li-light-name{display:grid;gap:4px;flex:1;min-width:0}
+#lampSettingsPane .li-light-name strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lampSettingsPane .li-light-name small{font-size:11px;color:#bcb3d2}
+#lampSettingsPane .li-chevron{color:#cdb9eb;font-size:25px}
+#lampSettingsPane #liEditor{padding-top:9px;border-top:1px solid #a18fc33e}
+#lampSettingsPane #liEditor h3{font-size:17px;margin:8px 0}
+#lampSettingsPane .li-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:13px 0}
+#lampSettingsPane .li-choice{display:flex;align-items:center;flex-direction:column;gap:5px;justify-content:center;min-height:97px;min-width:0;padding:8px 5px;border:1px solid #9b85bc52;border-radius:14px;background:linear-gradient(145deg,#40315791,#24213c);color:#e8dff6}
+#lampSettingsPane .li-choice[aria-pressed=true]{background:linear-gradient(140deg,#8365b5,#59418d);border-color:#dbc3fe;box-shadow:0 0 0 1px #ba9bf744}
+#lampSettingsPane .li-choice .li-choice-svg{width:43px;height:43px;stroke:#e0d1fc;fill:#d6b3fa18;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#lampSettingsPane .li-choice span{font-size:11px;line-height:1.25;text-align:center;overflow-wrap:anywhere}
+#lampSettingsPane #liResult{min-height:2em;color:#b1ebd5}
+.g-tree-symbol{display:grid;place-items:center}
+.g-tree-symbol svg.g-tree-lamp-svg{width:21px;height:21px;stroke:#c7a7ee;fill:#9474bc25;stroke-width:4;stroke-linejoin:round;stroke-linecap:round;display:block}
+.g-tree-select[aria-pressed=true] .g-tree-symbol svg.g-tree-lamp-svg{stroke:#f2e8ff}
+@media(min-width:470px){#lampSettingsPane .li-choices{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:350px){#lampSettingsPane .li-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
