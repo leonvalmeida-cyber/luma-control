@@ -1,0 +1,28 @@
+name: Luma Flow V4 preview checks
+on:
+  push:
+    paths:
+      - 'flow-v4/**'
+      - '.github/workflows/flow-v4-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v4/**'
+      - '.github/workflows/flow-v4-tests.yml'
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse V4 scripts
+        run: |
+          node --check flow-v4/v4.js
+          node --check flow-v4/quick-pull-v4.js
+      - name: V4 preview regressions
+        run: node --test flow-v4/tests/v4.test.cjs
+      - name: Ensure untouched Flow LIVE baseline still passes
+        run: node --test flow-live/tests/flow-live.test.cjs flow-live/tests/ambient-lamp-swipe.test.cjs flow-live/tests/quick-pull-v10.test.cjs
