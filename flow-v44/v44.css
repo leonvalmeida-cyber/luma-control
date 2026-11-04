@@ -1,0 +1,130 @@
+/* LUMA FLOW V4.4 — compact parked lamp + physical magnet-dock beside master brightness.
+ * Loaded ONLY in /flow-v44/, over existing V4.3 CSS.
+ * No selectors affect the stable production/LIVE/V4.1/V4.2/V4.3 pages. */
+:root{
+ --v44-launcher-top:clamp(104px,17dvh,158px);
+ --v44-open-progress:0;
+ --v44-magnet:0;
+}
+/* Resting lamp sits visibly higher and becomes a compact 73% model, reducing
+   obstruction near the settings toggle. Its real button is still keyboard-
+   accessible and large enough for a practical touch target. */
+.quick-launcher,
+:root[data-v4-hand=left] .quick-launcher{
+ top:var(--v44-launcher-top)!important;
+}
+.quick-launcher svg.ambient-lamp-art{
+ transform:scale(calc(.73 + var(--v44-open-progress)*.27));
+ transform-origin:90% 37%;
+ transition:transform .19s cubic-bezier(.2,.78,.3,1);
+}
+.quick-launcher.quick-pulling svg.ambient-lamp-art{transition:none!important}
+.quick-launcher:not([aria-expanded=true]):not(.quick-pulling){
+ width:73px;min-width:73px;max-width:73px;
+ height:84px;min-height:84px;
+}
+.quick-launcher:not([aria-expanded=true]):not(.quick-pulling) .v43-fixed-rail{
+ opacity:.07!important;
+}
+.quick-launcher[data-v44-docked=true] .v43-fixed-rail{
+ opacity:.98!important;
+}
+/* The wall plate and long rail stay at the same top and right coordinate;
+   only the carriage/arm/shade change their Y and X independently via SVG.
+   The glow and swipe target follow the rendered shade, not the wall. */
+.quick-lamp-grip,
+:root[data-v4-hand=left] .quick-lamp-grip{
+ top:calc(var(--v44-launcher-top) - var(--luma-open-lift-px) - var(--v43-dock-px) + 3px)!important;
+}
+.quick-launcher[data-v44-docked=true] .v43-carriage-body{
+ filter:drop-shadow(0 0 5px rgb(var(--ambient-rgb) / .3));
+}
+.quick-launcher[data-v44-docked=true] .v43-carriage-bolt{
+ fill:#fff2c1;
+}
+
+/* Reserve an actual gutter for the luminous head. This is crucial:
+   neither the artwork nor its invisible swipe hit area is allowed to
+   obscure the user’s thumb moving the brightness slider. */
+#quickOverlay .v41-master{
+ position:relative;
+ min-height:112px;
+ padding-right:88px!important;
+ transition:border-color .24s ease,box-shadow .24s ease;
+}
+#quickOverlay .v41-master .v41-master-head{
+ gap:6px;flex-wrap:wrap;
+}
+#quickOverlay .v41-master input[type=range]{
+ display:block;
+ width:100%!important;
+ min-width:0;
+ touch-action:pan-x;
+}
+#quickOverlay .v41-master .v41-master-head strong{
+ font-size:13px;letter-spacing:-.12px;
+}
+#quickOverlay .v41-master p{max-width:100%}
+/* The elegant bronze socket marks where the real movable shade
+   telescopes into the end of the master card. It is an interactive
+   brightness FOCUS action, not a second dimming slider. */
+#v44DockSocket{
+ position:absolute;
+ right:10px;top:10px;
+ width:65px;min-width:65px;height:72px;min-height:72px;
+ padding:0 3px 2px;
+ display:flex;flex-direction:column;gap:1px;
+ align-items:center;justify-content:center;
+ background:linear-gradient(150deg,#46374b,#2b273f);
+ color:#f5e2bd;
+ border:1px solid #9e8374bd;border-radius:18px;
+ box-shadow:inset 0 0 0 1px #ffffff0e,0 4px 13px #100c2299;
+ z-index:1;
+ transition:background .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+#v44DockSocket .v44-dock-ring{
+ display:grid;place-items:center;
+ width:34px;height:34px;min-width:34px;
+ border:2px solid #bca079;
+ box-shadow:inset 0 0 7px #f6d8a435,0 0 10px #ba8f5744;
+ border-radius:50%;
+ font-size:21px;line-height:1;
+}
+#v44DockSocket .v44-dock-title{
+ font-size:9px;font-weight:820;letter-spacing:1.4px;line-height:1.2;
+}
+#v44DockSocket[aria-pressed=true]{
+ border-color:rgb(var(--ambient-rgb) / .8);
+ box-shadow:0 0 0 1px rgb(var(--ambient-rgb)/.42),0 0 17px rgb(var(--ambient-rgb)/.32),inset 0 0 9px rgb(var(--ambient-rgb)/.18);
+ background:linear-gradient(160deg,#4d4054,#25233f);
+}
+#v44DockSocket[aria-pressed=true] .v44-dock-ring{
+ border-color:rgb(var(--ambient-rgb));
+ box-shadow:0 0 13px rgb(var(--ambient-rgb)/.52),inset 0 0 12px rgb(var(--ambient-rgb)/.28);
+}
+#v44DockSocket:focus-visible,
+#quickOverlay .v41-master input[type=range]:focus-visible{
+ outline:3px solid #f9daae!important;outline-offset:3px;
+}
+#quickOverlay .v41-master.v44-brightness-active{
+ border-color:#f7d69dcc;
+ box-shadow:0 0 0 2px #e5bd7688,0 0 20px #a987c435;
+}
+#quickOverlay .v41-master.v44-brightness-active input[type=range]{
+ accent-color:#eac888!important;
+}
+@media(max-width:360px){
+ #quickOverlay .v41-master{
+  padding-left:9px!important;padding-right:75px!important;
+ }
+ #v44DockSocket{right:7px;width:59px;min-width:59px;height:68px;min-height:68px}
+ #quickOverlay .v41-master .v41-master-head strong{font-size:12px}
+}
+/* The rail or decorative beams must NEVER swallow a pointer meant for a
+   lamp-card control or the dimmer. Existing swipe-close belongs to grip. */
+.ambient-room-glow,.ambient-beam-canvas{pointer-events:none!important}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher svg.ambient-lamp-art,
+ #v44DockSocket,
+ #quickOverlay .v41-master{transition:none!important}
+}
