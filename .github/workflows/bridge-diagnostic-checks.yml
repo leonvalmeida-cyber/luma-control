@@ -1,0 +1,25 @@
+name: Luma Hue Bridge diagnostic checks
+on:
+  push:
+    paths:
+      - 'bridge-check/**'
+      - '.github/workflows/bridge-diagnostic-checks.yml'
+  pull_request:
+    paths:
+      - 'bridge-check/**'
+jobs:
+  bridge-test-safety:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static and simulated browser checks
+        run: node --test bridge-check/tests/bridge-check.test.cjs
+      - name: Syntax checks
+        run: |
+          node --check bridge-check/groups-v1.js
+          node --check bridge-check/groups-v1-tree.js
