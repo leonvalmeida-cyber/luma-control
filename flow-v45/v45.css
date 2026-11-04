@@ -93,7 +93,7 @@ body:has(#settingsMenu:not([hidden])) .quick-launcher:not([aria-expanded=true]){
 }
 #v45LampHome .v45-stage-copy{
  position:absolute;z-index:2;
- top:16px;left:16px;width:min(51%,200px);
+ top:29px;left:16px;width:min(47%,175px);
  display:grid;gap:7px;text-shadow:0 2px 13px #111021d9;
 }
 #v45LampHome .v45-stage-eyebrow{
@@ -113,7 +113,7 @@ body:has(#settingsMenu:not([hidden])) .quick-launcher:not([aria-expanded=true]){
  position:absolute;right:15%;top:11px;font-size:21px;color:#f9e0ab66;
 }
 @media(max-width:360px){
- #v45LampHome .v45-stage-copy{left:12px;top:13px;width:52%}
+ #v45LampHome .v45-stage-copy{left:12px;top:26px;width:48%}
  #v45LampHome{height:167px;min-height:167px;max-height:167px}
 }
 
