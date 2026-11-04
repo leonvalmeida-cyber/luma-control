@@ -1,0 +1,23 @@
+name: Luma Flow LIVE beta checks
+on:
+  push:
+    paths:
+      - 'flow-live/**'
+      - '.github/workflows/flow-live-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-live/**'
+jobs:
+  flow-live:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Real Hue preview integrity
+        run: node --test flow-live/tests/flow-live.test.cjs
+      - name: Parse sound protection module
+        run: node --check flow-live/flow/noise-guard.js
