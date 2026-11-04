@@ -11,7 +11,7 @@ test('Wall fixture stays still: moving shade is independent of the fixed mount',
  assert.ok(html.includes('ambient-lamp-mount-line'));
  assert.ok(html.includes('class="ambient-lamp-base"'));
  assert.ok(!html.includes('<small>Licht</small>'));
- assert.ok(css.includes('var(--luma-pull-px)'));
+ assert.ok(css.includes('var(--luma-head-svg-px)'),'WebKit renders SVG group transforms in viewBox units');
  assert.ok(css.includes('.ambient-moving-head'));
  assert.ok(css.includes('quick-pulling'));
  assert.ok(pull.armPath(160).includes('H82 Q88 33 88 39 V53'));
