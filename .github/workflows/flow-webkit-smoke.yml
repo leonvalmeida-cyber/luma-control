@@ -12,7 +12,7 @@ on:
       - '.github/workflows/flow-webkit-smoke.yml'
 jobs:
   mobile-webkit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     timeout-minutes: 12
