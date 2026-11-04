@@ -50,10 +50,10 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
    <linearGradient id="ambientUpFade" x1="100%" y1="100%" x2="0%" y2="0%">
     <stop offset="0" stop-color="white" stop-opacity=".24"/><stop offset=".65" stop-color="white" stop-opacity=".025"/><stop offset="1" stop-color="white" stop-opacity="0"/>
    </linearGradient>
-<linearGradient id="ambientBeamGradient1" x1="100%" y1="0%" x2="0%" y2="0%"><stop offset="0" stop-opacity=".5"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
-   <linearGradient id="ambientBeamGradient2" x1="100%" y1="0%" x2="0%" y2="0%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".24"/><stop offset=".66" stop-opacity=".06"/><stop offset="1" stop-opacity="0"/></linearGradient>
-   <linearGradient id="ambientBeamGradient3" x1="100%" y1="0%" x2="0%" y2="0%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".055"/><stop offset="1" stop-opacity="0"/></linearGradient>
-   <linearGradient id="ambientBeamGradientUp" x1="100%" y1="100%" x2="0%" y2="0%"><stop offset="0" stop-opacity=".14"/><stop offset=".4" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
+<linearGradient id="ambientBeamGradient1" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".5"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradient2" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".24"/><stop offset=".66" stop-opacity=".06"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradient3" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".055"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradientUp" x1="50%" y1="100%" x2="50%" y2="0%"><stop offset="0" stop-opacity=".14"/><stop offset=".4" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
   </defs>
   <path id="ambientBeam1" class="ambient-beam-path ambient-beam-1"/>
   <path id="ambientBeam2" class="ambient-beam-path ambient-beam-2"/>
@@ -69,10 +69,10 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
     <linearGradient id="lumaLampInside" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#241b38"/><stop offset="1" stop-color="#d4b8ed"/></linearGradient>
    </defs>
    <!-- The right-side wall mounting stays motionless when the shade is pulled. -->
-   <path class="ambient-lamp-base" d="M84 19Q96 19 96 32V106Q96 116 85 116H78V20Z"/>
-   <path class="ambient-lamp-mount-line" d="M86 31V101M83 24H94"/>
+   <path class="ambient-lamp-base" d="M85 72Q97 72 97 83V112Q97 120 85 120H79V72Z"/>
+   <path class="ambient-lamp-mount-line" d="M87 79V112M82 76H93"/>
    <!-- This single telescopic arm is re-shaped from the shade to its fixed mounting. -->
-   <path id="ambientLampArm" class="ambient-lamp-stem ambient-lamp-arm" d="M45 38Q57 33 67 33H82Q88 33 88 39V53"/>
+   <path id="ambientLampArm" class="ambient-lamp-stem ambient-lamp-arm" d="M43 78V100Q43 106 50 106H86"/>
    <g id="ambientMovingHead" class="ambient-moving-head">
     <!-- Open top: the small secondary upward spill originates here. -->
     <path class="ambient-lamp-rim" d="M16 38Q32 30 48 37" fill="none"/>
@@ -83,11 +83,12 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
     <path class="ambient-lamp-lumen ambient-lamp-lumen-one" d="M6 73Q14 78 23 80"/>
     <path class="ambient-lamp-lumen ambient-lamp-lumen-two" d="M24 80Q33 83 41 79"/>
     <path class="ambient-lamp-lumen ambient-lamp-lumen-three" d="M42 79Q51 78 57 73"/>
-    <path class="ambient-lamp-joint" d="M39 30L46 37"/>
+    <circle class="ambient-lamp-joint" cx="43" cy="80" r="3.5"/>
    </g>
   </svg>
  </span>
 </button>
+<button id="quickLampGrip" class="quick-lamp-grip" type="button" aria-label="Lampenschirm nach rechts ziehen, um die Lichtsteuerung zu schließen" aria-controls="quickOverlay" hidden></button>
 <div id="quickOverlay" class="quick-overlay" hidden>
  <button id="quickBackdrop" type="button" class="quick-backdrop" tabindex="-1" aria-label="Lichtsteuerung schließen"></button>
  <button id="quickSwipeClose" type="button" class="quick-swipe-close" aria-label="Lichtsteuerung nach rechts wischen oder schließen"><span aria-hidden="true">›</span></button>
@@ -658,7 +659,7 @@ const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost')
 const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
 el('quickPanelBody').append(el('targetCard'));
 let quickClosing=false,quickCloseAnimation=null,quickFinishTimer=0;
-const quickClose=()=>{
+const quickClose=(options={})=>{
  if(quickOverlay.hidden||quickClosing)return;
  quickClosing=true;
  const finish=()=>{
@@ -672,6 +673,7 @@ const quickClose=()=>{
   window.lumaQuickPull?.reset?.();
   quickLauncher.focus({preventScroll:true});
  };
+ if(options?.immediate===true){finish();return}
  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(!reduce&&typeof quickSheet.animate==='function'){
   try{
@@ -703,6 +705,7 @@ const quickOpen=()=>{
  quickOverlay.querySelector('.quick-backdrop').style.opacity='';
  quickOverlay.style.pointerEvents='';
  quickLauncher.setAttribute('aria-expanded','true');
+ window.lumaQuickPull?.showOpened?.();
  document.body.style.top='-'+quickScrollPosition+'px';
  document.body.classList.add('quick-page-lock');
  const chosen=el('target').selectedOptions?.[0]?.textContent||'All';
