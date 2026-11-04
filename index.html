@@ -41,7 +41,17 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 .g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
 #groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
 @media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
-</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js"></script><link rel="stylesheet" href="lamp-icons.css"><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsLamps">💡 Lampensymbole</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row mi-target-head"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span><button id="targetTreeToggle" type="button" aria-controls="targetFastTree" aria-expanded="true" aria-label="Gruppenauswahl einklappen">▴</button></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden><div class="mi-bridge-banner" role="note"><b>● LUMA FLOW · LIVE BETA</b><span>Diese Testversion steuert echte Lampen. Neuer Störschutz ist standardmäßig aus und experimentell. Die Haupt-App bleibt unverändert.</span><span id="miBridgeStatus" role="status">Bridge-Verbindung wird geprüft …</span></div>
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css"><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtbereiche und einzelne Lampen öffnen" aria-controls="quickOverlay" aria-expanded="false"><span aria-hidden="true">💡</span><small>Licht</small></button>
+<div id="quickOverlay" class="quick-overlay" hidden>
+ <button id="quickBackdrop" type="button" class="quick-backdrop" tabindex="-1" aria-label="Lichtsteuerung schließen"></button>
+ <section class="quick-sheet" role="dialog" aria-modal="true" aria-labelledby="quickTitle" tabindex="-1">
+  <header class="quick-titlebar"><div><small>✦ LUMA QUICK CONTROL</small><h2 id="quickTitle">Dein Licht</h2></div><button id="quickClose" type="button" aria-label="Lichtsteuerung schließen">✕</button></header>
+  <p class="quick-subtitle">Lampe antippen zum Auswählen · ⏻ zum Schalten</p>
+  <div id="quickPanelBody" class="quick-panel-body"></div>
+  <p id="quickStatus" class="quick-status" role="status" aria-live="polite">Deine Lampen – ohne die aktuelle Seite zu verlassen.</p>
+ </section>
+</div>
+<div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsLamps">💡 Lampensymbole</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row mi-target-head"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span><button id="targetTreeToggle" type="button" aria-controls="targetFastTree" aria-expanded="true" aria-label="Gruppenauswahl einklappen">▴</button></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden><div class="mi-bridge-banner" role="note"><b>● LUMA FLOW · LIVE BETA</b><span>Diese Testversion steuert echte Lampen. Neuer Störschutz ist standardmäßig aus und experimentell. Die Haupt-App bleibt unverändert.</span><span id="miBridgeStatus" role="status">Bridge-Verbindung wird geprüft …</span></div>
 <section class="mi-hero" aria-label="Luma Music Immersive">
  <div class="mi-row"><span class="mi-label">✦ LUMA IMMERSIVE · MUSIK</span><span id="status" class="pill">Bereit</span></div>
  <h2>Fühl die Musik.<br>Sieh das Licht.</h2>
@@ -181,6 +191,9 @@ for(const button of document.querySelectorAll('#palettes [data-palette]')){
  button.style.setProperty('--mood-c3',colors[3]);button.style.setProperty('--mood-c4',colors[5]);
  button.dataset.moodArt=detail.motif;
  const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
+ const sceneImage=document.createElement('img');sceneImage.className='mi-mood-picture';
+ sceneImage.src='media/'+id+'.svg';sceneImage.alt='';sceneImage.loading='eager';sceneImage.decoding='async';
+ artwork.append(sceneImage);
  const glow=document.createElement('span');glow.className='mi-mood-glow';artwork.append(glow);
  const beam=document.createElement('span');beam.className='mi-mood-beam';artwork.append(beam);
  const wave=document.createElement('span');wave.className='mi-mood-wave';artwork.append(wave);
@@ -241,7 +254,7 @@ async function tick(){
   if(!devices.length){end('Keine Lampen ausgewählt.');return}
   const group=window.lumaMusicGroup();
   const i=group?0:cursor++%devices.length;
-  const d=devices[i],frame=musicFrames[i%lamps.length],v=hsv(...frame.rgb);
+  const d=devices[i],frame=musicFrames[i%musicFrames.length],v=hsv(...frame.rgb);
   const speed=Number($('speed').value)/100;
   const body=frame.brightness<=.001?{on:false,transitiontime:0}:{on:true,bri:Math.max(1,Math.min(254,Math.round(frame.brightness*254/5)*5)),transitiontime:speed>.7?0:Math.max(0,Math.round(5*(1-speed)))};
   if(body.on&&(group||d.color)){
@@ -487,7 +500,7 @@ function renderTree(){
     stopAll();
     const answer=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',{on});
     if(!Array.isArray(answer)||!answer.some(result=>result.success))throw Error('Bridge hat das Schalten nicht bestätigt.');
-    device.state.on=on;renderLights();
+    device.state.on=on;renderLights();el('quickStatus').textContent=(device.name||'Lampe')+(on?' eingeschaltet':' ausgeschaltet');
     status((device.name||'Lampe')+(on?' eingeschaltet.':' ausgeschaltet.')+' · Musiklicht bei manueller Bedienung gestoppt.');
    },
    onPowerError:(error,lightId)=>{
@@ -516,7 +529,7 @@ function renderGroups(){ensureGroups();groupUI.render()}
 function renderOrder(){/* Lampenreihenfolge wird über den Editor des zentralen Gruppenmodells verwaltet. */}
 function tab(name){
  for(const id of ['light','scene','group','music','connection','lampSettings'])el(id+'Pane').hidden=id!==name;
- el('targetCard').hidden=!['light','scene','music'].includes(name);
+ el('targetCard').hidden=false; // one persistent group tree lives in the floating quick-control sheet
  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.pane===name)));
  el('settingsMenu').hidden=true;
  if(name==='group'&&groupEngine)renderGroups();
@@ -573,6 +586,47 @@ function renderLampSettings(){
 }
 const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost').append(el('musicOutput'));
 
+const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
+el('quickPanelBody').append(el('targetCard'));
+const quickClose=()=>{
+ if(quickOverlay.hidden)return;
+ quickOverlay.hidden=true;
+ quickLauncher.setAttribute('aria-expanded','false');
+ document.body.classList.remove('quick-page-lock');
+ document.body.style.top='';
+ window.scrollTo(0,quickScrollPosition);
+ quickLauncher.focus({preventScroll:true});
+};
+let quickScrollPosition=0;
+const quickOpen=()=>{
+ if(!quickOverlay.hidden)return;
+ quickScrollPosition=window.scrollY||window.pageYOffset||0;
+ // The tree is moved, not cloned: selection, power state, disclosure, and focus survive.
+ el('targetCard').hidden=false;
+ quickOverlay.hidden=false;
+ quickLauncher.setAttribute('aria-expanded','true');
+ document.body.style.top='-'+quickScrollPosition+'px';
+ document.body.classList.add('quick-page-lock');
+ const chosen=el('target').selectedOptions?.[0]?.textContent||'All';
+ el('quickStatus').textContent='Aktueller Lichtbereich: '+chosen;
+ el('quickClose').focus({preventScroll:true});
+};
+quickLauncher.onclick=quickOpen;
+el('quickClose').onclick=quickClose;
+el('quickBackdrop').onclick=quickClose;
+window.addEventListener('keydown',event=>{
+ if(quickOverlay.hidden)return;
+ if(event.key==='Escape'){event.preventDefault();quickClose();return}
+ if(event.key==='Tab'){
+  const focusables=[...quickSheet.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')].filter(node=>node.getClientRects().length>0);
+  if(!focusables.length)return;
+  const start=focusables[0],end=focusables[focusables.length-1];
+  if(event.shiftKey&&document.activeElement===start){event.preventDefault();end.focus()}
+  else if(!event.shiftKey&&document.activeElement===end){event.preventDefault();start.focus()}
+ }
+});
+
+
 const toggleTargetTree=()=>{
  const button=el('targetTreeToggle'),panel=el('targetFastTree'),help=el('targetHelp');
  const show=panel.hidden;
@@ -584,7 +638,7 @@ const toggleTargetTree=()=>{
 el('targetTreeToggle').addEventListener('click',toggleTargetTree);
 
 el('bridgeIp').value=read('ip','192.168.1.2');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.setItem('luma_live_key',JSON.stringify(''))}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;el('miBridgeStatus').textContent='Bridge-Verbindung getrennt';status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
- try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();groupTree?.updateLampStates();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();groupTree?.updateLampStates();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';el('quickStatus').textContent='Ausgewählt: '+(el('target').selectedOptions[0]?.textContent||'All');renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
  catch(e){status('Gruppenauswahl: '+e.message)}
 };
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
