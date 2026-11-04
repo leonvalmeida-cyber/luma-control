@@ -49,3 +49,34 @@ test('Guard filter has no microphone, network or persistent storage access',()=>
  const guard=require('../flow/noise-guard.js');
  assert.equal(new guard.NoiseGuard().mode,guard.MODES.OFF);
 });
+
+test('Collapsing a group naturally shrinks the tree instead of holding a fixed height',()=>{
+ const css=fs.readFileSync(path.join(base,'groups-v1-tree.css'),'utf8');
+ assert.ok(css.includes('.g-tree-inner{height:auto;min-height:0;max-height:'),'tree must size to visible rows');
+ assert.ok(!css.includes('min-height:230px'),'old fixed panel height must not return');
+ const tree=fs.readFileSync(path.join(base,'groups-v1-tree.js'),'utf8');
+ assert.ok(tree.includes('this.updateExpansion()'),'collapse updates visibility instead of re-rendering');
+});
+test('Entire group chooser can be collapsed to the current selection and reopened',()=>{
+ assert.ok(html.includes('id="targetTreeToggle"'));
+ assert.ok(html.includes('aria-controls="targetFastTree"'));
+ assert.ok(html.includes('const toggleTargetTree=()=>'));
+ assert.ok(html.includes("panel.hidden=!show;help.hidden=!show;"));
+ assert.ok(html.includes("button.setAttribute('aria-expanded',String(show))"));
+ const css=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
+ assert.ok(css.includes('.target-card:has(#targetFastTree[hidden])'));
+});
+test('Music gallery uses compact symbolic lamp icons and live Hue names, never product pictures',()=>{
+ assert.ok(html.includes('id="miLampGallery"'));
+ assert.ok(html.includes('id="miLampCount"'));
+ assert.ok(html.includes('id="lamps"'));
+ assert.ok(html.includes('const miLampGlyphs='));
+ assert.ok(html.includes("document.createElementNS('http://www.w3.org/2000/svg','svg')"));
+ assert.ok(html.includes("card.querySelector('.mi-lamp-name').textContent="));
+ assert.ok(html.includes("window.lumaUpdateMusicPreview?.(devices)"));
+ assert.ok(html.includes("name:d.name||'Lampe '+id"));
+ assert.ok(html.includes("'--mi-lamp-level'"));
+ const css=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
+ assert.ok(css.includes('#musicPane #lamps .lamp.mi-lamp-card'));
+ assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
+});
