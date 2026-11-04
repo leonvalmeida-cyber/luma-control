@@ -200,3 +200,59 @@ background:radial-gradient(ellipse 85vw 41vh at calc(100% - 26px) clamp(145px,22
  .quick-overlay.quick-preview.quick-retract .quick-sheet{transition:none!important}
  .ambient-beam-path,.ambient-beam-up{filter:none!important}
 }
+
+/* V3 · User-drawn L: shade stem drops vertically then runs horizontally right
+   to the wall mount. While expanded the entire lamp moves into the header strip
+   above the tree, and the *moving shade*, not the right-edge button, is draggable. */
+:root{--luma-open-lift-px:0px}
+.quick-launcher{
+ transform:translate3d(0,calc(0px - var(--luma-open-lift-px)),0);
+ transform-origin:center right;
+ transition:transform .14s ease-out;
+}
+.quick-launcher.quick-pulling{transition:none!important}
+.quick-launcher[aria-expanded=true]{
+ visibility:visible!important;
+ opacity:1!important;
+ z-index:39620!important;
+ pointer-events:none!important;
+}
+.quick-launcher .ambient-lamp-arm{
+ stroke:#c9bddb;
+ stroke-width:5.5;
+ filter:drop-shadow(0 2px 2px #100d1f7a);
+}
+.quick-launcher .ambient-lamp-joint{fill:#d3bddb;stroke:none}
+.quick-launcher .ambient-lamp-mount-line{stroke:#f4e4ff;opacity:.5}
+.quick-launcher .ambient-lamp-top-opening{
+ fill:rgb(var(--ambient-ray-1) / .14);
+ stroke:rgb(var(--ambient-ray-1) / .67)
+}
+.quick-lamp-grip{
+ position:fixed;z-index:39630;
+ top:calc(clamp(135px,22dvh,238px) - var(--luma-open-lift-px) + 3px);
+ right:calc(max(6px,env(safe-area-inset-right)) + 21px + var(--luma-pull-px));
+ width:76px;min-width:76px;height:75px;min-height:75px;
+ border:0;background:transparent;box-shadow:none;padding:0;margin:0;
+ border-radius:35px;cursor:grab;
+ touch-action:none;-webkit-user-select:none;user-select:none;
+ -webkit-tap-highlight-color:transparent;
+}
+.quick-lamp-grip[hidden]{display:none!important}
+.quick-lamp-grip:active{cursor:grabbing}
+.quick-lamp-grip:focus-visible{outline:2px solid #f8e5ff;outline-offset:2px}
+.quick-swipe-close{display:none!important}
+/* Better readability under a shade that now lives in the header area. */
+.quick-overlay:not([hidden]) .quick-titlebar{padding-right:57px}
+.quick-overlay.quick-preview .quick-titlebar{pointer-events:none}
+.ambient-beam-canvas .ambient-beam-path{
+ filter:blur(8px);
+ opacity:.8;
+}
+.ambient-beam-canvas .ambient-beam-up{filter:blur(9px);opacity:.38}
+.ambient-room-glow{mix-blend-mode:screen}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher{transition:none!important}
+ .quick-lamp-grip{transition:none!important}
+ .ambient-beam-canvas .ambient-beam-path,.ambient-beam-canvas .ambient-beam-up{filter:none}
+}
