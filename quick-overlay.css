@@ -56,3 +56,74 @@ background:radial-gradient(ellipse 85vw 41vh at calc(100% - 26px) clamp(145px,22
 .quick-sheet{transform:translate3d(0,0,0);animation:quick-drawer-enter .24s cubic-bezier(.2,.8,.25,1) both}
 @keyframes quick-drawer-enter{from{transform:translate3d(34px,0,0);opacity:.74}to{transform:translate3d(0,0,0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.ambient-room-glow,.quick-launcher .ambient-lamp-art{transition:none!important}.quick-sheet{animation:none!important}}
+
+/* v0.9 · LEFT-FACING FLOOR LAMP / SPLIT-COLOR LIGHT CAST
+   Each beam comes from a distinct on lamp or fresh live-music channel, not a decorative preset.
+   The entire layer is hit-test transparent, with a subtle fan aimed LEFT + DOWN. */
+:root{
+ --ambient-ray-1:255 199 126;
+ --ambient-ray-2:255 199 126;
+ --ambient-ray-3:255 199 126;
+ --ambient-beam-count:0;
+}
+.ambient-room-glow{
+ position:fixed;inset:0;z-index:720;pointer-events:none;opacity:var(--ambient-power);
+ background:radial-gradient(ellipse 90vw 54vh at calc(100% - 45px) clamp(180px,28dvh,315px),
+ rgb(var(--ambient-rgb) / .13),rgb(var(--ambient-rgb) / .045) 42%,transparent 76%);
+ mix-blend-mode:screen;transition:opacity .33s ease
+}
+.ambient-room-glow::before{
+ content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
+ background:radial-gradient(ellipse 75vw 65vh at 90% 34%,rgb(var(--ambient-rgb) / .20),transparent 83%);
+ filter:blur(22px);clip-path:none
+}
+.ambient-room-glow .ambient-ray{
+ position:absolute;top:calc(clamp(135px,22dvh,238px) + 45px);right:28px;
+ width:min(94vw,745px);height:min(67vh,565px);
+ background:linear-gradient(251deg,rgb(var(--ray-color) / .40) 0%,rgb(var(--ray-color) / .22) 33%,rgb(var(--ray-color) / .09) 65%,transparent 100%);
+ filter:blur(14px);pointer-events:none;
+ transform:translateZ(0);will-change:opacity
+}
+.ambient-room-glow .ambient-ray-1{
+ --ray-color:var(--ambient-ray-1);
+ clip-path:polygon(100% 0%,100% 2%,0 99%,0 78%)
+}
+.ambient-room-glow .ambient-ray-2{
+ --ray-color:var(--ambient-ray-2);
+ clip-path:polygon(100% 0%,100% 2%,0 77%,0 54%)
+}
+.ambient-room-glow .ambient-ray-3{
+ --ray-color:var(--ambient-ray-3);
+ clip-path:polygon(100% 0%,100% 2%,0 56%,0 34%)
+}
+.quick-launcher{width:67px;min-width:67px;height:91px;min-height:91px;top:clamp(135px,22dvh,238px);right:max(6px,env(safe-area-inset-right));padding:0 3px 0;touch-action:none;-webkit-user-select:none;user-select:none}
+.quick-launcher>.ambient-lamp-device{width:65px;height:83px;min-height:83px}
+.quick-launcher svg.ambient-lamp-art{width:67px;height:83px;overflow:visible;filter:drop-shadow(0 6px 9px #090817a4)}
+.quick-launcher .ambient-lamp-silhouette{fill:url(#lumaLampMetal);stroke:#bcb0d2;stroke-width:3.1;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-stem{fill:none;stroke:#9b92b1;stroke-width:6;stroke-linejoin:round;stroke-linecap:round}
+.quick-launcher .ambient-lamp-reflection{stroke:#e3d9fc;stroke-width:3.6;fill:none;opacity:.55;stroke-linecap:round}
+.quick-launcher .ambient-lamp-diffuser{fill:rgb(var(--ambient-rgb) / var(--ambient-symbol));stroke:rgb(var(--ambient-rgb) / .96);stroke-width:2.1;filter:drop-shadow(0 0 9px rgb(var(--ambient-rgb) / .7))}
+.quick-launcher .ambient-lamp-lumen{fill:none;stroke-width:3.9;stroke-linecap:round;opacity:var(--ambient-power);filter:drop-shadow(0 0 3px currentColor)}
+.quick-launcher .ambient-lamp-lumen-one{stroke:rgb(var(--ambient-ray-1))}
+.quick-launcher .ambient-lamp-lumen-two{stroke:rgb(var(--ambient-ray-2))}
+.quick-launcher .ambient-lamp-lumen-three{stroke:rgb(var(--ambient-ray-3))}
+.quick-launcher .ambient-lamp-joint{stroke:#d7cbe4;stroke-width:6;stroke-linecap:round}
+.quick-launcher .ambient-lamp-base{fill:#635678;stroke:#c7b8d7;stroke-width:2.7}
+.quick-launcher .ambient-lamp-detail{stroke:#e7d9f0;stroke-width:2;fill:none;opacity:.55}
+.quick-launcher>small{position:relative;top:-11px;text-shadow:0 2px 7px #131023,0 0 11px #1c1425;font-size:9px}
+.quick-launcher::after{right:45px;top:38px;transform:rotate(17deg);width:200px;height:85px;opacity:calc(var(--ambient-power) * .48)}
+.quick-launcher::before{right:29px;top:24px;opacity:calc(var(--ambient-power) * .65)}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-lumen{opacity:0}
+.quick-swipe-close{
+ position:fixed;z-index:4;top:clamp(135px,22dvh,238px);right:0;display:grid;place-items:center;
+ width:34px;min-width:34px;height:92px;min-height:92px;padding:0;
+ border:1px solid #bda9db80;border-right:0;border-radius:15px 0 0 15px;
+ background:linear-gradient(130deg,#716192b3,#2f284caf);color:#fff4ff;font-size:31px;
+ box-shadow:-6px 0 19px #281b4052;touch-action:none;-webkit-user-select:none;user-select:none
+}
+.quick-swipe-close>span{pointer-events:none}
+.quick-swipe-close:focus-visible{outline:2px solid #fae4ff;outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){
+ .ambient-room-glow{transition:none}
+ .ambient-room-glow .ambient-ray{will-change:auto}
+}
