@@ -612,6 +612,24 @@ function renderTree(){
    },
    onPowerError:(error,lightId)=>{
     status('Lampe '+(lights[lightId]?.name||lightId)+': '+(error?.message||'Schalten fehlgeschlagen.'));
+    el('quickStatus').textContent='Lampe: '+(error?.message||'Helligkeit nicht übernommen');
+   },
+   onBrightness:async(lightId,percent)=>{
+    if(!connected)throw Error('Bridge nicht verbunden.');
+    const device=lights[lightId];
+    if(!device||device.state?.reachable===false)throw Error('Lampe nicht erreichbar.');
+    if(!Number.isFinite(percent)||percent<1||percent>100)throw Error('Helligkeit ungültig.');
+    // Selecting the sun button never changes the current group selection.
+    // On release, make exactly one manual command to this one light.
+    stopAll();
+    const body={on:true,bri:Math.max(1,Math.round(percent*2.54))};
+    const reply=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',body);
+    if(!Array.isArray(reply)||!reply.some(item=>item?.success))throw Error('Hue bestätigt die Helligkeit nicht.');
+    reflectLightState(lightId,body,reply);
+    groupTree?.updateLampStates();
+    el('quickStatus').textContent=(device.name||'Lampe')+' · '+percent+' %';
+    status((device.name||'Lampe')+' · Helligkeit '+percent+' %');
+    renderLights();
    },
    onSelect:id=>{
     if(!engine.group(id))return;
