@@ -29,7 +29,7 @@ test('reserved real master card gutter avoids an overlapping invisible grip',()=
  assert.match(css,/#v44DockSocket\{/);
  assert.match(css,/right:10px;top:10px/);
  assert.match(css,/\.quick-lamp-grip,/);
- assert.match(css,/--luma-pull-px/); // real shade/grip geometric position retained from previous stylesheet
+ assert.match(pull,/setProperty\('--luma-pull-px'/); // grip follows actual moving shade geometry
 });
 test('physical Luma arm telescopes into dock rather than cloning artwork',()=>{
  assert.match(pull,/const magnetic=p\*magnet/);
