@@ -85,3 +85,33 @@ test('Fast tree includes new nested local groups without losing lamp targets',()
  assert.ok(tv.children.some(x=>x.id==='lamp:a'));
  assert.equal(root.children[0].id,'bridge:1');
 });
+
+test('Fast tree DOM renders and direct lamp pick updates shared selection',()=>{
+ require('../groups-v1-tree.js');
+ const {engine}=fixture();
+ const oldDocument=global.document;
+ function node(tag){
+  const attrs={};
+  return {tag,className:'',textContent:'',disabled:false,children:[],style:{setProperty(){}},
+   classList:{add(){}},setAttribute(k,v){attrs[k]=v},getAttribute(k){return attrs[k]},
+   replaceChildren(...xs){this.children=[...xs]},append(...xs){this.children.push(...xs)}};
+ }
+ try{
+  global.document={createElement:node};
+  const container=node('div');
+  const tree=new global.LumaGroupsTree.Tree(engine,container,{
+   getSelected:()=>engine.currentTarget(),
+   onSelect:id=>engine.setTarget(id)
+  });
+  tree.render();
+  const descendants=x=>[x,...(x.children||[]).flatMap(descendants)];
+  const treeItems=()=>descendants(container).filter(x=>x.getAttribute?.('role')==='treeitem');
+  assert.ok(treeItems().some(x=>x.getAttribute('aria-level')==='3'));
+  const candidates=descendants(container).filter(x=>x.tag==='button'&&x.getAttribute('aria-pressed')==='false');
+  const lampButton=candidates.find(x=>x.children.some(n=>n.textContent==='Iris'));
+  assert.ok(lampButton,'Lamp must be present and directly selectable in expanded room');
+  lampButton.onclick();
+  assert.equal(engine.currentTarget(),'lamp:a');
+  assert.ok(descendants(container).some(x=>x.getAttribute?.('aria-pressed')==='true'&&x.children?.some(y=>y.textContent==='Iris')));
+ }finally{global.document=oldDocument}
+});
