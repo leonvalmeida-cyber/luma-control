@@ -56,3 +56,11 @@ test('New UI modules have no Hue or microphone side effects',()=>{
  }
  assert.ok(html.includes('frame=musicFrames[i%musicFrames.length]'));
 });
+
+test('Even if iPhone fails to load an SVG image request, the four illustrations remain inline',()=>{
+ assert.ok(html.includes('const lumaMoodArtwork='));
+ assert.ok(html.includes("artFallback.className='mi-mood-fallback'"));
+ assert.ok(html.includes('artFallback.innerHTML=lumaMoodArtwork[id]'));
+ assert.ok(moodCSS.includes('.mi-mood-fallback>svg{display:block'));
+ for(const name of ['neon','sunset','ocean','warm'])assert.ok(html.includes('"'+name+'":"<svg'),name+' fallback missing');
+});
