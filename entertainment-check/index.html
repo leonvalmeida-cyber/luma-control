@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#121429"><title>Luma · Entertainment Check</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101323;color:#f3f2fc}
+*{box-sizing:border-box}body{margin:0;padding:20px 15px 60px;max-width:730px;margin-inline:auto}
+h1{font-size:26px;margin:12px 0}h2{font-size:17px;margin:0 0 11px}
+p{line-height:1.5;color:#bfc1d3}a{color:#b7a6ff}.card{background:#1d2034;border:1px solid #363952;border-radius:18px;padding:17px;margin:16px 0}
+label{display:block;font-size:13px;color:#cfd0dd;margin:12px 0 5px}input{width:100%;padding:12px;color:#fff;background:#14172a;border:1px solid #595c7a;border-radius:11px;font-size:16px}
+button{background:#7967db;color:#fff;border:0;border-radius:11px;padding:12px 16px;font-size:15px;font-weight:600;min-height:44px;margin:7px 8px 0 0}
+button.secondary{background:#333751}button:disabled{opacity:.45}.note{font-size:12px;color:#aaaec8}
+#status{padding:12px;background:#272b43;border-radius:12px;line-height:1.45;white-space:pre-wrap}
+.area{padding:12px 0;border-bottom:1px solid #42465e}.area:last-child{border:0}.area strong{font-size:16px}
+.value{font-size:13px;color:#cccfea;margin-top:6px;line-height:1.5}
+.badge{display:inline-block;margin-left:8px;background:#3b3755;color:#cfc2ff;border-radius:6px;padding:3px 7px;font-size:11px}
+ul{margin:7px 0 0;padding-left:20px;color:#cfd0e3}li{margin:5px 0}
+.hidden{display:none}
+</style></head>
+<body>
+<a href="../flow-live/">← Zur Luma Flow Testversion</a>
+<h1>⚡ Entertainment-Check</h1>
+<p>Schritt A unseres Musik-Tests: Wir prüfen direkt an deiner Hue Bridge Pro, welche Entertainment-Bereiche und streamingfähigen Dienste sie meldet. <strong>Nur Lesen – keine Lampe wird verändert.</strong></p>
+<div class="card">
+<h2>1 · Bridge verbinden</h2>
+<button id="reuse" type="button" class="secondary">Vorhandene Luma-Verbindung übernehmen</button>
+<label for="ip">Lokale Bridge-IP</label><input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.2" autocomplete="off">
+<label for="key">Hue Application Key (wird nicht gespeichert)</label><input id="key" type="password" placeholder="Schlüssel aus Luma Control" autocomplete="off">
+<button id="check" type="button">Entertainment prüfen</button>
+<p class="note">iPhone und Bridge müssen im selben WLAN sein. Der Test nutzt ausschließlich HTTPS direkt zu deiner Bridge, keinen Cloud-Server. Zugangsdaten werden nicht an GitHub übertragen und nicht neu gespeichert.</p>
+<div id="status" role="status" aria-live="polite">Noch nicht geprüft.</div>
+</div>
+<div class="card hidden" id="resultCard">
+<h2>2 · Ergebnis</h2><div id="summary"></div><div id="areas"></div>
+<h2 style="margin-top:18px">Lampen / Geräte</h2><div id="devices"></div>
+<button id="copy" class="secondary" type="button">Ergebnis ohne Schlüssel kopieren</button>
+<p class="note">Mit „Ergebnis kopieren“ kannst du die Diagnose direkt in unseren Chat einfügen. IP-Adresse, API-Schlüssel und Geräte-IDs werden dabei nicht kopiert.</p>
+</div>
+<div class="card"><h2>Was wir damit prüfen</h2><p class="note">Ein Entertainment-Bereich ist nicht dasselbe wie die normalen Hue-Räume „All“ und „Wohnzimmer“. Falls noch keiner vorhanden ist: in der offiziellen Hue-App unter Einstellungen → Entertainment-Bereiche einen Bereich erstellen. Die tatsächliche Musik-Latenz kann diese reine Lesediagnose noch nicht messen.</p></div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+let report="";
+function status(message){$("status").textContent=message;}
+function getSaved(name){try{const raw=localStorage.getItem(name);if(!raw)return "";const value=JSON.parse(raw);return typeof value==="string"?value:"";}catch{return "";}}
+function validPrivateIPv4(value){
+ const match=/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(value);
+ if(!match)return false;
+ const n=match.slice(1).map(Number);
+ if(n.some(v=>v>255))return false;
+ return n[0]===10||(n[0]===172&&n[1]>=16&&n[1]<=31)||(n[0]===192&&n[1]===168);
+}
+$("reuse").addEventListener("click",()=>{
+ const ip=getSaved("luma_live_ip")||getSaved("luma07_ip");
+ const key=getSaved("luma_live_key")||getSaved("luma07_key");
+ if(!ip||!key){status("Keine gespeicherte Bridge-Verbindung gefunden. IP und Application Key bitte manuell eingeben.");return;}
+ $("ip").value=ip;$("key").value=key;
+ status("Daten lokal übernommen. Noch kein Netzwerkzugriff.");
+});
+function node(tag,text,cls){
+ const el=document.createElement(tag);if(text!=null)el.textContent=String(text);if(cls)el.className=cls;return el;
+}
+function addLine(el,text){el.appendChild(node("div",text,"value"));}
+function unique(xs){return [...new Set(xs.filter(Boolean))];}
+async function resource(ip,key,name){
+ const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),9000);
+ try{
+  const response=await fetch("https://"+ip+"/clip/v2/resource/"+name,{
+   method:"GET",mode:"cors",cache:"no-store",credentials:"omit",
+   headers:{"hue-application-key":key},signal:ctrl.signal
+  });
+  if(!response.ok)throw Error("HTTP "+response.status+" bei "+name);
+  const value=await response.json();
+  if(Array.isArray(value.errors)&&value.errors.length)throw Error("Hue meldet Fehler bei "+name);
+  if(!Array.isArray(value.data))throw Error("Unerwartetes Datenformat bei "+name);
+  return value.data;
+ }finally{clearTimeout(timer);}
+}
+$("check").addEventListener("click",async()=>{
+ const ip=$("ip").value.trim();const key=$("key").value.trim();
+ if(!validPrivateIPv4(ip)){status("Bitte eine lokale private IPv4-Adresse der Bridge eingeben.");return;}
+ if(!key){status("Application Key fehlt.");return;}
+ $("check").disabled=true;$("resultCard").classList.add("hidden");report="";
+ status("Lese Entertainment-Bereiche und Lampendienste …");
+ try{
+  const [areas,entertainment,lights,devices]=await Promise.all([
+   resource(ip,key,"entertainment_configuration"),
+   resource(ip,key,"entertainment"),
+   resource(ip,key,"light"),
+   resource(ip,key,"device")
+  ]);
+  const areaHost=$("areas"),deviceHost=$("devices"),summaryHost=$("summary");
+  areaHost.replaceChildren();deviceHost.replaceChildren();summaryHost.replaceChildren();
+  const lightById=new Map(lights.map(x=>[x.id,x]));
+  const deviceById=new Map(devices.map(x=>[x.id,x]));
+  const entertainmentById=new Map(entertainment.map(x=>[x.id,x]));
+  const supportedDeviceIds=new Set(entertainment.map(x=>x.owner?.rid).filter(Boolean));
+  const sectionLines=[];
+  sectionLines.push("Entertainment-Bereiche: "+areas.length);
+  sectionLines.push("Streaming-Dienste: "+entertainment.length);
+  sectionLines.push("Hue-Geräte gesamt: "+devices.length);
+  addLine(summaryHost,sectionLines.join(" · "));
+  const output=[...sectionLines];
+  if(!areas.length){
+   const message="Noch kein Entertainment-Bereich vorhanden. Bitte zuerst in der offiziellen Hue-App anlegen.";
+   areaHost.append(node("p",message));output.push(message);
+  }
+  for(const area of areas){
+   const el=node("div",null,"area");
+   const name=area.metadata?.name||area.name||"Unbenannter Bereich";
+   const strong=node("strong",name);
+   el.append(strong,node("span",String(area.status||"Status unbekannt"),"badge"));
+   const channels=Array.isArray(area.channels)?area.channels:[];
+   const members=unique(channels.flatMap(c=>(c.members||[]).map(m=>m.service?.rid||m.rid)));
+   const lightIds=unique((area.light_services||[]).map(x=>x.rid));
+   const linkedOwners=unique(members.map(id=>entertainmentById.get(id)?.owner?.rid));
+   const lampNames=unique([...lightIds.map(id=>lightById.get(id)?.metadata?.name),
+    ...lights.filter(x=>linkedOwners.includes(x.owner?.rid)).map(x=>x.metadata?.name)]);
+   addLine(el,"Kanäle: "+channels.length+" · Entertainment-Mitglieder: "+members.length+" · Lampen: "+(lampNames.join(", ")||"keine Namenszuordnung verfügbar"));
+   areaHost.append(el);
+   output.push("Bereich: "+name+" | Status: "+(area.status||"?")+" | Kanäle: "+channels.length+" | Lampen: "+(lampNames.join(", ")||"nicht zugeordnet"));
+  }
+  const grouped=new Map();
+  for(const d of devices){
+   const name=d.metadata?.name||d.product_data?.product_name||"Unbenanntes Gerät";
+   const model=d.product_data?.model_id||"Modell unbekannt";
+   const supported=supportedDeviceIds.has(d.id);
+   const bucket=supported?"Entertainment-Service erkannt":"Kein Entertainment-Service gemeldet";
+   if(!grouped.has(bucket))grouped.set(bucket,[]);
+   grouped.get(bucket).push(name+" · "+model);
+  }
+  for(const title of ["Entertainment-Service erkannt","Kein Entertainment-Service gemeldet"]){
+   const items=grouped.get(title)||[];
+   const h=node("h3",title+" ("+items.length+")");h.style.fontSize="14px";deviceHost.append(h);
+   const list=node("ul");for(const item of items)list.append(node("li",item));
+   deviceHost.append(list);
+   output.push(title+": "+(items.join(" / ")||"keine"));
+  }
+  output.push("Hinweis: Abwesenheit eines Dienstes beweist keine Hardware-Inkompatibilität.");
+  report=output.join("\n");
+  $("resultCard").classList.remove("hidden");
+  status("Lesetest abgeschlossen. Es wurden keine Lampenbefehle gesendet.");
+ }catch(e){
+  const msg=e.name==="AbortError"?"Zeitüberschreitung: WLAN, Bridge-Adresse oder Zertifikat prüfen.":
+   e instanceof TypeError?"Netzwerkzugriff fehlgeschlagen. Prüfe Heim-WLAN, lokale HTTPS-Zertifikatsfreigabe in Safari und Hue-Bridge-Verbindung.":String(e.message||e);
+  status("Prüfung fehlgeschlagen: "+msg+"\nDie produktive App wurde nicht verändert.");
+ }finally{$("check").disabled=false;}
+});
+$("copy").addEventListener("click",async()=>{
+ try{await navigator.clipboard.writeText(report);status("Diagnose ohne Schlüssel kopiert. Jetzt im Chat einfügen.");}
+ catch{status("Kopieren nicht möglich – Ergebnis bitte per Screenshot senden.");}
+});
+})();
+</script></body></html>
