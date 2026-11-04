@@ -41,11 +41,24 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 .g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
 #groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
 @media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
-</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css?v=6"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css?v=6"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js?v=6"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css?v=6"><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtbereiche und einzelne Lampen öffnen" aria-controls="quickOverlay" aria-expanded="false"><span aria-hidden="true">💡</span><small>Licht</small></button>
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css?v=6"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css?v=6"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js?v=6"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css?v=7"><script src="ambient-lamp.js?v=7" defer></script><script src="quick-swipe.js?v=7" defer></script><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="ambientRoomGlow" class="ambient-room-glow" aria-hidden="true"></div>
+<button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtbereiche und einzelne Lampen öffnen, auch nach links oder oben wischen" aria-controls="quickOverlay" aria-expanded="false">
+ <span class="ambient-lamp-device" aria-hidden="true">
+  <svg class="ambient-lamp-art" viewBox="0 0 84 102" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+   <path class="ambient-lamp-silhouette" d="M42 12C25 12 18 26 18 42L10 52Q42 66 74 52L66 42C66 26 59 12 42 12Z"/>
+   <path class="ambient-lamp-reflection" d="M27 39C27 26 34 21 40 19"/>
+   <ellipse class="ambient-lamp-diffuser" cx="42" cy="52" rx="27" ry="9"/>
+   <path class="ambient-lamp-stem" d="M42 61V80"/>
+   <path class="ambient-lamp-base" d="M26 88C26 83 58 83 58 88L63 92H21Z"/>
+   <path class="ambient-lamp-detail" d="M29 92H55"/>
+  </svg>
+ </span>
+ <small>Licht</small>
+</button>
 <div id="quickOverlay" class="quick-overlay" hidden>
  <button id="quickBackdrop" type="button" class="quick-backdrop" tabindex="-1" aria-label="Lichtsteuerung schließen"></button>
  <section class="quick-sheet" role="dialog" aria-modal="true" aria-labelledby="quickTitle" tabindex="-1">
-  <header class="quick-titlebar"><div><small>✦ LUMA QUICK CONTROL</small><h2 id="quickTitle">Dein Licht</h2></div><button id="quickClose" type="button" aria-label="Lichtsteuerung schließen">✕</button></header>
+  <header class="quick-titlebar"><span class="quick-swipe-grip" aria-hidden="true"></span><div><small>✦ LUMA QUICK CONTROL</small><h2 id="quickTitle">Dein Licht</h2></div><button id="quickClose" type="button" aria-label="Lichtsteuerung schließen">✕</button></header>
   <p class="quick-subtitle">Lampe antippen zum Auswählen · ⏻ zum Schalten</p>
   <div id="quickPanelBody" class="quick-panel-body"></div>
   <p id="quickStatus" class="quick-status" role="status" aria-live="polite">Deine Lampen – ohne die aktuelle Seite zu verlassen.</p>
@@ -192,8 +205,9 @@ for(const button of document.querySelectorAll('#palettes [data-palette]')){
  button.dataset.moodArt=detail.motif;
  const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
  const sceneImage=document.createElement('img');sceneImage.className='mi-mood-picture';
- sceneImage.src='media/'+id+'.svg';sceneImage.alt='';sceneImage.loading='eager';sceneImage.decoding='async';
+ sceneImage.src='media/'+id+'.svg?v=7';sceneImage.alt='';sceneImage.loading='eager';sceneImage.decoding='async';sceneImage.onerror=()=>{artwork.dataset.imageFailed='true'};
  artwork.append(sceneImage);
+ const artTag=document.createElement('span');artTag.className='mi-mood-art-tag';artTag.textContent=({neon:'NEON CITY',sunset:'GOLDEN HOUR',ocean:'DEEP BLUE',warm:'COZY ROOM'})[id];artwork.append(artTag);
  const glow=document.createElement('span');glow.className='mi-mood-glow';artwork.append(glow);
  const beam=document.createElement('span');beam.className='mi-mood-beam';artwork.append(beam);
  const wave=document.createElement('span');wave.className='mi-mood-wave';artwork.append(wave);
@@ -441,7 +455,9 @@ window.lumaTargetIds=targetIds;
 window.lumaMusicGroup=()=>{const t=el('target').value;return ['bass','beatcolor','fast'].includes(mode)?t==='all'?'/groups/0/action':t.startsWith('bridge:')?'/groups/'+encodeURIComponent(t.slice(7))+'/action':null:null};
 let musicTransportEpoch=0;const musicControllers=new Set();let transportActive=0;window.lumaCancelMusicRequests=()=>{musicTransportEpoch++;for(const ctrl of musicControllers)ctrl.abort();musicControllers.clear()};window.lumaTransportState=()=>({active:transportActive,musicActive:musicControllers.size});
 async function raw(method,path,body,ip,key,music){const c=new AbortController(),timer=setTimeout(()=>c.abort(),music?1800:6000);if(music)musicControllers.add(c);transportActive++;try{const pending=fetch('https://'+ip+'/api/'+encodeURIComponent(key)+path,{method,mode:'cors',credentials:'omit',cache:'no-store',signal:c.signal,...(body?{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const aborted=new Promise((resolve,reject)=>{c.signal.addEventListener('abort',()=>{const e=Error('Anfrage abgebrochen');e.name='AbortError';reject(e)},{once:true})});const r=await Promise.race([pending,aborted]);if(!r.ok)throw Error('Bridge HTTP '+r.status);const d=await Promise.race([r.json(),aborted]);if(Array.isArray(d)&&d.some(x=>x.error))throw Error(d.filter(x=>x.error).map(x=>x.error.description).join('; '));return d}finally{clearTimeout(timer);musicControllers.delete(c);transportActive--}}
-function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaBridgeConnected=()=>connected;window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();if(!connected)throw Error('Bridge ist nicht verbunden. Öffne ⚙ → Bridge & Verbindung.');tab('music');};
+function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaBridgeConnected=()=>connected;
+window.lumaAmbientLightState=()=>({connected,devices:connected?targetIds().map(id=>lights[id]).filter(Boolean):[]});
+window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();if(!connected)throw Error('Bridge ist nicht verbunden. Öffne ⚙ → Bridge & Verbindung.');tab('music');};
 
 async function guard(fn){try{await fn()}catch(e){el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';stopAll();const msg=e.name==='AbortError'?'Zeitüberschreitung: Die Bridge hat nicht rechtzeitig geantwortet.':e instanceof TypeError?'Netzwerkzugriff blockiert: WLAN, IP-Adresse, HTTPS-Zertifikat oder lokale Netzwerkfreigabe prüfen.':e.message;status('Fehler: '+msg);el('hueState').textContent='Verbindung fehlgeschlagen. '+msg;el('hueLoad').disabled=false;el('hueLoad').textContent='Erneut verbinden';tab('connection')}}
 let connectionTask=null;function connect(){if(!connectionTask)connectionTask=connectInner().finally(()=>{connectionTask=null});return connectionTask}
@@ -588,14 +604,30 @@ const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost')
 
 const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
 el('quickPanelBody').append(el('targetCard'));
+let quickClosing=false,quickCloseAnimation=null;
 const quickClose=()=>{
- if(quickOverlay.hidden)return;
- quickOverlay.hidden=true;
- quickLauncher.setAttribute('aria-expanded','false');
- document.body.classList.remove('quick-page-lock');
- document.body.style.top='';
- window.scrollTo(0,quickScrollPosition);
- quickLauncher.focus({preventScroll:true});
+ if(quickOverlay.hidden||quickClosing)return;
+ quickClosing=true;
+ const finish=()=>{
+  if(quickOverlay.hidden)return;
+  quickOverlay.hidden=true;quickClosing=false;quickCloseAnimation=null;
+  quickLauncher.setAttribute('aria-expanded','false');
+  document.body.classList.remove('quick-page-lock');
+  document.body.style.top='';
+  window.scrollTo(0,quickScrollPosition);
+  quickLauncher.focus({preventScroll:true});
+ };
+ const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ if(!reduce&&typeof quickSheet.animate==='function'){
+  try{
+   const from=quickSheet.getBoundingClientRect().left;
+   quickCloseAnimation=quickSheet.animate([
+    {transform:'translate3d(0,0,0)',opacity:1},
+    {transform:'translate3d(100%,0,0)',opacity:.7}
+   ],{duration:210,easing:'cubic-bezier(.45,0,.95,.75)'});
+   quickCloseAnimation.finished.then(finish,finish);
+  }catch{finish()}
+ }else finish();
 };
 let quickScrollPosition=0;
 const quickOpen=()=>{
@@ -612,6 +644,7 @@ const quickOpen=()=>{
  el('quickClose').focus({preventScroll:true});
 };
 quickLauncher.onclick=quickOpen;
+window.lumaQuickControl={open:quickOpen,close:quickClose,isOpen:()=>!quickOverlay.hidden};
 el('quickClose').onclick=quickClose;
 el('quickBackdrop').onclick=quickClose;
 window.addEventListener('keydown',event=>{
