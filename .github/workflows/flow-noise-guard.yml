@@ -36,3 +36,27 @@ jobs:
         run: |
           node --check flow/noise-guard.js
           node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs tests/visual-mood-tree.test.cjs tests/floating-quick-control.test.cjs tests/ambient-lamp-swipe.test.cjs tests/ambient-swipe-v7.test.cjs tests/mood-lamp-swipe-v9.test.cjs
+
+  mobile-webkit-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up real mobile WebKit
+        run: |
+          npm install --no-save playwright@1.57.0
+          npx playwright install --with-deps webkit
+      - name: Render four Music scene images and test on-screen thumb swipes
+        run: node tests/browser-webkit-smoke.cjs
+      - name: Attach visual screenshot for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: luma-mobile-webkit-preview
+          path: /tmp/luma-webkit-music.png
+          if-no-files-found: ignore
