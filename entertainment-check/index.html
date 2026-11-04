@@ -76,6 +76,56 @@ async function resource(ip,key,name){
   return value.data;
  }finally{clearTimeout(timer);}
 }
+
+async function resourceV1(ip,key,name){
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),9000);
+ try{
+  const response=await fetch("https://"+ip+"/api/"+encodeURIComponent(key)+"/"+name,{
+   method:"GET",mode:"cors",cache:"no-store",credentials:"omit",signal:ctrl.signal
+  });
+  if(!response.ok)throw Error("Hue API v1 HTTP "+response.status);
+  const json=await response.json();
+  if(Array.isArray(json)&&json.some(x=>x.error))throw Error("Hue API v1 meldet Zugriffsfehler.");
+  if(!json||typeof json!=="object"||Array.isArray(json))throw Error("Unerwartete v1-Antwort.");
+  return json;
+ }finally{clearTimeout(timer);}
+}
+async function legacyReadOnly(ip,key){
+ status("Hue API v2 konnte nicht direkt aus Safari gelesen werden. Prüfe alternative Browser-kompatible Hue API v1 …");
+ const [groups,lights]=await Promise.all([
+  resourceV1(ip,key,"groups"),resourceV1(ip,key,"lights")
+ ]);
+ const areas=Object.values(groups).filter(x=>x?.type==="Entertainment");
+ const lightMap=lights;
+ const host=$("areas");host.replaceChildren();
+ const list=$("devices");list.replaceChildren();
+ const summary=$("summary");summary.replaceChildren();
+ const output=[
+  "Browser-Test über Hue API v1 (Fallback)",
+  "Entertainment-Bereiche: "+areas.length,
+  "Lampen gesamt: "+Object.keys(lightMap).length
+ ];
+ addLine(summary,output.slice(1).join(" · "));
+ if(areas.length===0)host.append(node("p","Die alte Hue API meldet keine Entertainment-Gruppe. Das beweist NICHT, dass deine Bridge oder Lampen kein Entertainment unterstützen."));
+ for(const area of areas){
+  const el=node("div",null,"area");
+  el.append(node("strong",area.name||"Unbenannter Bereich"));
+  const names=(area.lights||[]).map(id=>lightMap[id]?.name).filter(Boolean);
+  addLine(el,"Lampen: "+(names.join(", ")||"keine Zuordnung")+" · Stream aktiv: "+String(Boolean(area.stream?.active)));
+  host.append(el);
+  output.push("Bereich: "+(area.name||"unbenannt")+" | Lampen: "+(names.join(", ")||"keine")+" | Stream aktiv: "+Boolean(area.stream?.active));
+ }
+ for(const light of Object.values(lightMap)){
+  const name=light.name||"Unbenannte Lampe",model=light.modelid||"Modell unbekannt";
+  list.append(node("div",name+" · "+model,"value"));
+  output.push("Lampe: "+name+" · "+model);
+ }
+ output.push("Nur Hue API v1 aus Safari erreichbar. API v2 und echte Streaming-Kompatibilität noch nicht bestätigt.");
+ report=output.join("\n");
+ $("resultCard").classList.remove("hidden");
+ status("Lesetest über API v1 erfolgreich. Keine Lampen verändert. Die v2-Abfrage ist im Browser möglicherweise durch CORS/Zertifikate blockiert; dafür folgt ein nativer Test.");
+}
+
 $("check").addEventListener("click",async()=>{
  const ip=$("ip").value.trim();const key=$("key").value.trim();
  if(!validPrivateIPv4(ip)){status(ip ? "Diese Bridge-IP ist ungültig. Bitte die tatsächliche lokale IPv4-Adresse aus Luma Flow → ⚙ Bridge & Verbindung eintragen." : "Die Bridge-IP ist leer. Die graue 192.168.1.2 ist nur ein Beispiel, keine eingetragene Adresse. Öffne Luma Flow → ⚙ Bridge & Verbindung und kopiere die dortige Bridge-IP hierher.");$("ip").focus();return;}
@@ -141,9 +191,17 @@ $("check").addEventListener("click",async()=>{
   $("resultCard").classList.remove("hidden");
   status("Lesetest abgeschlossen. Es wurden keine Lampenbefehle gesendet.");
  }catch(e){
-  const msg=e.name==="AbortError"?"Zeitüberschreitung: WLAN, Bridge-Adresse oder Zertifikat prüfen.":
-   e instanceof TypeError?"Netzwerkzugriff fehlgeschlagen. Prüfe Heim-WLAN, lokale HTTPS-Zertifikatsfreigabe in Safari und Hue-Bridge-Verbindung.":String(e.message||e);
-  status("Prüfung fehlgeschlagen: "+msg+"\nDie produktive App wurde nicht verändert.");
+  try{await legacyReadOnly(ip,key);}
+  catch(legacyError){
+   const msg=legacyError.name==="AbortError"?"Zeitüberschreitung – Bridge nicht erreicht.":
+      legacyError instanceof TypeError?"Browser-Netzwerkfehler: möglicherweise Zertifikat, WLAN, CORS oder In-App-Browser.":
+      String(legacyError.message||legacyError);
+   const v2reason=e instanceof TypeError?"Browser-Sicherheitsblockade (CORS oder Zertifikat) möglich.":String(e.message||e);
+   status("Auch der alternative Lesetest ist fehlgeschlagen.\nV2: "+v2reason+"\nV1: "+msg+"\n\nNächster Schritt: Öffne in der normalen Safari-App die Adresse https://"+ip+"/ (ohne Schlüssel). Falls eine Zertifikatswarnung erscheint, kontrolliere zuerst, dass die IP wirklich zu deiner eigenen Hue Bridge gehört. Dann kann die lokale HTTPS-Verbindung geprüft werden.\n\nDie produktive App wurde nicht verändert.");
+   const a=node("a","Bridge-Verbindung in Safari prüfen");
+   a.href="https://"+ip+"/";a.target="_blank";a.rel="noopener noreferrer";a.style.display="inline-block";a.style.marginTop="12px";a.style.color="#b7a6ff";
+   $("status").append(a);
+  }
  }finally{$("check").disabled=false;}
 });
 $("copy").addEventListener("click",async()=>{
