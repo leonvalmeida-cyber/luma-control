@@ -204,6 +204,13 @@ for(const button of document.querySelectorAll('#palettes [data-palette]')){
  button.style.setProperty('--mood-c1',colors[0]);button.style.setProperty('--mood-c2',colors[1]);
  button.style.setProperty('--mood-c3',colors[3]);button.style.setProperty('--mood-c4',colors[5]);
  button.dataset.moodArt=detail.motif;
+ // Paint the real miniature scene directly on the tappable card itself.
+ // This layer has no dependency on nested-image stacking, external SVG requests or iPhone caching.
+ const embeddedSVG='data:image/svg+xml;base64,'+btoa(lumaMoodArtwork[id]);
+ button.style.setProperty('background-image','linear-gradient(180deg,transparent 5%,#11162c17 44%,#1d1935dd 76%,#19172ff9 100%),url("'+embeddedSVG+'")','important');
+ button.style.setProperty('background-size','100% 100%,100% 77%','important');
+ button.style.setProperty('background-position','center center,center top','important');
+ button.style.setProperty('background-repeat','no-repeat,no-repeat','important');
  const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
  const artFallback=document.createElement('span');artFallback.className='mi-mood-fallback';artFallback.setAttribute('aria-hidden','true');artFallback.innerHTML=lumaMoodArtwork[id];artwork.append(artFallback);
  const sceneImage=document.createElement('img');sceneImage.className='mi-mood-picture';
