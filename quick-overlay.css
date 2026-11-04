@@ -131,12 +131,12 @@ background:radial-gradient(ellipse 85vw 41vh at calc(100% - 26px) clamp(145px,22
 /* v1.0 · Finger-driven pull-to-open Luma wall lamp.
    A fixed wall mount + translating lamp head + one continuously extended SVG arm.
    The light rays share the moving lampshade lip as their only physical origin. */
-:root{--luma-pull-px:0px}
+:root{--luma-pull-px:0px;--luma-head-svg-px:0px}
 .quick-launcher{width:73px;min-width:73px;height:99px;min-height:99px;padding:0;border:0!important;overflow:visible!important;touch-action:none!important}
 .quick-launcher>.ambient-lamp-device{width:73px;height:98px;min-height:98px;overflow:visible!important}
 .quick-launcher svg.ambient-lamp-art{width:73px;height:96px;max-width:none;overflow:visible!important;filter:drop-shadow(0 5px 8px #10102aab)}
 .quick-launcher .ambient-moving-head{
- transform:translate3d(calc(0px - var(--luma-pull-px)),0,0);
+ transform:translate3d(calc(0px - var(--luma-head-svg-px)),0,0);
  will-change:transform
 }
 .quick-launcher .ambient-lamp-silhouette{
