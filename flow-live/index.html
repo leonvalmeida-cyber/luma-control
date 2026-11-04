@@ -41,26 +41,48 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 .g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
 #groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
 @media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
-</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css?v=9"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css?v=6"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js?v=6"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css?v=9"><script src="ambient-lamp.js?v=9" defer></script><script src="quick-swipe.js?v=9" defer></script><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="ambientRoomGlow" class="ambient-room-glow" aria-hidden="true">
- <span class="ambient-ray ambient-ray-1"></span><span class="ambient-ray ambient-ray-2"></span><span class="ambient-ray ambient-ray-3"></span>
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css?v=9"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css?v=6"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="groups-v1-tree.js?v=6"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css?v=10"><script src="ambient-lamp.js?v=9" defer></script><script src="quick-pull.js?v=10" defer></script><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="ambientRoomGlow" class="ambient-room-glow" aria-hidden="true">
+ <svg id="ambientBeamCanvas" class="ambient-beam-canvas" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+   <linearGradient id="ambientDownFade" x1="100%" y1="0%" x2="0%" y2="55%">
+    <stop offset="0" stop-color="white" stop-opacity=".56"/><stop offset=".19" stop-color="white" stop-opacity=".28"/><stop offset=".62" stop-color="white" stop-opacity=".07"/><stop offset="1" stop-color="white" stop-opacity="0"/>
+   </linearGradient>
+   <linearGradient id="ambientUpFade" x1="100%" y1="100%" x2="0%" y2="0%">
+    <stop offset="0" stop-color="white" stop-opacity=".24"/><stop offset=".65" stop-color="white" stop-opacity=".025"/><stop offset="1" stop-color="white" stop-opacity="0"/>
+   </linearGradient>
+  </defs>
+  <path id="ambientBeam1" class="ambient-beam-path ambient-beam-1"/>
+  <path id="ambientBeam2" class="ambient-beam-path ambient-beam-2"/>
+  <path id="ambientBeam3" class="ambient-beam-path ambient-beam-3"/>
+  <path id="ambientBeamUp" class="ambient-beam-up"/>
+ </svg>
 </div>
-<button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtbereiche und einzelne Lampen öffnen, auch nach links oder oben wischen" aria-controls="quickOverlay" aria-expanded="false">
+<button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtsteuerung öffnen oder Lampe nach links herausziehen" aria-controls="quickOverlay" aria-expanded="false">
  <span class="ambient-lamp-device" aria-hidden="true">
   <svg class="ambient-lamp-art" viewBox="0 0 100 124" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
-   <defs><linearGradient id="lumaLampMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6c6884"/><stop offset=".6" stop-color="#332a49"/><stop offset="1" stop-color="#1a2335"/></linearGradient></defs>
-   <path class="ambient-lamp-stem" d="M72 108V69C72 46 58 28 41 28H34"/>
-   <path class="ambient-lamp-silhouette" d="M29 23C18 23 11 32 9 43L3 58C16 68 37 74 56 66L50 44C47 32 40 24 29 23Z"/>
-   <path class="ambient-lamp-reflection" d="M28 31C20 32 17 38 15 46"/>
-   <path class="ambient-lamp-diffuser" d="M4 57Q27 73 56 65L57 70Q29 84 4 65Z"/>
-   <path class="ambient-lamp-lumen ambient-lamp-lumen-one" d="M9 65Q15 72 24 73"/>
-   <path class="ambient-lamp-lumen ambient-lamp-lumen-two" d="M25 73Q34 76 41 73"/>
-   <path class="ambient-lamp-lumen ambient-lamp-lumen-three" d="M42 72Q50 70 54 66"/>
-   <path class="ambient-lamp-joint" d="M41 24L45 32"/>
-   <path class="ambient-lamp-base" d="M55 108C61 104 84 104 91 108L97 116H49Z"/>
-   <path class="ambient-lamp-detail" d="M58 116H89"/>
+   <defs>
+    <linearGradient id="lumaLampMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#aaa2bd"/><stop offset=".29" stop-color="#655c7b"/><stop offset=".7" stop-color="#342f4e"/><stop offset="1" stop-color="#21293c"/></linearGradient>
+    <linearGradient id="lumaLampInside" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#241b38"/><stop offset="1" stop-color="#d4b8ed"/></linearGradient>
+   </defs>
+   <!-- The right-side wall mounting stays motionless when the shade is pulled. -->
+   <path class="ambient-lamp-base" d="M84 19Q96 19 96 32V106Q96 116 85 116H78V20Z"/>
+   <path class="ambient-lamp-mount-line" d="M86 31V101M83 24H94"/>
+   <!-- This single telescopic arm is re-shaped from the shade to its fixed mounting. -->
+   <path id="ambientLampArm" class="ambient-lamp-stem ambient-lamp-arm" d="M45 38Q57 33 67 33H82Q88 33 88 39V53"/>
+   <g id="ambientMovingHead" class="ambient-moving-head">
+    <!-- Open top: the small secondary upward spill originates here. -->
+    <path class="ambient-lamp-rim" d="M16 38Q32 30 48 37" fill="none"/>
+    <path class="ambient-lamp-silhouette" d="M16 38Q19 29 32 28Q45 29 49 39L60 70Q29 83 2 69L16 38Z"/>
+    <path class="ambient-lamp-reflection" d="M21 40Q25 33 33 34"/>
+    <path class="ambient-lamp-top-opening" d="M18 38Q31 34 47 39Q38 42 18 38Z"/>
+    <path class="ambient-lamp-diffuser" d="M3 69Q32 84 59 70L58 76Q32 91 3 76Z"/>
+    <path class="ambient-lamp-lumen ambient-lamp-lumen-one" d="M6 73Q14 78 23 80"/>
+    <path class="ambient-lamp-lumen ambient-lamp-lumen-two" d="M24 80Q33 83 41 79"/>
+    <path class="ambient-lamp-lumen ambient-lamp-lumen-three" d="M42 79Q51 78 57 73"/>
+    <path class="ambient-lamp-joint" d="M39 30L46 37"/>
+   </g>
   </svg>
  </span>
- <small>Licht</small>
 </button>
 <div id="quickOverlay" class="quick-overlay" hidden>
  <button id="quickBackdrop" type="button" class="quick-backdrop" tabindex="-1" aria-label="Lichtsteuerung schließen"></button>
