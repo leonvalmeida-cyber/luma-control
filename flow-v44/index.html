@@ -1,0 +1,910 @@
+<!doctype html><html lang="de"><head><base href="../flow-live/"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><title>Luma Flow V4.4 · Smart Dock</title><style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0b0e18;color:#f7f5ff}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 17px 34px;max-width:700px;margin:auto}header{padding:25px 0 10px}h1{margin:3px 0;font-size:32px;letter-spacing:-1px}.sub{color:#a8b1c9;font-size:13px}.card{background:#1a2032;border:1px solid #2c3550;border-radius:19px;margin:15px 0;padding:18px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{border-radius:20px;padding:5px 10px;font-size:12px;background:#353b57;color:#e0e4ff}button{border:0;background:#7160e8;color:white;font-size:16px;padding:13px 17px;border-radius:12px;font-weight:600;cursor:pointer}button.alt{background:#303951}button:disabled{opacity:.45}.buttons{display:flex;gap:8px;flex-wrap:wrap}h2{font-size:17px;margin:0 0 12px}.muted{color:#a9b1ca;font-size:13px;line-height:1.5}.meter{margin:14px 0}.meter-top{display:flex;justify-content:space-between;font-size:14px;margin:0 0 5px}.track{height:12px;background:#323a52;border-radius:20px;overflow:hidden}.fill{height:100%;width:0%;background:linear-gradient(90deg,#5ccfea,#a16dff,#f281c0);border-radius:20px;transition:width .09s linear}#lamps{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin:18px 0} .lamp{height:73px;border-radius:10px;background:#5e6185;transition:background .15s,opacity .15s;box-shadow:0 0 14px #0003}.controls{display:grid;gap:15px}label.range{display:block;font-size:14px}input[type=range]{width:100%;accent-color:#9186ff;margin-top:10px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chip{background:#303951;padding:9px 12px;font-size:13px}.chip.on{background:#6556d4}.error{color:#ffb0b0}.good{color:#97edc9}footer{color:#9ea8bf;font-size:12px;line-height:1.5;padding-bottom:20px}
+
+[hidden]{display:none!important}.tabs{display:flex;gap:6px;overflow:auto;position:sticky;top:0;background:#0b0e18f5;padding:10px 0;z-index:5}.tabs button{font-size:13px;padding:12px 10px;white-space:nowrap}.tabs button[aria-selected="false"]{background:#303951}select,input[type=text],input[type=password]{font:inherit;width:100%;padding:12px;border-radius:12px;background:#12182a;border:1px solid #454c68;color:white;margin:8px 0}input[type=checkbox]{width:20px;height:20px;accent-color:#9186ff}.scenegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sceneitem{border:1px solid #343c50;background:#1a2032;border-radius:15px;padding:10px;min-width:0}.sceneitem button.pick{font-size:13px;background:transparent;padding:0;text-align:left;width:100%;min-height:60px}.swatches{display:flex;height:26px;border-radius:7px;overflow:hidden;margin-bottom:8px}.swatches i{flex:1}.star{background:transparent;color:#ffce6c;float:right;padding:5px 8px}.lightrow{border-bottom:1px solid #343b57;padding:12px 0}.groupcheck{display:flex;gap:12px;align-items:center;margin:12px 0}.note{font-size:12px;line-height:1.5;color:#a9b1ca}.rangeval{float:right}body{padding-bottom:calc(35px + env(safe-area-inset-bottom))}button{min-height:44px}#globalStatus{position:relative;padding:10px;background:#1a2032;border-radius:12px}
+
+.target-tree{overflow:auto;padding:6px 2px 14px;max-height:440px}.tree-node{display:flex;align-items:center;gap:12px;min-width:max-content;margin:6px 0}.tree-children{border-left:2px solid #7767c9;border-radius:18px;padding:4px 0 4px 14px}.tree-pick{width:145px;white-space:normal;flex-shrink:0;text-align:left;background:#303951;border:2px solid transparent;padding:12px;font-size:14px}.tree-pick[aria-pressed="true"]{border-color:#c1b5ff;background:#6553c7}.tree-pick small{display:block;color:#ddd5fa;font-size:11px;margin-top:5px}.target-tree:empty::before{content:'Unter Verbindung die Lampen laden.';color:#a9b1ca}
+summary{cursor:pointer;padding:12px 0;color:#c1b5ff;font-weight:600}details[open] summary{margin-bottom:8px}
+.target-tree{max-height:250px;padding:2px 0 8px}.tree-node{gap:5px;margin:2px 0}.tree-children{padding:1px 0 1px 7px;border-radius:8px;border-left-width:1px}.tree-pick{width:105px;min-height:32px;padding:5px 6px;font-size:12px;line-height:1.15;border-width:1px}.tree-pick small{font-size:10px;margin-top:2px}.tree-node:has(>.tree-pick:only-child){display:inline-flex;min-width:0;margin:2px}.tree-children:not(:has(.tree-children)){max-width:230px;display:flex;flex-wrap:wrap;gap:3px}.tree-children:not(:has(.tree-children)) .tree-pick{width:auto;max-width:110px;min-width:65px}.tree-children:not(:has(.tree-children)) .tree-pick small{display:none}#musicOutput{margin-top:0}#musicOutput .buttons{display:none}
+
+#message{height:3.2em;overflow:auto;line-height:1.5;margin:10px 0;font-size:13px}#musicInfo{min-height:3em;max-height:3em;overflow:auto;line-height:1.5}#audioHint{height:3em;overflow:hidden;font-variant-numeric:tabular-nums}#effectiveStatus{height:3em;overflow:hidden;font-variant-numeric:tabular-nums}#status{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#lamps .lamp{box-shadow:none!important}#beat{min-width:80px;font-variant-numeric:tabular-nums}
+
+/* Compact navigation, original hierarchical group picker from v0.14. */
+header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
+.tabs{position:sticky;top:0;gap:5px;padding:7px 0 8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{font-size:12px;padding:9px 12px;min-height:40px;flex:0 0 auto}
+.card{margin:11px 0;padding:15px}
+#globalStatus{margin:8px 0;font-size:12px;padding:8px 11px}
+.target-card{padding:11px 13px;margin:9px 0}
+.target-card .row{gap:7px;flex-wrap:wrap}.target-label{font-size:13px}
+.target-card #targetSummary{margin:0;font-size:12px}
+.target-card .target-tree{display:block;max-height:300px;overflow:auto;padding:5px 0 8px}
+.target-card .tree-node{display:flex;align-items:center;gap:5px;margin:2px 0;min-width:max-content}
+.target-card .tree-children{border-left:1px solid #7767c9;border-radius:8px;padding:1px 0 1px 7px}
+.target-card .tree-pick{width:105px;min-height:32px;padding:5px 6px;font-size:12px;line-height:1.15;border:1px solid transparent;text-align:left;white-space:normal;flex-shrink:0;background:#303951}
+.target-card .tree-pick[aria-pressed="true"]{border-color:#c1b5ff;background:#6553c7}
+.target-card .tree-pick small{font-size:10px;margin-top:2px}
+.target-card .tree-children:not(:has(.tree-children)){max-width:230px;display:flex;flex-wrap:wrap;gap:3px}
+.target-card .tree-children:not(:has(.tree-children)) .tree-pick{width:auto;max-width:110px;min-width:65px}
+.target-card details summary{padding:8px 0;font-size:12px}
+.target-card .target-help{margin:6px 0 0;font-size:11px}
+@media(max-width:420px){body{padding-left:12px;padding-right:12px}.card{padding:13px}.tabs button{padding:8px 10px}}
+</style><style>
+/* Three-section navigation and group quick controls, scoped additions */
+#tabs.tabs{align-items:center;justify-content:space-around;background:#090b18f5;border-bottom:1px solid #ffffff15;padding:8px 0;gap:5px}
+#tabs.tabs button:not(.g-settings-toggle){flex:1;border-radius:14px;min-height:44px;font-size:14px;background:#22213a;color:#cbbfdf}
+#tabs.tabs button[aria-selected=true]{background:linear-gradient(120deg,#8665c8,#503b93);color:#fff}
+#tabs.tabs button.g-settings-toggle{flex:0 0 46px;background:#292441;border:1px solid #ffffff20;min-height:44px;font-size:21px}
+.g-settings-menu{position:sticky;top:61px;display:flex;gap:8px;flex-wrap:wrap;padding:8px 0;z-index:6;background:#0b0e18}
+.g-settings-menu[hidden]{display:none!important}.g-settings-menu button{flex:1;font-size:12px;padding:11px;border:1px solid #6b5c9c;border-radius:12px;background:#302943}
+.g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
+#groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
+@media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="../app.webmanifest"><link rel="icon" href="../icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="music-immersive-v1.css?v=9"><link rel="stylesheet" href="flow/noise-guard.css"><script src="flow/noise-guard.js"></script><script src="music-immersive-v1.js" defer></script><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css?v=6"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="lamp-icons.js"></script><script src="../flow-v41/groups-v41-tree.js?v=1"></script><link rel="stylesheet" href="lamp-icons.css"><link rel="stylesheet" href="quick-overlay.css?v=11"><script src="ambient-lamp.js?v=9" defer></script><script src="../flow-v44/quick-pull-v44.js?v=1" defer></script><style>.mi-bridge-banner{border:1px solid #af8ee78a;background:linear-gradient(110deg,#432a5eeb,#132a3ee8);padding:13px;border-radius:16px;display:grid;gap:5px;margin:12px 0;font-size:11px;line-height:1.5}.mi-bridge-banner b{font-size:10px;letter-spacing:1px;color:#d7bfff}.mi-bridge-banner span{color:#d5cce5}</style><link rel="stylesheet" href="../flow-v4/v4.css?v=4"><link rel="stylesheet" href="../flow-v41/v41.css?v=1"><link rel="stylesheet" href="../flow-v42/v42.css?v=1"><link rel="stylesheet" href="../flow-v43/v43.css?v=1"><link rel="stylesheet" href="../flow-v44/v44.css?v=1"><script src="../flow-v44/v44.js?v=1" defer></script></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">V4.4 · kompakte Parkposition · magnetischer Helligkeits-Dock · sichere Swipe-Bedienung</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="ambientRoomGlow" class="ambient-room-glow" aria-hidden="true">
+ <svg id="ambientBeamCanvas" class="ambient-beam-canvas" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <defs>
+   <linearGradient id="ambientDownFade" x1="100%" y1="0%" x2="0%" y2="55%">
+    <stop offset="0" stop-color="white" stop-opacity=".56"/><stop offset=".19" stop-color="white" stop-opacity=".28"/><stop offset=".62" stop-color="white" stop-opacity=".07"/><stop offset="1" stop-color="white" stop-opacity="0"/>
+   </linearGradient>
+   <linearGradient id="ambientUpFade" x1="100%" y1="100%" x2="0%" y2="0%">
+    <stop offset="0" stop-color="white" stop-opacity=".24"/><stop offset=".65" stop-color="white" stop-opacity=".025"/><stop offset="1" stop-color="white" stop-opacity="0"/>
+   </linearGradient>
+<linearGradient id="ambientBeamGradient1" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".5"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradient2" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".24"/><stop offset=".66" stop-opacity=".06"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradient3" x1="75%" y1="0%" x2="15%" y2="100%"><stop offset="0" stop-opacity=".48"/><stop offset=".2" stop-opacity=".25"/><stop offset=".66" stop-opacity=".055"/><stop offset="1" stop-opacity="0"/></linearGradient>
+   <linearGradient id="ambientBeamGradientUp" x1="50%" y1="100%" x2="50%" y2="0%"><stop offset="0" stop-opacity=".14"/><stop offset=".4" stop-opacity=".05"/><stop offset="1" stop-opacity="0"/></linearGradient>
+  </defs>
+  <path id="ambientBeam1" class="ambient-beam-path ambient-beam-1"/>
+  <path id="ambientBeam2" class="ambient-beam-path ambient-beam-2"/>
+  <path id="ambientBeam3" class="ambient-beam-path ambient-beam-3"/>
+  <path id="ambientBeamUp" class="ambient-beam-up"/>
+ </svg>
+</div>
+<button id="quickLauncher" class="quick-launcher" type="button" aria-label="Lichtsteuerung öffnen oder Lampe nach links herausziehen" aria-controls="quickOverlay" aria-expanded="false">
+ <span class="ambient-lamp-device" aria-hidden="true">
+  <svg class="ambient-lamp-art" viewBox="0 0 100 124" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+   <defs>
+    <linearGradient id="v41Brass" x1="0" y1="0" x2="1" y2=".2">
+     <stop offset="0" stop-color="#795225"/><stop offset=".2" stop-color="#e8c98c"/>
+     <stop offset=".48" stop-color="#f7dc9b"/><stop offset=".7" stop-color="#a87c3a"/>
+     <stop offset="1" stop-color="#684722"/>
+    </linearGradient>
+    <linearGradient id="v41Linen" x1="0" y1="0" x2="1" y2="0">
+     <stop offset="0" stop-color="#b5a180"/>
+     <stop offset=".08" stop-color="#e0ceb0"/>
+     <stop offset=".23" stop-color="#fbf1da"/>
+     <stop offset=".37" stop-color="#d8c5a1"/>
+     <stop offset=".53" stop-color="#fff3db"/>
+     <stop offset=".70" stop-color="#dec8a5"/>
+     <stop offset=".86" stop-color="#f2dfbd"/>
+     <stop offset="1" stop-color="#ab9474"/>
+    </linearGradient>
+    <linearGradient id="v41SoftLight" x1="0" y1="0" x2="0" y2="1">
+     <stop offset="0" stop-color="rgb(var(--ambient-rgb))" stop-opacity=".10"/>
+     <stop offset=".54" stop-color="rgb(var(--ambient-rgb))" stop-opacity=".33"/>
+     <stop offset="1" stop-color="rgb(var(--ambient-rgb))" stop-opacity=".10"/>
+    </linearGradient>
+    <linearGradient id="v41LinenEdges" x1="0" y1="0" x2="1" y2="0">
+     <stop offset="0" stop-color="#322417" stop-opacity=".31"/>
+     <stop offset=".16" stop-color="#fff9e6" stop-opacity=".1"/>
+     <stop offset=".84" stop-color="#fff5df" stop-opacity=".07"/>
+     <stop offset="1" stop-color="#3d2c17" stop-opacity=".29"/>
+    </linearGradient>
+    <linearGradient id="v42DecoGlass" x1="0" y1="0" x2="1" y2="1">
+     <stop offset="0" stop-color="#28414a"/>
+     <stop offset=".48" stop-color="#739ba3"/>
+     <stop offset=".53" stop-color="#d8c297"/>
+     <stop offset="1" stop-color="#32475a"/>
+    </linearGradient>
+    <linearGradient id="v42WashiPaper" x1="0" y1="0" x2="1" y2="0">
+     <stop offset="0" stop-color="#baa78a"/>
+     <stop offset=".28" stop-color="#ffecd0"/>
+     <stop offset=".62" stop-color="#f7ebd2"/>
+     <stop offset="1" stop-color="#b59d7a"/>
+    </linearGradient>
+    <linearGradient id="v42HaloFinish" x1="0" y1="0" x2="1" y2="1">
+     <stop offset="0" stop-color="#94b4c7"/>
+     <stop offset=".42" stop-color="#ebf7fc"/>
+     <stop offset=".57" stop-color="#7995ae"/>
+     <stop offset="1" stop-color="#bce7f5"/>
+    </linearGradient>
+    <!-- Dynamic Hue scene colors diffuse through the shade *interior*,
+         rather than tinting only its outline. Geometry remains clipped to fabric. -->
+    <radialGradient id="v42InnerGlow" gradientUnits="userSpaceOnUse" cx="33" cy="67" r="47" fx="31" fy="60">
+     <stop offset="0" class="v42-glow-center" stop-opacity=".97"/>
+     <stop offset=".37" class="v42-glow-middle" stop-opacity=".85"/>
+     <stop offset=".73" class="v42-glow-side" stop-opacity=".65"/>
+     <stop offset="1" class="v42-glow-edge" stop-opacity=".42"/>
+    </radialGradient>
+    <linearGradient id="v42InsideSheen" x1="0" y1="0" x2="1" y2="0">
+     <stop offset="0" stop-color="#fff6e0" stop-opacity=".18"/>
+     <stop offset=".3" stop-color="#fff6e0" stop-opacity="0"/>
+     <stop offset=".6" stop-color="#fff6e0" stop-opacity=".14"/>
+     <stop offset="1" stop-color="#291b14" stop-opacity=".17"/>
+    </linearGradient>
+    <clipPath id="v41ClothClip">
+     <path d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+    </clipPath>
+   </defs>
+   <!-- The decorative rail and wall mount are a STATIONARY assembly.
+        Its track is visible above the original wall escutcheon. -->
+   <g id="v43FixedRail" class="v43-fixed-rail">
+    <rect class="v43-rail-shadow" x="82" y="-130" width="16" height="245" rx="7"/>
+    <path class="v43-rail-left" d="M85 -122 V109"/>
+    <path class="v43-rail-right" d="M95 -122 V109"/>
+    <path class="v43-rail-channel" d="M90 -118 V108"/>
+    <path class="v43-rail-lip" d="M87 -122 V109"/>
+    <path class="v43-rail-top-cap" d="M82 -124 Q90 -134 98 -124 L98 -119 Q90 -125 82 -119Z"/>
+    <path class="v43-rail-endstop" d="M82 110 Q90 115 98 110"/>
+    <circle class="v43-rail-top-rivet" cx="90" cy="-123" r="2.1"/>
+   </g>
+   <g id="v43FixedWall" class="v43-fixed-wall">
+   <!-- Rounded pebble-like wall escutcheon: the right anchor never moves. -->
+   <path class="ambient-lamp-base v41-pebble-mount"
+    d="M87 73 C93 70 98 76 97 84 C95 92 99 105 96 114 C94 122 84 123 81 116 C79 109 82 100 81 91 C80 81 82 75 87 73 Z"/>
+   <path class="ambient-lamp-mount-line" d="M86 80 Q92 77 93 86 M87 114 Q92 115 93 111"/>
+   <path class="v41-mount-inlay" d="M87 78Q93 85 91 94Q89 107 93 116"/>
+   <circle class="v41-mount-jewel" cx="89" cy="103" r="2.5"/>
+   </g>
+   <!-- This is the ONLY translated assembly. The fixed wall and rail above
+        never receive a moving transform. The gripper + rays use its Y coordinate. -->
+   <g id="v43MovingAssembly" class="v43-moving-assembly">
+   <!-- A single Luma arm is connected to the shade and the sliding carriage. -->
+   <path id="ambientLampArm" class="ambient-lamp-stem ambient-lamp-arm" d="M43 78V99Q43 106 50 106H86"/>
+   <path id="v41ArmHighlight" class="v41-arm-highlight" d="M43 78V99Q43 106 50 106H86"/>
+   <!-- The carriage rides the channel at X=90, exactly where the arm terminates. -->
+   <g id="v43SlidingCarriage" class="v43-sliding-carriage">
+    <path class="v43-carriage-body" d="M81 96 Q90 91 99 96 L99 112 Q90 118 81 112 Z"/>
+    <path class="v43-carriage-highlight" d="M83 97 Q90 94 97 97"/>
+    <path class="v43-carriage-band" d="M82 101 Q90 105 98 101"/>
+    <circle class="v43-carriage-bolt" cx="90" cy="106" r="3"/>
+   </g>
+   <g id="ambientMovingHead" class="ambient-moving-head">
+    <path class="v41-shade-top-shadow" d="M19 30H44"/>
+    <path class="ambient-lamp-silhouette"
+     d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+    <path class="v41-shade-edge-shadow"
+     d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+    <g class="v41-shade-details" clip-path="url(#v41ClothClip)">
+     <g class="v42-glow-layer">
+      <path class="v42-inner-radiance"
+       d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+      <path class="v42-inner-edge"
+       d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+     </g>
+     <path class="v41-shade-warmth"
+      d="M20 28 L43 28 Q45 28 46 32 L60 72 Q32 78 4 72 L18 32 Q19 28 20 28 Z"/>
+     <path class="v41-pleat-shadows" d="
+      M20 29 Q17 46 10 73 M24 29 Q22 54 17 75 M28 29 Q28 51 26 77
+      M32 29 L32 78 M36 29 Q37 52 39 77 M40 29 Q43 51 48 75 M44 30 Q49 51 56 73"/>
+     <path class="v41-pleat-highlights" d="
+      M22 29 Q21 53 14 73 M26 29 Q26 55 22 75 M30 29 Q31 51 30 77
+      M34 29 Q35 52 35 77 M38 29 Q40 54 44 75 M42 29 Q46 52 52 74"/>
+    </g>
+    <!-- Distinct styles: cut-crystal facets, Shoji lantern ribs and a bare halo.
+         Only the selected model's decorative parts are visible. -->
+    <g class="v42-deco-details">
+     <path d="M22 31L33 40L43 31 M10 48L33 54L54 48 M3 59Q33 68 62 59"
+       fill="none"/>
+     <path d="M21 32L18 52 M43 32L48 52 M33 37V62" fill="none"/>
+     <circle cx="33" cy="52" r="2.4"/>
+    </g>
+    <g class="v42-washi-details">
+     <path d="M29 21Q21 47 25 89 M41 21Q48 49 44 88 M34 20Q31 54 34 92" fill="none"/>
+     <path d="M12 44Q32 51 57 43 M9 59Q32 66 59 58 M14 78Q36 84 54 75" fill="none"/>
+     <path d="M24 22Q38 18 48 30 M21 88Q36 96 45 88" fill="none"/>
+    </g>
+    <g class="v42-halo-details">
+     <path d="M32 47 C45 47 55 53 55 65 C55 78 45 84 32 84 C18 84 9 78 9 65 C9 53 19 47 32 47Z" fill="none"/>
+     <path d="M17 53Q31 42 47 53" fill="none"/>
+    </g>
+    <path class="ambient-lamp-rim" d="M20 28 L43 28" fill="none"/>
+    <path class="ambient-lamp-top-opening" d="M20 28 Q32 26 43 28 Q33 30 20 28 Z"/>
+    <path class="ambient-lamp-reflection" d="M22 34 Q21 39 19 46"/>
+    <path class="v41-hem" d="M4 72 Q32 78 60 72"/>
+    <path class="ambient-lamp-diffuser" d="M5 73 Q32 79 59 73 L58 77 Q32 83 6 77 Z"/>
+    <path class="v41-fringe" d="
+     M8 77 l0 5 M12 78 l.5 6 M16 79 l.3 6 M20 80 l0 6
+     M24 80 l0 7 M28 81 l0 6 M32 81 l0 7 M36 81 l0 6
+     M40 80 l0 7 M44 80 l0 6 M48 79 l0 6 M52 78 l0 6 M56 77 l0 5"/>
+    <path class="v41-neck-band" d="M40 78Q43 75 46 78 M40 84H46"/>
+    <circle class="ambient-lamp-joint" cx="43" cy="79" r="3.9"/>
+   </g>
+   </g>
+  </svg>
+ </span>
+</button>
+<button id="quickLampGrip" class="quick-lamp-grip" type="button" aria-label="Lampenschirm nach rechts ziehen, um die Lichtsteuerung zu schließen" aria-controls="quickOverlay" hidden></button>
+<div id="quickOverlay" class="quick-overlay" hidden>
+ <button id="quickBackdrop" type="button" class="quick-backdrop" tabindex="-1" aria-label="Lichtsteuerung schließen"></button>
+ <button id="quickSwipeClose" type="button" class="quick-swipe-close" aria-label="Lichtsteuerung nach rechts wischen oder schließen"><span aria-hidden="true">›</span></button>
+ <section class="quick-sheet" role="dialog" aria-modal="true" aria-labelledby="quickTitle" tabindex="-1">
+  <header class="quick-titlebar"><span class="quick-swipe-grip" aria-hidden="true"></span><div><small>✦ LUMA QUICK CONTROL</small><h2 id="quickTitle">Dein Licht</h2></div><button id="quickClose" type="button" aria-label="Lichtsteuerung schließen">✕</button></header>
+  <p class="quick-subtitle">Lampe antippen zum Auswählen · ⏻ zum Schalten</p>
+  <div id="quickPanelBody" class="quick-panel-body"></div>
+  <p id="quickStatus" class="quick-status" role="status" aria-live="polite">Deine Lampen – ohne die aktuelle Seite zu verlassen.</p>
+ </section>
+</div>
+<div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsLamps">💡 Lampensymbole</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row mi-target-head"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span><button id="targetTreeToggle" type="button" aria-controls="targetFastTree" aria-expanded="true" aria-label="Gruppenauswahl einklappen">▴</button></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden><div class="mi-bridge-banner" role="note"><b>● LUMA FLOW · V4.4 SMART DOCK</b><span>Diese Testversion steuert echte Lampen. Neuer Störschutz ist standardmäßig aus und experimentell. Die Haupt-App bleibt unverändert.</span><span id="miBridgeStatus" role="status">Bridge-Verbindung wird geprüft …</span></div>
+<section class="mi-hero" aria-label="Luma Music Immersive">
+ <div class="mi-row"><span class="mi-label">✦ LUMA IMMERSIVE · MUSIK</span><span id="status" class="pill">Bereit</span></div>
+ <h2>Fühl die Musik.<br>Sieh das Licht.</h2>
+ <p class="mi-lead">Dein Raum reagiert auf hörbare Musik – über das Mikrofon deines iPhones.</p>
+ <div class="mi-visual" id="miVisual" data-live="false" role="img" aria-label="Musikvisualisierung; zeigt aktuelle Helligkeit und Farbpalette">
+  <div class="mi-orb" aria-hidden="true"></div><div class="mi-bars" id="miBars" aria-hidden="true"></div>
+  <div class="mi-source" id="miSourceStatus">Mikrofon noch nicht aktiv</div>
+ </div>
+ <div class="mi-actions"><button id="start" type="button">🎙 Musiklicht starten</button><button id="stop" type="button" class="alt" disabled>■ Stoppen</button></div>
+ <p id="message" class="muted" role="status" aria-live="polite">Beim Start fragt Safari nach Mikrofonzugriff. Musik über Lautsprecher abspielen.</p>
+ <div class="mi-footline"><span>Aktiver Bereich: <strong id="miMusicTarget">All</strong></span><span id="miTransportStatus">Bereit</span></div>
+ </section>
+ <section class="mi-quick" id="miQuick" aria-label="Schnelle Musikeinstellungen">
+  <h3>Dein Musiklicht</h3>
+  <div class="mi-quick-block"><div class="mi-quick-label"><span>Farbstimmung</span><span id="miQuickSelection" class="mi-selection"></span></div><div id="miQuickSwatches"></div><div id="miQuickPalettes"></div></div>
+  <div class="mi-quick-block"><div class="mi-quick-label"><span>Reaktionsmodus</span><span class="mi-live-tag">Sofort ändern</span></div><div id="miQuickModes"></div></div>
+  <div class="mi-quick-block"><div class="mi-quick-label"><span>Takt oder Stimmenbereich</span></div><div id="miQuickFocus"></div></div>
+  <div class="mi-quick-block"><div class="mi-quick-label"><span>Schnellstart</span></div><div id="miQuickPresets"></div></div>
+  <p class="mi-microphone-note">Apple Music spielt weiter in deiner Musik-App. Luma analysiert den Klang über das Mikrofon, nicht den geschützten Audiostream.</p>
+ </section>
+<section class="flow-guard" aria-label="Optionaler Störschutz">
+ <div class="flow-guard-heading"><h3>◈ Störschutz</h3><small>BETA</small></div>
+ <p class="flow-guard-description">Optionaler Schutz vor gleichmäßigen Störgeräuschen, zum Beispiel einem Lüfter oder Staubsauger. Gespräche lassen sich damit nicht zuverlässig herausfiltern.</p>
+ <div class="flow-guard-switches" role="group" aria-label="Störschutz aktivieren">
+  <button type="button" data-flow-guard="off" aria-pressed="true">Aus</button>
+  <button type="button" data-flow-guard="ambient" aria-pressed="false">Umgebung</button>
+ </div>
+ <div class="flow-guard-actions">
+  <button id="flowCalibrate" type="button">🔊 Raumgeräusche einmessen</button>
+  <button id="flowReset" type="button">Profil löschen</button>
+ </div>
+ <p id="flowStatus" class="flow-guard-status" role="status" aria-live="polite">Störschutz ist aus. Mikrofon- und Lichtsteuerung laufen unverändert.</p>
+ <p class="flow-guard-hint">Zum Einmessen Musik pausieren und währenddessen nicht sprechen. Dieser Filter ist für möglichst gleichbleibende Geräusche gedacht, nicht für Unterhaltungen. Der Gesprächsmodus wurde wegen unzureichender Wirksamkeit aus dem Live-Test genommen. Keine Aufnahme oder Audioübertragung.</p>
+</section>
+<details class="mi-diagnostic" id="miAdvanced"><summary>⚙ Experteneinstellungen & Diagnose</summary><div class="mi-diagnostic-content"><p class="mi-expert-copy">Die bestehenden Mikrofonfilter, Helligkeitsregler und Diagnosedaten bleiben verfügbar. Die Bridge-Befehlsrate wird hier nicht erhöht.</p><div id="miOutputHost"></div><section class="card"><div class="row"><h2>Audioeingang · vor Filter</h2><span id="beat" class="pill">Beat: –</span></div><div class="buttons"><button id="noiseLearn" class="alt">Raumgeräusche einmessen · 2 s</button><button id="noiseReset" class="alt">Einmessung löschen</button></div><p id="noiseStatus" class="note">Noch kein Raumprofil. Zum Einmessen Musik pausieren und PC/Lüfter weiterlaufen lassen.</p><p class="note" id="effectiveStatus">Musiksignal nach Filter: –</p><p class="note" id="audioHint">Bass = Mikrofonenergie von 35–210 Hz. Raumgeräusche können ebenfalls Bass enthalten.</p><div class="meter"><div class="meter-top"><span>Bass</span><span id="bassNum">0%</span></div><div class="track"><div id="bass" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Mitten</span><span id="midNum">0%</span></div><div class="track"><div id="mid" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Höhen</span><span id="highNum">0%</span></div><div class="track"><div id="high" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Gesamtpegel</span><span id="volumeNum">0%</span></div><div class="track"><div id="volume" class="fill"></div></div></div></section>
+<section class="card"><h2>Feinabstimmung</h2><p class="muted">Zusätzliche Einstellungen für Helligkeit und Mikrofonempfindlichkeit.</p><div class="controls"><label class="range">Empfindlichkeit <span id="gainNum">50%</span><input id="gain" type="range" min="0" max="100" value="50" step="1"></label><label class="range">Tempo & Direktheit <span id="speedNum">60%</span><input id="speed" type="range" min="0" max="100" value="60" step="1"></label><label class="range">Helligkeit bei Ruhe <span id="lightNum">10%</span><input id="light" type="range" min="0" max="100" value="10" step="1"></label><label class="range">Maximale Musikhelligkeit <span id="peakNum">100%</span><input id="peak" type="range" min="0" max="100" value="100" step="1"></label><p class="note">Ruhe legt den Mindestwert fest, Maximum die obere Grenze. Empfindlichkeit: links nur laute Töne, rechts auch leise. Tempo: links weiche Übergänge, rechts direkte Reaktion und schnellere Farbwechsel.</p></div><h2 style="margin-top:20px">Farbstimmung</h2><p id="musicSelection" class="note" aria-live="polite"></p><div id="paletteSwatches" class="swatches" aria-label="Gewählte Farbpalette"></div><div id="palettes" class="chips"><button class="chip on" data-palette="neon">Neon</button><button class="chip" data-palette="sunset">Sonnenuntergang</button><button class="chip" data-palette="ocean">Ozean</button><button class="chip" data-palette="warm">Warm</button></div><h2 style="margin-top:20px">Reaktionsfokus</h2><div class="buttons" id="focusPresets"></div><label class="range">Takt ↔ Gesang <span id="focusNum">Mischung · 50%</span><input id="focus" type="range" min="0" max="100" value="50" step="1"></label><p class="note">Links: Bassimpulse und Anschläge. Rechts: Energie im Stimmenbereich (250–3500 Hz), auch Instrumente in diesem Bereich. Mitte: Mischung. Keine isolierte Gesangserkennung.</p><label class="range">Geräuschgrenze <span id="gateNum">−85 dB</span><input id="gate" type="range" min="-95" max="-40" value="-85" step="1"></label><p class="note">Bei zu wenig Reaktion nach links, bei störenden Raumgeräuschen nach rechts. Die dB-Werte sind digitale Mikrofonpegel, keine gemessene Raumlautstärke.</p><h2 style="margin-top:20px">Schnelleinstellungen</h2><div class="buttons" id="musicPresets"></div><h2 style="margin-top:20px">Lichtmodus</h2><div id="modes" class="chips"><button class="chip on" data-mode="bass">Bass-Puls</button><button class="chip" data-mode="wave">Raumwelle</button><button class="chip" data-mode="spectrum">Frequenzen</button><button class="chip" data-mode="beatcolor">Beat-Farbwechsel</button><button class="chip" data-mode="fast">Schneller Farbfluss</button></div></section></div></details>
+<footer>Apple Music: Diese Live-Testversion erkennt den hörbaren Klang deiner externen Lautsprecher. Er liest keine geschützten Apple-Music-Audiodaten aus. Eine spätere Apple-Music-Verbindung für Titel- und Coverinformationen benötigt eine eigene MusicKit-Autorisierung. Die Musikreaktion benötigt eine aktive Mikrofonanalyse. Ob sie im Hintergrund weiterläuft, hängt von iOS ab.</footer>
+<script>
+'use strict';
+const $=x=>document.getElementById(x);const lumaFlowGuard=window.LumaFlowNoiseGuard?new window.LumaFlowNoiseGuard.NoiseGuard():null;let guardUIUpdate=0;
+const palettes={neon:[[242,28,94],[141,36,230],[251,82,26],[76,84,246],[243,34,185],[73,218,244],[254,74,49]],sunset:[[255,99,49],[248,170,58],[233,66,129],[250,193,81],[167,44,164],[255,117,83],[255,219,113]],ocean:[[13,95,161],[53,196,209],[38,127,177],[54,224,179],[71,76,183],[95,197,245],[40,169,202]],warm:[[221,112,46],[255,184,99],[241,142,61],[255,212,146],[185,82,43],[245,157,81],[235,194,132]]};
+let stream=null,context=null,analyser=null,data=null,raf=0,palette='neon',mode='bass',phase=0,last=performance.now(),bassSmooth=0,levelSmooth=0,prevBass=0,lastBeat=0,beats=0;
+function meter(id,n){const v=Math.max(0,Math.min(100,Math.round(n*100)));$(id).style.width=v+'%';$(id+'Num').textContent=v+'%'}
+// Measure the strongest quarter of FFT bins in each band; stay in dB for display scaling.
+let noisePower=null,calibration=null,priorEnergy=0,lastInput=0,audioSource=null,silentSink=null,audioStarting=false,audioEpoch=0,emptyFrames=0;
+function subtractNoise(db,power){if(!Number.isFinite(db))return -120;const excess=Math.pow(10,db/10)-(power||0)*4;return excess>1e-12?10*Math.log10(excess):-120}
+function processNoise(f,now){if(calibration){for(let i=0;i<f.length;i++)calibration.sums[i]+=Number.isFinite(f[i])?Math.pow(10,f[i]/10):0;calibration.count++;if(now-calibration.start>=2000){if(calibration.count<10){calibration=null;$('noiseStatus').textContent='Zu wenige Audiodaten. Bitte im Vordergrund erneut einmessen.'}else{noisePower=Array.from(calibration.sums,x=>x/calibration.count);try{localStorage.setItem('luma_live_noise012',JSON.stringify({sampleRate:context.sampleRate,power:noisePower}))}catch{}calibration=null;$('noiseStatus').textContent='Raumprofil aktiv · stationäre Hintergrundgeräusche werden reduziert.'}$('noiseLearn').disabled=false;}else{$('noiseStatus').textContent='Einmessen: bitte ruhig bleiben und Musik pausieren …'}f.fill(-120);return true}if(noisePower)for(let i=0;i<f.length;i++)f[i]=subtractNoise(f[i],noisePower[i]);return false}
+$('noiseLearn').onclick=()=>{if(!analyser){$('noiseStatus').textContent='Zuerst Mikrofon starten.';return}window.lumaStopMusic?.();calibration={start:performance.now(),count:0,sums:new Float64Array(data.length)};$('noiseLearn').disabled=true;$('noiseStatus').textContent='2 Sekunden Ruhe: PC/Lüfter weiterlaufen lassen.';beatPulse=0;focusSmooth=0;priorEnergy=0};
+$('noiseReset').onclick=()=>{noisePower=null;calibration=null;$('noiseLearn').disabled=false;try{localStorage.removeItem('luma_live_noise012')}catch{}$('noiseStatus').textContent='Raumprofil gelöscht. Ohne Einmessung aktiv.'};
+function band(f,min,max){const step=context.sampleRate/2/f.length,a=Math.max(1,Math.floor(min/step)),b=Math.min(f.length,Math.max(a+1,Math.ceil(max/step))),values=[];for(let i=a;i<b;i++)if(Number.isFinite(f[i]))values.push(f[i]);if(!values.length)return -120;values.sort((a,b)=>b-a);const n=Math.max(1,Math.ceil(values.length*.25));let sum=0;for(let i=0;i<n;i++)sum+=Math.pow(10,values[i]/10);return 10*Math.log10(Math.max(1e-12,sum/n))}
+let lastFrame=0,beatColor=0,beatPulse=0,focusSmooth=0,currentBands=[0,0,0],analysisErrors=0,lastAnalysisTick=-Infinity,lastUiTick=-Infinity;
+const musicFrames=Array.from({length:7},()=>({rgb:[242,28,94],brightness:0}));window.lumaMusicFrames=musicFrames;
+function musicResponse(db,gain,gate=-85){if(!Number.isFinite(db)||db<=gate)return 0;const shifted=db+(gain-50)*.36;return Math.pow(Math.max(0,Math.min(1,(shifted-gate)/60)),1.05)}
+function focusSignal(bass,voice,pulse,focus){return (Math.max(pulse,bass*.35)*(1-focus)+voice*focus)}
+
+function musicBrightness(signal,floor,peak){peak=Math.max(0,Math.min(1,peak));floor=Math.min(peak,Math.max(0,floor));return floor+(peak-floor)*(signal<.035?0:Math.max(0,Math.min(1,signal)))}
+window.lumaMusicMath={response:musicResponse,brightness:musicBrightness,focus:focusSignal,subtractNoise};
+function analyseFrame(now){
+ if(!analyser)return;
+ analyser.getFloatFrequencyData(data);
+ const inputDb=[band(data,35,210),band(data,250,3500),band(data,3500,9000)];
+ let learning=false,flowResult=null;
+ if(lumaFlowGuard&&lumaFlowGuard.mode!=='off'){
+  if(lumaFlowGuard.calibrating){
+   try{const calibrated=lumaFlowGuard.sampleCalibration(data,{sampleRate:context.sampleRate,nowMs:now});
+    if(now-guardUIUpdate>200||calibrated.done){
+     guardUIUpdate=now;
+     $('flowStatus').textContent=calibrated.done?'✓ Raumprofil bereit. Gleichbleibende Geräusche werden gedämpft.':'Raumprofil: '+Math.round(calibrated.progress*100)+' % · Musik pausiert lassen';
+     $('flowStatus').dataset.state=calibrated.done?'ready':'';
+    }
+   }catch(e){lumaFlowGuard.cancelCalibration();$('flowStatus').textContent='Einmessung fehlgeschlagen: '+e.message;$('flowStatus').dataset.state='error'}
+   data.fill(-120);learning=true;
+  }else{
+   flowResult=lumaFlowGuard.process(data,{sampleRate:context.sampleRate,nowMs:now});
+   data.set(flowResult.filteredSpectrum);
+  }
+ }else learning=processNoise(data,now);
+ const gain=Number($('gain').value),gate=Number($('gate').value);
+ const raw=[band(data,35,210),band(data,250,3500),band(data,3500,9000)];
+ const conv=lumaFlowGuard?.mode==='conversation';
+ const b=musicResponse(raw[0],gain,gate),m=musicResponse(raw[1],gain,gate)*(conv?.13:1),h=musicResponse(raw[2],gain,gate)*(conv?.12:1),v=Math.sqrt((b*b+m*m+h*h)/3);
+if(now-lastUiTick>=200){lastUiTick=now;$('audioHint').textContent=(noisePower?'Nach Raumfilter: ':'Mikrofon: ')+'Bass '+Math.round(raw[0])+' dB · Stimmen '+Math.round(raw[1])+' dB · Höhen '+Math.round(raw[2])+' dB';meter('bass',musicResponse(inputDb[0],50,-100));meter('mid',musicResponse(inputDb[1],50,-100));meter('high',musicResponse(inputDb[2],50,-100));meter('volume',musicResponse(Math.max(...inputDb),50,-100));$('effectiveStatus').textContent='Musiksignal: '+Math.round(v*100)+' %'+(learning?' · Einmessung':noisePower?' · Raumprofil aktiv':' · ohne Raumprofil');}emptyFrames=Math.max(...inputDb)<-115?emptyFrames+1:0;const speed=Number($('speed').value)/100,dt=Math.min(.1,Math.max(.001,(now-last)/1000));last=now;lastFrame=now;const blend=1-Math.exp(-dt/(.6*Math.pow(.04,speed)));bassSmooth+=(b-bassSmooth)*blend;levelSmooth+=(v-levelSmooth)*blend;if(v>.035&&!learning)phase+=dt*(.1+speed*5);
+const impulse=Math.max(b-prevBass,v-priorEnergy,conv?(flowResult?.transient||0)*.26:0);if(!learning&&impulse>.07&&Math.max(b,v)>.1&&now-lastBeat>280){lastBeat=now;beats++;beatColor++;beatPulse=Math.min(1,.45+Math.max(b,v)*.8);$('beat').textContent='Impulse: '+beats;}prevBass+=(b-prevBass)*(1-Math.exp(-dt/.35));priorEnergy+=(v-priorEnergy)*(1-Math.exp(-dt/.35));if(v>.035)lastInput=now;const pulseAge=now-lastBeat;if(pulseAge>250)beatPulse*=Math.exp(-dt/(.18+(1-speed)*.4));const quiet=learning||v<.035&&now-lastInput>350;if(quiet){beatPulse=0;bassSmooth=0;levelSmooth=0;focusSmooth=0}const focus=Number($('focus').value)/100,driven=quiet?0:focusSignal(b,m,beatPulse,focus);focusSmooth+=(driven-focusSmooth)*blend;
+
+currentBands=[b,m,h];composeMusicFrames();}
+function composeMusicFrames(){const [b,m,h]=currentBands,focus=Number($('focus').value)/100;musicFrames.forEach((frame,i)=>{let signal=focusSmooth,shift=0;if(mode==='wave')signal=Math.max(0,Math.sin(phase*2-i*.95))*focusSmooth;else if(mode==='spectrum')signal=[b*(1-focus),m*focus,h*.3][i%3];else if(mode==='beatcolor'){shift=beatColor;}else if(mode==='fast'){shift=Math.floor(phase*2);}if(signal<.035)signal=0;const intensity=musicBrightness(signal,Number($('light').value)/100,Number($('peak').value)/100),col=palettes[palette][(i+shift)%7];musicFrames[i]={rgb:col,brightness:intensity}})}
+
+function render(now){if(!analyser)return;if(now-lastAnalysisTick<33){raf=requestAnimationFrame(render);return}lastAnalysisTick=now;try{analyseFrame(now);analysisErrors=0}catch(e){analysisErrors++;$('status').textContent='Analysefehler';$('message').textContent='Audioanalyse: '+e.message;if(analysisErrors>=3){window.lumaStopMusic?.();stop();$('message').textContent='Audioanalyse angehalten: '+e.message;return}}if(analyser)raf=requestAnimationFrame(render)}
+function syncMusicControls(){const paletteNames={neon:'Neon',sunset:'Sonnenuntergang',ocean:'Ozean',warm:'Warm'},modeNames={bass:'Bass-Puls',wave:'Raumwelle',spectrum:'Frequenzen',beatcolor:'Beat-Farbwechsel',fast:'Schneller Farbfluss'};document.querySelectorAll('[data-palette]').forEach(b=>{const selected=b.dataset.palette===palette;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});document.querySelectorAll('[data-mode]').forEach(b=>{const selected=b.dataset.mode===mode;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected))});$('musicSelection').textContent=paletteNames[palette]+' · '+modeNames[mode];$('paletteSwatches').replaceChildren();palettes[palette].forEach(col=>{const sw=document.createElement('i');sw.style.background='rgb('+col.join(',')+')';$('paletteSwatches').append(sw)});composeMusicFrames()}
+window.lumaMusicState=()=>({palette,mode,active:window.lumaMusicActive?.()||false,contextState:context?.state||'closed',frameAgeMs:lastFrame?Math.round(performance.now()-lastFrame):null,frames:musicFrames.map(x=>({rgb:[...x.rgb],brightness:x.brightness}))});
+
+function timed(promise,ms,text){return new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error(text)),ms);Promise.resolve(promise).then(v=>{clearTimeout(t);resolve(v)},e=>{clearTimeout(t);reject(e)})})}
+async function start(){if(audioStarting)return false;if(analyser&&stream?.getTracks().some(t=>t.readyState==='live')&&context?.state==='running')return true;stop();const epoch=++audioEpoch;audioStarting=true;$('start').disabled=true;$('status').textContent='Mikrofon wird aktiviert …';try{if(!navigator.mediaDevices?.getUserMedia)throw Error('Mikrofon nicht verfügbar. Bitte in Safari über HTTPS öffnen.');
+// Create/resume the AudioContext within the original tap, before awaiting permission.
+const ctx=new (window.AudioContext||window.webkitAudioContext)();context=ctx;const resumed=timed(ctx.resume(),5000,'Audio konnte nicht aktiviert werden. Musik stoppen und erneut starten.');resumed.catch(()=>{});
+const acquired=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});if(epoch!==audioEpoch){acquired.getTracks().forEach(t=>t.stop());return false}stream=acquired;await resumed;if(epoch!==audioEpoch)return false;if(ctx.state!=='running')throw Error('Audio ist pausiert. Bitte erneut starten.');audioSource=ctx.createMediaStreamSource(stream);analyser=ctx.createAnalyser();analyser.fftSize=2048;analyser.minDecibels=-110;analyser.maxDecibels=-10;analyser.smoothingTimeConstant=.05;silentSink=ctx.createGain();silentSink.gain.value=0;audioSource.connect(analyser);analyser.connect(silentSink);silentSink.connect(ctx.destination);data=new Float32Array(analyser.frequencyBinCount);noisePower=null;try{const profile=JSON.parse(localStorage.getItem('luma_live_noise012')||'null');if(profile?.sampleRate===ctx.sampleRate&&profile.power?.length===data.length&&profile.power.every(x=>Number.isFinite(x)&&x>=0&&x<=1)){noisePower=profile.power;$('noiseStatus').textContent='Gespeichertes Raumprofil aktiv.'}}catch{}emptyFrames=0;lastAnalysisTick=-Infinity;lastUiTick=-Infinity;last=performance.now();lastFrame=last;render(last);$('status').textContent='Mikrofon aktiv';$('status').className='pill good';$('stop').disabled=false;return true}catch(e){if(epoch===audioEpoch){stop();$('status').textContent='Start fehlgeschlagen';$('message').textContent=e.message;$('message').className='error'}return false}finally{if(epoch===audioEpoch){audioStarting=false;$('start').disabled=false}}}
+function stop(){lumaFlowGuard?.cancelCalibration();audioEpoch++;audioStarting=false;cancelAnimationFrame(raf);raf=0;audioSource?.disconnect();silentSink?.disconnect();audioSource=null;silentSink=null;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const ctx=context;context=null;if(ctx)Promise.resolve(ctx.close()).catch(()=>{});analyser=null;calibration=null;$('noiseLearn').disabled=false;bassSmooth=0;levelSmooth=0;focusSmooth=0;beatPulse=0;prevBass=0;priorEnergy=0;for(const id of ['bass','mid','high','volume'])meter(id,0);$('start').disabled=false;$('stop').disabled=true;$('start').textContent='Musik starten';$('status').textContent='Gestoppt';currentBands=[0,0,0];composeMusicFrames()}
+window.lumaStartAudio=start;window.lumaStopAudio=stop;
+function flowStatus(message,state=''){
+ const element=$('flowStatus');element.textContent=message;element.dataset.state=state;
+}
+if(lumaFlowGuard){
+ document.querySelectorAll('[data-flow-guard]').forEach(button=>button.addEventListener('click',()=>{
+  const value=button.dataset.flowGuard;
+  lumaFlowGuard.setMode(value);
+  document.querySelectorAll('[data-flow-guard]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+  if(value==='off')flowStatus('Störschutz ist aus. Die normale Musikreaktion bleibt aktiv.');
+  else if(lumaFlowGuard.profileReady)flowStatus('✓ '+(value==='ambient'?'Umgebung':'Gespräche')+' aktiviert. Raumprofil aktiv.','ready');
+  else flowStatus((value==='ambient'?'Umgebungs-':'Gesprächs-')+'Störschutz gewählt. Bitte zuerst bei pausierter Musik Raumgeräusche einmessen.');
+ }));
+ $('flowCalibrate').onclick=()=>{
+  if(!analyser||!context||context.state!=='running'){flowStatus('Zuerst Musik/Mikrofon starten, dann Musik pausieren und einmessen.','error');return}
+  if(lumaFlowGuard.mode==='off'){flowStatus('Zuerst „Umgebung“ oder „Gespräche“ wählen.','error');return}
+  window.lumaStopMusic?.();
+  lumaFlowGuard.startCalibration({sampleRate:context.sampleRate,binCount:data.length,nowMs:performance.now()});
+  flowStatus('Raumgeräusche einmessen … Musik bitte 3 Sekunden pausiert lassen.');
+ };
+ $('flowReset').onclick=()=>{lumaFlowGuard.resetProfile();flowStatus('Raumprofil gelöscht. Schutz vor gleichbleibenden Geräuschen ist bis zur nächsten Einmessung nicht aktiv.')};
+}
+
+
+$('start').onclick=async()=>{if(audioStarting)return;const ok=await start();if(!ok)return;try{$('start').disabled=true;$('start').textContent='Verbinde Lampen …';await window.lumaEnsureConnection();await window.lumaStartMusic();$('start').textContent='Musik läuft';$('message').textContent='Eingangsbalken = Mikrofon. Musiksignal = nach Filter.';$('start').disabled=true;$('stop').disabled=false}catch(e){window.lumaStopMusic?.();stop();$('message').textContent=e.message;$('status').textContent='Start fehlgeschlagen'}};
+$('stop').onclick=()=>{window.lumaStopMusic?.();stop()};
+const moodPresentation={
+ neon:{name:'Neon',subtitle:'Electric Night',motif:'neon'},
+ sunset:{name:'Sunset',subtitle:'Beach Glow',motif:'sunset'},
+ ocean:{name:'Ocean',subtitle:'Blue Waves',motif:'ocean'},
+ warm:{name:'Warm',subtitle:'Cozy Light',motif:'warm'}
+};
+const lumaMoodArtwork={"neon":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 210\" role=\"img\" aria-label=\"Abstrakte Lichtstimmung\"><defs><linearGradient id=\"room\"><stop stop-color=\"#29113f\"/><stop offset=\".52\" stop-color=\"#1b1741\"/><stop offset=\"1\" stop-color=\"#102e48\"/></linearGradient></defs><defs><filter id=\"blur\"><feGaussianBlur stdDeviation=\"16\"/></filter><filter id=\"soft\"><feGaussianBlur stdDeviation=\"5\"/></filter><linearGradient id=\"floor\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#0b0d22\"/><stop offset=\"1\" stop-color=\"#283057\"/></linearGradient></defs>\n<rect width=\"320\" height=\"210\" fill=\"#0b0921\"/>\n<ellipse cx=\"88\" cy=\"85\" rx=\"100\" ry=\"74\" fill=\"#b731e1\" opacity=\".38\" filter=\"url(#blur)\"/>\n<ellipse cx=\"255\" cy=\"89\" rx=\"102\" ry=\"68\" fill=\"#00d6eb\" opacity=\".32\" filter=\"url(#blur)\"/>\n<path d=\"M0 0h320v152L0 210Z\" fill=\"url(#room)\" opacity=\".8\"/>\n<path d=\"M12 13H308V153H12Z\" fill=\"none\" stroke=\"#4a356c\" stroke-width=\"7\"/>\n<rect x=\"170\" y=\"17\" width=\"128\" height=\"117\" fill=\"#11122c\" stroke=\"#52486b\" stroke-width=\"4\" rx=\"2\"/>\n<g fill=\"#322545\"><rect x=\"187\" y=\"69\" width=\"13\" height=\"65\"/><rect x=\"205\" y=\"49\" width=\"15\" height=\"85\"/><rect x=\"224\" y=\"78\" width=\"21\" height=\"56\"/><rect x=\"249\" y=\"58\" width=\"17\" height=\"76\"/><rect x=\"269\" y=\"37\" width=\"16\" height=\"97\"/></g>\n<path d=\"M15 34L145 12\" stroke=\"#f47dff\" stroke-width=\"5\" opacity=\".75\" filter=\"url(#soft)\"/><path d=\"M15 34L145 12\" stroke=\"#fc73f4\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n<path d=\"M302 20V139\" stroke=\"#43edfd\" stroke-width=\"8\" opacity=\".52\" filter=\"url(#soft)\"/><path d=\"M302 20V139\" stroke=\"#43edfd\" stroke-width=\"3\"/>\n<path d=\"M0 152L174 119L320 158V210H0Z\" fill=\"url(#floor)\"/>\n<path d=\"M30 150V129q0-9 10-9h91q11 0 11 11v19M28 151h118v25H28Z\" fill=\"#322647\" stroke=\"#a55abe\" stroke-width=\"2\"/>\n<path d=\"M39 156h96\" stroke=\"#dc71f4\" stroke-width=\"5\" opacity=\".7\" filter=\"url(#soft)\"/>\n<path d=\"M150 183l56-23 78 10\" stroke=\"#6a2a86\" stroke-width=\"5\"/><path d=\"M195 160l48-20 46 10\" stroke=\"#6ef2ff\" stroke-width=\"3\" opacity=\".8\"/>\n<ellipse cx=\"248\" cy=\"172\" rx=\"45\" ry=\"14\" fill=\"#12d0e8\" opacity=\".25\" filter=\"url(#soft)\"/></svg>","sunset":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 210\" role=\"img\" aria-label=\"Abstrakte Lichtstimmung\"><defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\".4\" y2=\"1\"><stop stop-color=\"#723d88\"/><stop offset=\".5\" stop-color=\"#e67e8d\"/><stop offset=\"1\" stop-color=\"#ffb76b\"/></linearGradient></defs><defs><filter id=\"blur\"><feGaussianBlur stdDeviation=\"16\"/></filter><filter id=\"soft\"><feGaussianBlur stdDeviation=\"5\"/></filter><linearGradient id=\"floor\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#0b0d22\"/><stop offset=\"1\" stop-color=\"#283057\"/></linearGradient></defs>\n<rect width=\"320\" height=\"210\" fill=\"#27132f\"/>\n<rect x=\"12\" y=\"12\" width=\"296\" height=\"143\" rx=\"9\" fill=\"url(#sky)\" stroke=\"#af6485\" stroke-width=\"6\"/>\n<circle cx=\"202\" cy=\"96\" r=\"43\" fill=\"#ffe7a4\" opacity=\".76\" filter=\"url(#soft)\"/><circle cx=\"202\" cy=\"96\" r=\"35\" fill=\"#ffd5a0\"/>\n<path d=\"M18 116q80-25 156 4t128 2v24H18Z\" fill=\"#d35e88\"/>\n<path d=\"M18 139q76 11 146 0t138 3v20H18Z\" fill=\"#d97884\"/>\n<path d=\"M18 154h284\" stroke=\"#ffd3a8\" stroke-width=\"3\" opacity=\".7\"/>\n<path d=\"M270 141c-2-41-2-63-15-91\" stroke=\"#51323f\" stroke-width=\"6\" fill=\"none\"/>\n<g stroke=\"#533244\" stroke-width=\"5\" stroke-linecap=\"round\"><path d=\"M255 50q-35-12-45-32\"/><path d=\"M255 50q22-27 44-29\"/><path d=\"M255 50q-24-30-35-44\"/><path d=\"M255 50q38 1 55 19\"/></g>\n<path d=\"M0 164l107-12 213 10v48H0Z\" fill=\"#33273d\"/>\n<path d=\"M18 157h284\" stroke=\"#a85f75\" stroke-width=\"3\"/>\n<path d=\"M38 165q20-38 55-18l37 31H25Z\" fill=\"#5c3550\"/>\n<path d=\"M46 163q21-14 48-9\" stroke=\"#ef987f\" stroke-width=\"6\" opacity=\".5\" filter=\"url(#soft)\"/>\n<path d=\"M205 183l14-44h13l15 44m-54 3h65\" stroke=\"#ffba8b\" stroke-width=\"4\" fill=\"none\"/>\n<circle cx=\"225\" cy=\"135\" r=\"14\" fill=\"#ffb977\" filter=\"url(#soft)\"/>\n<ellipse cx=\"225\" cy=\"180\" rx=\"60\" ry=\"9\" fill=\"#e77b5e\" opacity=\".28\" filter=\"url(#blur)\"/></svg>","ocean":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 210\" role=\"img\" aria-label=\"Abstrakte Lichtstimmung\"><defs><linearGradient id=\"seaSky\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#071e4e\"/><stop offset=\".65\" stop-color=\"#0f779d\"/><stop offset=\"1\" stop-color=\"#12b0ad\"/></linearGradient></defs><defs><filter id=\"blur\"><feGaussianBlur stdDeviation=\"16\"/></filter><filter id=\"soft\"><feGaussianBlur stdDeviation=\"5\"/></filter><linearGradient id=\"floor\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#0b0d22\"/><stop offset=\"1\" stop-color=\"#283057\"/></linearGradient></defs>\n<rect width=\"320\" height=\"210\" fill=\"url(#seaSky)\"/>\n<ellipse cx=\"123\" cy=\"72\" rx=\"122\" ry=\"85\" fill=\"#2dc8dd\" opacity=\".25\" filter=\"url(#blur)\"/>\n<rect x=\"14\" y=\"16\" width=\"290\" height=\"134\" rx=\"6\" fill=\"none\" stroke=\"#3da4c9\" stroke-width=\"5\"/>\n<path d=\"M20 118Q64 96 104 118t83 2 120-7v43H20Z\" fill=\"#1c78a4\"/>\n<path d=\"M20 131Q66 105 112 133t93-1 102-6\" stroke=\"#67e4e9\" stroke-width=\"4\" fill=\"none\" opacity=\".88\"/>\n<path d=\"M20 148q42-22 87 1t88-3 112 2\" stroke=\"#c0fff8\" stroke-width=\"3\" fill=\"none\" opacity=\".55\"/>\n<path d=\"M0 157 115 139 320 162v48H0Z\" fill=\"#102f50\"/>\n<path d=\"M18 25h284\" stroke=\"#b1faff\" stroke-width=\"2\" opacity=\".3\"/>\n<path d=\"M44 169q20-36 51-27l28 21q5 6 3 18H38Z\" fill=\"#255b77\" stroke=\"#3cb0bb\" stroke-width=\"3\"/>\n<path d=\"M227 50v124\" stroke=\"#71d8e6\" stroke-width=\"5\" opacity=\".65\" filter=\"url(#soft)\"/>\n<path d=\"M227 45h11v116h-11zm-15 117h43\" fill=\"#164968\" stroke=\"#a0eff5\" stroke-width=\"3\"/>\n<ellipse cx=\"231\" cy=\"170\" rx=\"40\" ry=\"13\" fill=\"#33b9d8\" opacity=\".45\" filter=\"url(#soft)\"/>\n<path d=\"M32 181q70-15 128-5t160 4\" stroke=\"#3dd0d8\" stroke-width=\"4\" opacity=\".5\"/>\n<circle cx=\"163\" cy=\"65\" r=\"4\" fill=\"#a8f7ff\" opacity=\".8\"/><circle cx=\"177\" cy=\"52\" r=\"3\" fill=\"#a8f7ff\" opacity=\".65\"/><circle cx=\"166\" cy=\"35\" r=\"2\" fill=\"#a8f7ff\"/></svg>","warm":"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 210\" role=\"img\" aria-label=\"Abstrakte Lichtstimmung\"><defs><linearGradient id=\"warmRoom\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#6c473d\"/><stop offset=\".65\" stop-color=\"#3b2b36\"/><stop offset=\"1\" stop-color=\"#352a37\"/></linearGradient></defs><defs><filter id=\"blur\"><feGaussianBlur stdDeviation=\"16\"/></filter><filter id=\"soft\"><feGaussianBlur stdDeviation=\"5\"/></filter><linearGradient id=\"floor\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#0b0d22\"/><stop offset=\"1\" stop-color=\"#283057\"/></linearGradient></defs>\n<rect width=\"320\" height=\"210\" fill=\"url(#warmRoom)\"/>\n<ellipse cx=\"110\" cy=\"90\" rx=\"95\" ry=\"73\" fill=\"#ffc46c\" opacity=\".35\" filter=\"url(#blur)\"/>\n<path d=\"M20 12V159m280-147v147M17 16h286\" fill=\"none\" stroke=\"#5c3f3d\" stroke-width=\"8\"/>\n<rect x=\"191\" y=\"23\" width=\"92\" height=\"88\" rx=\"4\" fill=\"#674b58\" stroke=\"#b17a63\" stroke-width=\"6\"/>\n<path d=\"M237 23v88m-46-41h92\" stroke=\"#b48469\" stroke-width=\"4\"/>\n<path d=\"M0 156l147-28 173 26v56H0Z\" fill=\"#422d36\"/>\n<path d=\"M11 156h297\" stroke=\"#855749\" stroke-width=\"5\"/>\n<path d=\"M15 174v-27q0-15 15-15h108q14 0 14 15v27H15Z\" fill=\"#9d625b\" stroke=\"#d59a70\" stroke-width=\"3\"/>\n<path d=\"M35 139h38v21H35zm44 0h52v21H79z\" fill=\"#ba8273\"/>\n<path d=\"M15 175v12m137-12v12\" stroke=\"#d59a70\" stroke-width=\"4\"/>\n<path d=\"M168 173h49l6-5h-61l6 5Zm20-5v-47\" fill=\"#633d34\" stroke=\"#c58d5b\" stroke-width=\"3\"/>\n<path d=\"M161 122h54l-11-37h-32l-11 37Z\" fill=\"#ffe0a7\" stroke=\"#f4ba78\" stroke-width=\"3\"/>\n<ellipse cx=\"189\" cy=\"106\" rx=\"56\" ry=\"62\" fill=\"#ffd39b\" opacity=\".32\" filter=\"url(#blur)\"/>\n<path d=\"M255 169h37v3h-37zm18 0v-40\" fill=\"#533c35\" stroke=\"#a77351\" stroke-width=\"3\"/>\n<path d=\"M256 132h32l-5-23h-22l-5 23Z\" fill=\"#f8d49c\" stroke=\"#ecad67\" stroke-width=\"2\"/>\n<path d=\"M10 194q146-20 300 2\" fill=\"none\" stroke=\"#b4774c\" stroke-width=\"3\" opacity=\".4\"/></svg>"};
+for(const button of document.querySelectorAll('#palettes [data-palette]')){
+ const id=button.dataset.palette,detail=moodPresentation[id];
+ if(!detail||!palettes[id])continue;
+ const colors=palettes[id].map(rgb=>'rgb('+rgb.join(',')+')');
+ button.classList.add('mi-mood-card');
+ button.setAttribute('aria-label','Farbstimmung '+detail.name+' auswählen');
+ button.style.setProperty('--mood-c1',colors[0]);button.style.setProperty('--mood-c2',colors[1]);
+ button.style.setProperty('--mood-c3',colors[3]);button.style.setProperty('--mood-c4',colors[5]);
+ button.dataset.moodArt=detail.motif;
+ // Paint the real miniature scene directly on the tappable card itself.
+ // This layer has no dependency on nested-image stacking, external SVG requests or iPhone caching.
+ const embeddedSVG='data:image/svg+xml;base64,'+btoa(lumaMoodArtwork[id]);
+ button.style.setProperty('background-image','linear-gradient(180deg,transparent 5%,#11162c17 44%,#1d1935dd 76%,#19172ff9 100%),url("'+embeddedSVG+'")','important');
+ button.style.setProperty('background-size','100% 100%,100% 77%','important');
+ button.style.setProperty('background-position','center center,center top','important');
+ button.style.setProperty('background-repeat','no-repeat,no-repeat','important');
+ const artwork=document.createElement('span');artwork.className='mi-mood-art';artwork.setAttribute('aria-hidden','true');
+ const artFallback=document.createElement('span');artFallback.className='mi-mood-fallback';artFallback.setAttribute('aria-hidden','true');artFallback.innerHTML=lumaMoodArtwork[id];artwork.append(artFallback);
+ const sceneImage=document.createElement('img');sceneImage.className='mi-mood-picture';
+ sceneImage.src='media/'+id+'.svg?v=7';sceneImage.alt='';sceneImage.loading='eager';sceneImage.decoding='async';sceneImage.onerror=()=>{artwork.dataset.imageFailed='true'};
+ artwork.append(sceneImage);
+ const artTag=document.createElement('span');artTag.className='mi-mood-art-tag';artTag.textContent=({neon:'NEON CITY',sunset:'GOLDEN HOUR',ocean:'DEEP BLUE',warm:'COZY ROOM'})[id];artwork.append(artTag);
+ const glow=document.createElement('span');glow.className='mi-mood-glow';artwork.append(glow);
+ const beam=document.createElement('span');beam.className='mi-mood-beam';artwork.append(beam);
+ const wave=document.createElement('span');wave.className='mi-mood-wave';artwork.append(wave);
+ const caption=document.createElement('span');caption.className='mi-mood-caption';
+ const name=document.createElement('strong');name.textContent=detail.name;
+ const subtitle=document.createElement('small');subtitle.textContent=detail.subtitle;
+ caption.append(name,subtitle);
+ const dots=document.createElement('span');dots.className='mi-mood-pips';dots.setAttribute('aria-hidden','true');
+ for(const color of colors.slice(0,5)){const dot=document.createElement('i');dot.style.background=color;dots.append(dot)}
+ const check=document.createElement('span');check.className='mi-mood-check';check.textContent='✓';check.setAttribute('aria-hidden','true');
+ button.replaceChildren(artwork,caption,dots,check);
+}
+for(const b of document.querySelectorAll('[data-palette]'))b.onclick=()=>{palette=b.dataset.palette;musicSave();syncMusicControls()};for(const b of document.querySelectorAll('[data-mode]'))b.onclick=()=>{mode=b.dataset.mode;musicSave();syncMusicControls()};function musicSave(){try{localStorage.setItem('luma_live_music08',JSON.stringify({gain:$('gain').value,speed:$('speed').value,light:$('light').value,peak:$('peak').value,palette,mode,focus:$('focus').value,gate:$('gate').value}))}catch{}}
+function musicLabels(){for(const key of ['gain','speed','light','peak'])$(key+'Num').textContent=$(key).value+'%';const f=Number($('focus').value);$('focusNum').textContent=(f<25?'Takt':f>75?'Gesangsbereich':'Mischung')+' · '+f+'%';$('gateNum').textContent=$('gate').value+' dB';syncMusicControls()}
+for(const key of ['gain','speed','light','peak','focus','gate'])$(key).oninput=()=>{musicLabels();musicSave();composeMusicFrames()};
+for(const [name,values] of [['Sanft',[40,10,10,55,'bass']],['Puls',[60,70,0,100,'bass']],['Schnell',[55,100,0,100,'fast']],['Beatfarben',[65,90,5,100,'beatcolor']]]){const btn=document.createElement('button');btn.textContent=name;btn.className='alt';btn.onclick=()=>{['gain','speed','light','peak'].forEach((k,i)=>$(k).value=values[i]);mode=values[4];document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x.dataset.mode===mode));musicLabels();musicSave()};$('musicPresets').append(btn)}
+try{const saved=JSON.parse(localStorage.getItem('luma_live_music08')||'null');if(saved){for(const k of ['gain','speed','light','peak'])if(saved[k]!=null)$(k).value=Math.max(0,Math.min(100,Number(saved[k])));if(saved.focus!=null)$('focus').value=Math.max(0,Math.min(100,+saved.focus));if(saved.gate!=null)$('gate').value=Math.max(-95,Math.min(-40,+saved.gate));if(palettes[saved.palette])palette=saved.palette;if(['bass','wave','spectrum','beatcolor','fast'].includes(saved.mode))mode=saved.mode}}catch{}musicLabels();
+for(const b of document.querySelectorAll('[data-palette],[data-mode]'))b.addEventListener('click',musicSave);
+for(const [name,value] of [['Takt',0],['Gesangsbereich',100],['Mischung',50]]){const btn=document.createElement('button');btn.textContent=name;btn.className='alt';btn.onclick=()=>{$('focus').value=value;musicLabels();musicSave()};$('focusPresets').append(btn)}
+window.addEventListener('pagehide',stop);
+</script></main><main id="connectionPane" class="pane"><section class="card" id="hueControl" style="border-color:#5b5794">
+<h2>Verbindung zur Hue Bridge</h2>
+<p class="muted">Der Live-Test übernimmt, sofern vorhanden, deine bisher gespeicherten Bridge-Daten. Fehlen sie, gib sie hier einmalig ein. Änderungen am Live-Test bleiben getrennt von den Einstellungen der Haupt-App.</p>
+<label for="bridgeIp">Bridge-Adresse <small>– lokale IP im Heimnetz</small></label>
+<input id="bridgeIp" value="192.168.178.177" autocomplete="off" spellcheck="false" style="display:block;width:100%;margin:7px 0 12px;padding:13px;background:#11182c;color:white;border:1px solid #4d5673;border-radius:12px;font-size:16px">
+<label for="hueKey">Application Key <small>– der Wert „username“, nicht „clientkey“</small></label>
+<input id="hueKey" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Schlüssel nur lokal eingeben" style="display:block;width:100%;margin:7px 0 12px;padding:13px;background:#11182c;color:white;border:1px solid #4d5673;border-radius:12px;font-size:16px">
+<div class="buttons"><button id="hueLoad" type="button">Verbinden</button><button id="hueClear" type="button">Schlüssel entfernen</button></div>
+<p class="muted" style="font-size:12px">Der Schlüssel wird ausschließlich an die eingegebene Bridge gesendet. Er wird auf deinen Wunsch auf diesem Gerät gespeichert. „Schlüssel entfernen“ löscht ihn hier wieder. Keine Zugangsdaten im GitHub-Code.</p>
+<p id="hueState" aria-live="polite" style="white-space:pre-wrap;color:#c7d1ff">Noch nicht verbunden.</p><p class="note">Verbindung nur im Heim-WLAN. Falls der Browser das lokale HTTPS-Zertifikat nicht akzeptiert, muss die Bridge-Adresse zuvor direkt in Safari geöffnet und der Zertifikatsfehler geprüft werden. Zugangsschlüssel niemals hier teilen.</p>
+<div id="hueDevices"></div>
+</section>
+</main><section id="musicOutput" class="card"><h2>Verbindungsstatus</h2><p class="muted">„Musik starten“ aktiviert Mikrofon, Analyse und Lampen gemeinsam. Die Auswahl All oder Wohnzimmer gilt auch für Musik. Musik-Echtzeit wird künftig in einer separaten iPhone-App umgesetzt.</p><div class="buttons"><button id="musicConnect">Verbindung aktualisieren</button><button id="musicOn" disabled>Musiklicht starten</button><button id="musicOff" class="alt" disabled>Musiklicht stoppen</button></div><p id="musicInfo" role="status" class="muted">Noch nicht verbunden.</p><p id="musicDiagnostics" class="note" style="font-variant-numeric:tabular-nums;min-height:3em">Diagnose: noch nicht gestartet.</p><p class="muted">Stoppen beendet weitere Befehle; die Lampen behalten ihren letzten Zustand. Wenn iOS die Audioanalyse im Hintergrund unterbricht, werden keine Ersatzwerte gesendet. Beim Zurückkehren wird die Audioverbindung wieder aufgenommen.</p></section>
+<script>
+(()=>{'use strict';
+const q=id=>document.getElementById(id);let devices=[],active=false,timer=0,cursor=0,busy=false,generation=0,lastSent=new Map(),errors=0,lastResponseMs=0,lastSendTime=0,sentCommands=0,avoidedCommands=0;
+const say=s=>{if(q('musicInfo').textContent!==s)q('musicInfo').textContent=s};
+async function request(method,path,body){return window.lumaRequest(method,path,body,{music:method==='PUT'})}
+
+function end(message){window.lumaCancelMusicRequests?.();q('start').disabled=false;q('start').textContent='Musik starten';active=false;generation++;clearTimeout(timer);busy=false;q('musicOn').disabled=!devices.length;q('musicOff').disabled=true;if(message)say(message)}
+q('musicConnect').onclick=async()=>{end();devices=[];q('musicOn').disabled=true;q('musicConnect').disabled=true;try{const data=await request('GET','/lights');if(!data||Array.isArray(data)||typeof data!=='object')throw Error('Unerwartete Bridge-Antwort.');devices=Object.entries(data).filter(([id,d])=>d.state&&d.state.reachable!==false&&window.lumaTargetIds().includes(id)).map(([id,d])=>({id,color:'hue' in d.state&&'sat' in d.state,name:d.name||'Lampe '+id,type:d.type||'',modelid:d.modelid||''}));say(devices.length+' erreichbare Lampen verbunden.');q('musicOn').disabled=!devices.length}catch(e){say('Verbinden fehlgeschlagen: '+(e.name==='AbortError'?'Zeitüberschreitung':e.message))}finally{q('musicConnect').disabled=false}};
+function hsv(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;let h=0;if(d){if(max===r)h=((g-b)/d)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=(h*60+360)%360}return {hue:Math.round(h/360*65535),sat:Math.round((max?d/max:0)*254),bri:Math.max(1,Math.round(max*254))}}
+function diag(note=''){
+ const age=lastFrame?Math.round(performance.now()-lastFrame):null;
+ const m=window.lumaMusicState?.();
+ q('musicDiagnostics').textContent='Audio: '+(context?.state||'aus')+' · Analyse: '+(age===null?'–':age+' ms alt')+' · Signal: '+Math.round(Math.max(...currentBands)*100)+' % · Bridge: '+(lastResponseMs||'–')+' ms · Befehle: '+sentCommands+' · vermieden: '+avoidedCommands+' · Fehler: '+errors+(note?' · '+note:'');
+}
+async function tick(){
+ if(!active)return;
+ const version=generation;
+ if(busy){timer=setTimeout(tick,60);return}
+ busy=true;
+ try{
+  const age=performance.now()-lastFrame;
+  if(!analyser||!context){end('Mikrofon beendet.');diag('Mikrofon aus');return}
+  if(context.state==='suspended'&&!document.hidden){context.resume().catch(()=>{});}
+  if(age>700||context.state!=='running'){diag('Audio wartet – keine Lampenbefehle');return}
+  if(!devices.length){end('Keine Lampen ausgewählt.');return}
+  const group=window.lumaMusicGroup();
+  const i=group?0:cursor++%devices.length;
+  const d=devices[i],frame=musicFrames[i%musicFrames.length],v=hsv(...frame.rgb);
+  const speed=Number($('speed').value)/100;
+  const body=frame.brightness<=.001?{on:false,transitiontime:0}:{on:true,bri:Math.max(1,Math.min(254,Math.round(frame.brightness*254/5)*5)),transitiontime:speed>.7?0:Math.max(0,Math.round(5*(1-speed)))};
+  if(body.on&&(group||d.color)){
+    body.hue=Math.min(65535,Math.round(v.hue/1024)*1024);
+    body.sat=Math.min(254,Math.round(v.sat/5)*5);
+  }
+  const path=group?group:'/lights/'+encodeURIComponent(d.id)+'/state';
+  const stamp=JSON.stringify(body),previous=lastSent.get(path);
+  if(previous?.stamp===stamp){avoidedCommands++;diag('Unveränderter Zustand verworfen');return}
+  const t=performance.now();
+  const response=await request('PUT',path,body);
+  if(version!==generation)return;
+  lastResponseMs=Math.round(performance.now()-t);lastSendTime=performance.now();
+  if(!Array.isArray(response)||!response.some(x=>x.success))throw Error('Bridge bestätigt nicht');
+  lastSent.set(path,{stamp,time:lastSendTime});sentCommands++;
+  errors=0;diag('Musiklicht aktiv');
+  say('Musik aktiv · '+devices.length+' Lampen');
+ }catch(e){
+  if(version!==generation)return;
+  if(e.name==='AbortError'&&!active)return;
+  errors++;diag('Bridge-Fehler: '+e.message);
+  if(errors>=3){end('Musiklicht pausiert: wiederholte Bridge-Fehler. Bitte Verbindung prüfen.')}
+ }finally{busy=false;if(active&&version===generation)timer=setTimeout(tick,groupDelay())}
+}
+// Keep within Hue REST guidance. Entertainment streaming is the proper fast update transport.
+function groupDelay(){return window.lumaMusicGroup()?1000:Math.max(120,Math.min(250,devices.length*30))}
+q('musicOn').onclick=()=>{window.lumaStopMotion();if(!analyser){say('Zuerst oben das Mikrofon starten.');return}if(!devices.length||active)return;generation++;lastSent.clear();errors=0;lastResponseMs=0;sentCommands=0;avoidedCommands=0;active=true;q('musicOn').disabled=true;q('musicOff').disabled=false;say('Musiklicht aktiv · '+devices.length+' Lampen');tick()};q('musicOff').onclick=()=>end('Musiklicht gestoppt.');window.lumaStopMusic=()=>end('Musiklicht gestoppt.');window.lumaMusicActive=()=>active;window.lumaStartMusic=async()=>{if(!analyser||context?.state!=='running')throw Error('Audioanalyse ist nicht aktiv.');if(!devices.length)throw Error('Keine erreichbaren Lampen ausgewählt.');q('musicOn').onclick();};window.lumaMusicRefresh=()=>q('musicConnect').onclick();q('stop').addEventListener('click',()=>end('Mikrofon und Musiklicht gestoppt.'));q('hueClear').addEventListener('click',()=>{end('Schlüssel entfernt.');devices=[];q('musicOn').disabled=true});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&context&&context.state==='suspended')context.resume().catch(()=>{})});window.addEventListener('pagehide',()=>end());
+})();
+</script>
+
+<main id="lightPane" class="pane" hidden><section class="card"><h2>Licht</h2><div class="buttons"><button id="targetOn">Auswahl ein</button><button id="targetOff" class="alt">Auswahl aus</button><button id="lightRefresh" class="alt">Aktualisieren</button></div><p class="muted">Einzelne Lampen schalten und dimmen. Befehle werden erst beim Loslassen eines Reglers gesendet.</p><div id="lightList"></div></section></main>
+<main id="scenePane" class="pane" hidden>
+<section class="scene-hero">
+ <div class="scene-hero-top"><span class="scene-eyebrow">LUMA COLLECTION · ENTWURF</span><span class="scene-tag">SZENEN 1.0</span></div>
+ <h2>Licht, das Räume verändert.</h2>
+ <p>Entdecke kuratierte Lichtwelten – oder öffne nur deine Lieblingsszenen.</p>
+ <div id="sceneTabs" class="scene-tabs" role="tablist" aria-label="Szenensammlung">
+  <button id="favScenes" class="scene-tab" type="button" role="tab" aria-selected="true">★ Favoriten</button>
+  <button id="allScenes" class="scene-tab" type="button" role="tab" aria-selected="false">✦ Entdecken</button>
+ </div>
+</section>
+<section class="scene-toolbar">
+ <label class="scene-search-label"><span class="sr-only">Szenen suchen</span><input id="sceneSearch" type="search" placeholder="Szenen suchen …" autocomplete="off"></label>
+ <div id="sceneFilters" class="scene-filter-row" aria-label="Kategorie auswählen"></div>
+ <div class="scene-tools"><span id="sceneCount" class="note"></span><button type="button" class="scene-add" id="sceneNew">＋ Eigene Szene</button></div>
+</section>
+<section id="sceneGrid" class="scenegrid scene-gallery" aria-label="Szenengalerie"></section>
+<section class="card scene-adjust">
+ <div class="row"><h2>Szene anpassen</h2><span id="selectedScene" class="note">Noch keine Szene gewählt.</span></div>
+ <div id="moodControls"></div>
+ <details><summary>Voreinstellungen und Übergänge</summary>
+  <div id="moodPresets" class="buttons"></div>
+  <label class="range">Übergang beim Anwenden <span id="sceneTransitionValue">1,0 s</span><input id="sceneTransition" type="range" min="0" max="50" value="10" step="1"></label>
+ </details>
+ <div class="buttons"><button id="applyScene" type="button">Aktuelle Szene anwenden</button><button id="sceneSaveCopy" class="alt" type="button">Als eigene Szene speichern</button></div>
+</section>
+<section class="card"><details><summary>Dynamische Szenen</summary>
+<p class="note">Bestehende, vorsichtige Steuerung; keine zusätzliche hohe API-Datenrate.</p>
+<label>Animation<select id="motionMode"><option value="rotate">Farben tauschen</option><option value="wave">Welle durch die Auswahl</option><option value="breath">Sanftes Atmen</option><option value="drift">Farbdrift</option></select></label>
+<label>Übergang · <span id="transitionVal">5 s</span><input id="transition" type="range" min="1" max="15" value="5"></label>
+<label>Wechselabstand · <span id="intervalVal">4 s</span><input id="interval" type="range" min="1" max="12" value="4"></label>
+<label>Gleichzeitig ausgephast · <span id="phaseOutVal">0</span><input id="phaseOut" type="range" min="0" max="6" value="0"></label>
+<div class="buttons"><button id="motionStart">Dynamik starten</button><button id="motionStop" class="alt">Stoppen</button></div><p id="sceneMotionError" class="note" role="status" aria-live="polite"></p>
+</details></section>
+<section class="scene-backup card"><details><summary>Bibliothek sichern und wiederherstellen</summary><p class="note">Export enthält nur Szenen und Favoriten, niemals den Bridge-Schlüssel.</p><div class="buttons"><button id="sceneExport" class="alt" type="button">Sicherung erstellen</button><button id="sceneImport" class="alt" type="button">Sicherung importieren</button></div><input id="sceneImportFile" type="file" accept=".json,application/json" hidden><p id="sceneBackupStatus" class="note"></p></details></section>
+<dialog id="sceneEditor" class="scene-editor"><form method="dialog" id="sceneForm">
+ <div class="row"><h2 id="sceneEditorTitle">Eigene Szene</h2><button type="button" class="alt" id="sceneEditorClose">✕</button></div>
+ <label>Name<input id="sceneEditorName" type="text" maxlength="48" required placeholder="Meine Lichtwelt"></label>
+ <label>Kategorie<select id="sceneEditorCategory"><option>Eigene</option><option>Neon</option><option>Natur</option><option>Wärme</option><option>Fantasie</option><option>Alltag</option><option>Atmosphäre</option></select></label>
+ <p class="note">Farben und Helligkeit pro Lichtplatz. Die tatsächliche Lampenreihenfolge kommt aus dem Bereich Gruppen.</p>
+ <div id="sceneEditorLights"></div>
+ <div class="buttons"><button type="button" id="sceneEditorSave">Szene speichern</button><button type="button" id="sceneEditorDelete" class="alt" hidden>Szene löschen</button></div>
+ <p id="sceneEditorStatus" class="note"></p>
+</form></dialog>
+</main>
+<main id="groupPane" class="pane" hidden><div id="groupsV1Root" role="region" aria-label="Gruppenverwaltung"></div></main>
+<main id="lampSettingsPane" class="pane" hidden>
+ <section class="card li-settings">
+  <div class="li-heading"><div><span class="li-kicker">PERSONALISIERUNG</span><h2>💡 Lampensymbole</h2></div><button id="liBack" class="alt" type="button">← Zurück</button></div>
+  <p class="muted">Wähle eine Lampe und passe ihr Symbol an. Die Änderung gilt nur in Luma und schaltet kein Licht.</p>
+  <div id="liList" class="li-list" role="group" aria-label="Deine Hue-Lampen"></div>
+  <div id="liEditor" hidden>
+    <h3 id="liEditorTitle"></h3>
+    <p class="muted">Automatisch erkannt oder manuell ausgewählt. Dein Symbol bleibt nach dem Neuladen gespeichert.</p>
+    <div id="liChoices" class="li-choices" role="group" aria-label="Lampensymbol auswählen"></div>
+    <p id="liResult" class="note" role="status" aria-live="polite"></p>
+  </div>
+ </section>
+</main>
+
+
+
+<script>
+(()=>{'use strict';const el=id=>document.getElementById(id),save=(k,v)=>{try{localStorage.setItem('luma_live_'+k,JSON.stringify(v))}catch{}},read=(k,f)=>{try{const own=localStorage.getItem('luma_live_'+k);const transferable=['ip','key','groups','order','identity_ip','bridge_identity'].includes(k);return JSON.parse(own??(transferable?localStorage.getItem('luma07_'+k):null))??f}catch{return f}};
+let lights={},bridgeGroups={},groups=read('groups',[]),order=read('order',[]),favorites=read('favorites',[]),selected=read('selected',0),mood=read('mood',{brightness:75,saturation:85,contrast:50}),onlyFav=false,motion=0,motionTimer=0,connected=false,chain=Promise.resolve();
+let groupEngine=null,groupUI=null,groupTree=null,bridgeIdentity='';
+const lampIconPrefs=new window.LumaLampIcons.Store(localStorage);let editLampId=null;
+const status=s=>el('globalStatus').textContent=s;
+const SCENE_THEMES = [
+ ['Sonnenuntergänge',['#FF6A36','#F5C15D','#A83B93','#FF9E7A'],'🌅'],
+ ['Tropische Küsten',['#FF8A79','#6CE8D2','#FFE5AD','#19A6B5'],'🌴'],
+ ['Galaxien',['#291E69','#8843C8','#F88DCB','#142D89'],'✦'],
+ ['Nordlichter',['#123B6C','#32DBBC','#82A9FF','#AA4EEB'],'❄'],
+ ['Wald & Natur',['#124E44','#49AE65','#C8BD70','#F4A653'],'🌿'],
+ ['Feuer & Lava',['#9F171C','#FF4D17','#FF9A20','#FFCA5E'],'🔥'],
+ ['Ozean & Eis',['#0A3C82','#1679B6','#49CED8','#B6F5F8'],'≈'],
+ ['Pastellträume',['#F6A7CD','#B8AAFF','#9EE7D9','#FFE0B1'],'☁'],
+ ['Neon & Cyberpunk',['#FF1DA6','#642BEB','#00D6F7','#F7D02E'],'⚡'],
+ ['Gemütlich & Kerzenlicht',['#E86A30','#FFC37C','#DF9C55','#F2D4A6'],'☀'],
+ ['Wüsten',['#D95A36','#EAAA55','#68449C','#F5D59E'],'◇'],
+ ['Blütenmeere',['#EC559D','#F7B6D5','#A0C76A','#F8DE96'],'✿'],
+ ['Korallenriffe',['#FD6958','#FFCC76','#4FD5CE','#135FAD'],'◈'],
+ ['Gewitter',['#182959','#6C69D4','#A9BBF0','#FCB86C'],'☇'],
+ ['Herbstwälder',['#AA3A25','#E38D2E','#E4C065','#526039'],'🍁'],
+ ['Winterwelten',['#D9ECF5','#7ABADB','#376CA8','#8C83C8'],'❆'],
+ ['Juwelen',['#0D8E8F','#5E32AD','#D02788','#E8B94E'],'◆'],
+ ['Mediterrane Nächte',['#143C8B','#5E84BC','#EC9B62','#E7D8B9'],'☾'],
+ ['Gärten',['#3C8D4B','#B4C65F','#E9A8BC','#D56F97'],'❀'],
+ ['Retro Disco',['#FE4889','#FAAB3C','#37C7BA','#6034C7'],'♫'],
+ ['Vulkannacht',['#481724','#B12F2D','#FF7839','#F4BE61'],'▲'],
+ ['Wasserfälle',['#105C75','#3CAEC5','#8ADBD3','#C9EFDA'],'≋'],
+ ['Sternbilder',['#121844','#3C499C','#8D72DB','#C0B6F6'],'✧'],
+ ['Goldene Stunde',['#8A4C33','#DA8957','#FBC976','#FFE7B5'],'☼']
+];
+// Acht benannte Kompositionen pro Farbwelt, keine Stimmungs-/Intensitätsvarianten.
+const SCENE_NAMES=['Horizont','Lagune','Leuchtpfad','Mosaik','Panorama','Nachthimmel','Schimmer','Farbspiel'];
+function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+function hslToRgb(h,s,l){let r,g,b;if(!s){r=g=b=l;}else{const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;const f=t=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};r=f(h+1/3);g=f(h);b=f(h-1/3);}return [r,g,b].map(x=>Math.round(x*255));}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0,s=0,l=(mx+mn)/2;if(d){s=l>.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h/=6;}return [h,s,l];}
+// Kompositionen variieren Farbzuordnung, Farbton und Kombination innerhalb eines Themas.
+function sceneAt(index){
+ const theme=Math.floor(index/8)%SCENE_THEMES.length, variant=index%8, t=SCENE_THEMES[theme];
+ const base=t[1].map(h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)));
+ const offsets=[0,.035,-.028,.078,-.056,.115,-.105,.165];
+ const colors=Array.from({length:7},(_,i)=>{
+   const src=base[(i+variant*3+Math.floor(i/3))%base.length];let [h,s,l]=rgbToHsl(...src);
+   h=(h+offsets[variant]+(i%3-1)*(.012+variant*.002)+1)%1;
+   s=clamp(s*(1+(i%2?.10:-.08)),.08,1);
+   l=clamp(l+(i%4-1.5)*.027,.10,.87);
+   return hslToRgb(h,s,l);
+ });
+ return {name:`${t[2]} ${t[0]} · ${SCENE_NAMES[variant]}`,colors};
+}
+function moodColors(colors){
+ return colors.map((rgb,i)=>{
+  let [h,s,l]=rgbToHsl(...rgb);
+  s=clamp(s*mood.saturation/85,0,1);
+  // Kontrast: abweichende Helligkeit und Farbton je Lichtplatz.
+  const strength=(mood.contrast-50)/50;
+  l=clamp(l+(i%4-1.5)*strength*.085,.06,.94);
+  h=(h+(i%3-1)*strength*.025+1)%1;
+  return hslToRgb(h,s,l);
+ });
+}
+function rgbToXY(rgb){let [r,g,b]=rgb.map(x=>x/255).map(x=>x>.04045?Math.pow((x+.055)/1.055,2.4):x/12.92);const X=r*.664511+g*.154324+b*.162028,Y=r*.283881+g*.668433+b*.047685,Z=r*.000088+g*.07231+b*.986039;const sum=X+Y+Z;return sum>0?{x:Number((X/sum).toFixed(4)),y:Number((Y/sum).toFixed(4))}:{x:.3,y:.3};}
+
+// Legacy scene generator remains for migration and safe fallback.
+const sceneList=Array.from({length:192},(_,i)=>sceneAt(i));
+window.lumaLegacyScenes=sceneList.map((v,i)=>({id:'legacy-'+i,legacyIndex:i,name:v.name,colors:v.colors}));
+function stopMotion(){motion++;clearTimeout(motionTimer)}window.lumaStopMotion=stopMotion;
+function stopAll(){stopMotion();window.lumaStopMusic?.()}
+function ensureGroups(){
+ if(!bridgeIdentity){const ip=el('bridgeIp').value.trim();bridgeIdentity=read('identity_ip','')===ip?read('bridge_identity','ip:'+ip):'ip:'+ip;}
+ if(!window.LumaGroupsV1||!window.LumaGroupsUI)throw Error('Gruppenmodul konnte nicht geladen werden.');
+ if(!groupEngine)groupEngine=new window.LumaGroupsV1.Engine({storage:localStorage});
+ groupEngine.sync({bridgeId:bridgeIdentity||'offline',lights,bridgeGroups,legacyGroups:groups,legacyOrder:order});
+ if(!groupUI)groupUI=new window.LumaGroupsUI.UI(groupEngine,el('groupsV1Root'),{
+  onChange:()=>{
+   const selectedValue=el('target').value;
+   order=groupEngine.globalOrder();
+   renderTargets();
+   if(selectedValue&&!groupEngine.group(selectedValue)){stopAll();status('Der gewählte Lichtbereich wurde entfernt. All ist aktiv.')}
+  },
+  onSelect:id=>{
+   const target=el('target');if(!groupEngine.group(id))return;
+   target.value=id;if(target.value===id){target.onchange();tab('music')}
+  }
+ });
+ return groupEngine
+}
+function resolveGroup(id){return ensureGroups().resolve(id,{reachableOnly:false})}
+function targetIds(){return ensureGroups().resolve(el('target').value||'all')}
+window.lumaTargetIds=targetIds;
+window.lumaMusicGroup=()=>{const t=el('target').value;return ['bass','beatcolor','fast'].includes(mode)?t==='all'?'/groups/0/action':t.startsWith('bridge:')?'/groups/'+encodeURIComponent(t.slice(7))+'/action':null:null};
+let musicTransportEpoch=0;const musicControllers=new Set();let transportActive=0;window.lumaCancelMusicRequests=()=>{musicTransportEpoch++;for(const ctrl of musicControllers)ctrl.abort();musicControllers.clear()};window.lumaTransportState=()=>({active:transportActive,musicActive:musicControllers.size});
+async function raw(method,path,body,ip,key,music){const c=new AbortController(),timer=setTimeout(()=>c.abort(),music?1800:6000);if(music)musicControllers.add(c);transportActive++;try{const pending=fetch('https://'+ip+'/api/'+encodeURIComponent(key)+path,{method,mode:'cors',credentials:'omit',cache:'no-store',signal:c.signal,...(body?{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const aborted=new Promise((resolve,reject)=>{c.signal.addEventListener('abort',()=>{const e=Error('Anfrage abgebrochen');e.name='AbortError';reject(e)},{once:true})});const r=await Promise.race([pending,aborted]);if(!r.ok)throw Error('Bridge HTTP '+r.status);const d=await Promise.race([r.json(),aborted]);if(Array.isArray(d)&&d.some(x=>x.error))throw Error(d.filter(x=>x.error).map(x=>x.error.description).join('; '));return d}finally{clearTimeout(timer);musicControllers.delete(c);transportActive--}}
+function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaBridgeConnected=()=>connected;
+window.lumaAmbientLightState=()=>({connected,devices:connected?targetIds().map(id=>lights[id]).filter(Boolean):[]});
+window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();if(!connected)throw Error('Bridge ist nicht verbunden. Öffne ⚙ → Bridge & Verbindung.');tab('music');};
+
+async function guard(fn){try{await fn()}catch(e){el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';stopAll();const msg=e.name==='AbortError'?'Zeitüberschreitung: Die Bridge hat nicht rechtzeitig geantwortet.':e instanceof TypeError?'Netzwerkzugriff blockiert: WLAN, IP-Adresse, HTTPS-Zertifikat oder lokale Netzwerkfreigabe prüfen.':e.message;status('Fehler: '+msg);el('hueState').textContent='Verbindung fehlgeschlagen. '+msg;el('hueLoad').disabled=false;el('hueLoad').textContent='Erneut verbinden';tab('connection')}}
+let connectionTask=null;function connect(){if(!connectionTask)connectionTask=connectInner().finally(()=>{connectionTask=null});return connectionTask}
+async function connectInner(){
+ stopAll();connected=false;
+ el('hueLoad').disabled=true;el('hueLoad').textContent='Verbinde …';
+ const progress=s=>{status(s);el('hueState').textContent=s};
+ try{
+  progress('Schritt 1/3 · Verbinde zur Bridge und lade Lampen …');
+  const d=await request('GET','/lights');
+  if(!d||Array.isArray(d)||typeof d!=='object')throw Error('Unerwartete Lampen-Antwort.');
+  lights=d;
+  order=[...order.filter(id=>lights[id]),...Object.keys(lights).filter(id=>!order.includes(id))];
+  save('order',order);save('ip',el('bridgeIp').value.trim());save('key',el('hueKey').value.trim());
+  connected=true;
+  progress('Schritt 2/3 · Lampen verbunden; Gruppen werden gelesen …');
+  let warning='';
+  try{
+   const g=await request('GET','/groups');
+   if(g&&typeof g==='object'&&!Array.isArray(g))bridgeGroups=g;else throw Error('Gruppenformat');
+  }catch(e){bridgeGroups={};warning=' · Hue-Gruppen konnten nicht geladen werden: '+e.message}
+  const configuredIp=el('bridgeIp').value.trim();bridgeIdentity=read('identity_ip','')===configuredIp?read('bridge_identity','ip:'+configuredIp):'ip:'+configuredIp;
+  try{const c=await request('GET','/config');if(c?.bridgeid&&typeof c.bridgeid==='string'&&/^[A-Za-z0-9-]{6,50}$/.test(c.bridgeid)){bridgeIdentity='hue:'+c.bridgeid.toLowerCase();save('bridge_identity',bridgeIdentity);save('identity_ip',configuredIp)}}catch{/* Bridge-Konfiguration ist optional; fallback auf bekannte Identität */}
+  ensureGroups();order=groupEngine.globalOrder();
+  renderTargets();
+  renderLights();
+  try{renderGroups();renderOrder()}catch(e){warning+=' · Gruppenansicht: '+e.message}
+  progress('Schritt 3/3 · Musikverbindung wird vorbereitet …');
+  try{await window.lumaMusicRefresh()}catch(e){warning+=' · Musikstatus: '+e.message}
+  status(Object.keys(lights).length+' Lampen verbunden'+warning);el('miBridgeStatus').textContent='✓ '+Object.keys(lights).length+' Lampen verbunden – Musik bereit';
+  el('hueState').textContent='Verbindung erfolgreich: '+Object.keys(lights).length+' Lampen. '+(warning||'Licht und Szenen bereit.');
+  tab('music');
+ }finally{el('hueLoad').disabled=false;el('hueLoad').textContent='Verbinden'}
+}
+function renderTargets(){
+ const engine=ensureGroups(),select=el('target'),old=select.dataset.bridgeIdentity===engine.bridgeId?select.value:engine.currentTarget();
+ select.replaceChildren();
+ for(const entry of engine.options())select.add(new Option(entry.name,entry.id));
+ select.value=engine.group(old)?old:engine.currentTarget();
+ if(!select.value)select.value='all';
+ select.dataset.bridgeIdentity=engine.bridgeId;
+ renderTree();
+}
+function renderTree(){
+ const engine=ensureGroups();
+ if(!groupTree){
+  if(!window.LumaGroupsTree)throw Error('Baumansicht konnte nicht geladen werden.');
+  groupTree=new window.LumaGroupsTree.Tree(engine,el('targetFastTree'),{
+   getSelected:()=>el('target').value||engine.currentTarget(),
+   getLampIcon:(id,device)=>lampIconPrefs.icon(bridgeIdentity,id,device),
+   onPower:async(lightId,on)=>{
+    if(!connected)throw Error('Bridge nicht verbunden. Unter ⚙ die Bridge verbinden.');
+    const device=lights[lightId];
+    if(!device||device.state?.reachable===false)throw Error('Lampe nicht erreichbar.');
+    // Explicit manual action wins; otherwise running Music would switch it back on.
+    stopAll();
+    const answer=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',{on});
+    if(!Array.isArray(answer)||!answer.some(result=>result.success))throw Error('Bridge hat das Schalten nicht bestätigt.');
+    reflectLightState(lightId,{on},answer);device.state.on=on;renderLights();el('quickStatus').textContent=(device.name||'Lampe')+(on?' eingeschaltet':' ausgeschaltet');
+    status((device.name||'Lampe')+(on?' eingeschaltet.':' ausgeschaltet.')+' · Musiklicht bei manueller Bedienung gestoppt.');
+   },
+   onPowerError:(error,lightId)=>{
+    status('Lampe '+(lights[lightId]?.name||lightId)+': '+(error?.message||'Schalten fehlgeschlagen.'));
+    el('quickStatus').textContent='Lampe: '+(error?.message||'Helligkeit nicht übernommen');
+   },
+   onBrightness:async(lightId,percent)=>{
+    if(!connected)throw Error('Bridge nicht verbunden.');
+    const device=lights[lightId];
+    if(!device||device.state?.reachable===false)throw Error('Lampe nicht erreichbar.');
+    if(!Number.isFinite(percent)||percent<1||percent>100)throw Error('Helligkeit ungültig.');
+    // Selecting the sun button never changes the current group selection.
+    // On release, make exactly one manual command to this one light.
+    stopAll();
+    const body={on:true,bri:Math.max(1,Math.round(percent*2.54))};
+    const reply=await request('PUT','/lights/'+encodeURIComponent(lightId)+'/state',body);
+    if(!Array.isArray(reply)||!reply.some(item=>item?.success))throw Error('Hue bestätigt die Helligkeit nicht.');
+    reflectLightState(lightId,body,reply);
+    groupTree?.updateLampStates();
+    el('quickStatus').textContent=(device.name||'Lampe')+' · '+percent+' %';
+    status((device.name||'Lampe')+' · Helligkeit '+percent+' %');
+    renderLights();
+   },
+   onSelect:id=>{
+    if(!engine.group(id))return;
+    el('target').value=id;
+    if(el('target').value===id)el('target').onchange();
+   }
+  });
+ }
+ groupTree.engine=engine;
+ groupTree.render();
+ el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';
+}
+function reflectLightState(id,body,response){
+ // Visual cache only: no additional Bridge request, and do not assume an unsuccessful PUT worked.
+ if(!Array.isArray(response)||!response.some(item=>item?.success))return;
+ const state=lights[id]?.state;if(!state)return;
+ Object.assign(state,body);
+ if('hue' in body||'sat' in body)state.colormode='hs';
+ else if('xy' in body)state.colormode='xy';
+ else if('ct' in body)state.colormode='ct';
+ groupTree?.updateLampStates();
+}
+async function apply(body){if(!connected)throw Error('Zuerst unter Verbindung verbinden.');const ids=targetIds();if(!ids.length)throw Error('Keine erreichbaren Lampen in der Auswahl.');for(const id of ids){const reply=await request('PUT','/lights/'+encodeURIComponent(id)+'/state',body);reflectLightState(id,body,reply)}status(ids.length+' Lampen aktualisiert.')}
+function hsv(rgb){let [r,g,b]=rgb.map(x=>x/255),mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0;if(d){h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}return {hue:Math.round(h/360*65535),sat:Math.round((mx?d/mx:0)*254)}}
+async function paint(tick=0,animate=false,token=motion){if(!connected)throw Error('Zuerst verbinden.');const ids=targetIds();if(!ids.length)throw Error('Keine Lampen ausgewählt.');const current=window.lumaSceneSelection,cols=moodColors(current?.colors||sceneAt(selected).colors),mode=el('motionMode').value;for(let i=0;i<ids.length;i++){if(animate&&token!==motion)return;const id=ids[i],st=lights[id].state;let col=cols[i%7],brightness=mood.brightness*(current?.brightnesses?.[i%7]??1);if(animate){if(mode==='rotate')col=cols[(i+tick)%7];if(mode==='drift')col=cols[i%7].map((v,k)=>Math.round((v+cols[(i+tick+1)%7][k])/2));if(mode==='wave'){const dist=Math.abs(i-tick%ids.length),w=Math.exp(-dist*dist/1.6);col=cols[i%7].map((v,k)=>Math.round(v*(1-w)+cols[(i+tick+2)%7][k]*w));brightness*=.6+.4*w}if(mode==='breath')brightness*=.68+.32*Math.cos(tick*Math.PI/2)}const off=(current?.brightnesses?.[i%7]===0)||(animate&&((i-tick%ids.length+ids.length)%ids.length)<Math.min(Number(el('phaseOut').value),Math.max(0,ids.length-1))),body={on:!off,transitiontime:animate?Number(el('transition').value)*10:(window.lumaSceneTransition??10)};if(off){const reply=await request('PUT','/lights/'+encodeURIComponent(id)+'/state',body);reflectLightState(id,body,reply);continue}if('bri' in st)body.bri=Math.max(1,Math.round(brightness*2.54));if('hue' in st)Object.assign(body,hsv(col));else if('ct' in st)body.ct=Math.max(lights[id].capabilities?.control?.ct?.min||153,Math.min(lights[id].capabilities?.control?.ct?.max||500,brightness<45?390:270));const reply=await request('PUT','/lights/'+encodeURIComponent(id)+'/state',body);reflectLightState(id,body,reply)}status((animate?'Dynamik aktiv · ':'Szene angewendet · ')+(window.lumaSceneSelection?.name||sceneAt(selected).name))}
+function renderScenes(){window.lumaScenesV1?.render()}
+window.lumaApplyCuratedScene=async scene=>{stopAll();window.lumaSceneSelection=scene;await paint();};
+function renderMood(){el('moodControls').replaceChildren();for(const [k,name,help] of [['brightness','Helligkeit','Gesamte Lichtstärke'],['saturation','Farbintensität','Von dezent bis kräftig'],['contrast','Kontrast','Unterschiede zwischen den Lampen']]){const label=document.createElement('label');label.className='range';label.textContent=name+' · '+mood[k]+' %';const input=document.createElement('input');input.type='range';input.min=k==='brightness'?1:0;input.max=100;input.value=mood[k];input.oninput=()=>{mood[k]=+input.value;label.firstChild.textContent=name+' · '+input.value+' %';save('mood',mood)};const note=document.createElement('p');note.className='note';note.textContent=help;label.append(input,note);el('moodControls').append(label)}}
+for(const [n,v] of [['Gemütlich',[45,55,25]],['Natürlich',[75,65,50]],['Lebendig',[85,100,80]],['Kino',[20,75,70]],['Standard',[75,85,50]]]){const b=document.createElement('button');b.className='alt';b.textContent=n;b.onclick=()=>{[mood.brightness,mood.saturation,mood.contrast]=v;save('mood',mood);renderMood()};el('moodPresets').append(b)}
+function renderLights(){el('lightList').replaceChildren();const visible=ensureGroups().resolve(el('target').value||'all',{reachableOnly:false});for(const id of visible){const l=lights[id];if(!l)continue;const row=document.createElement('div');row.className='lightrow';const name=document.createElement('strong');name.textContent=l.name+(l.state.reachable===false?' · nicht erreichbar':'');const b=document.createElement('button');b.textContent=l.state.on?'Aus':'Ein';b.className='alt';b.onclick=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:!l.state.on});l.state.on=!l.state.on;renderLights();status(l.name+' geschaltet.')});row.append(name,' ',b);if('bri' in l.state){const label=document.createElement('label');label.textContent='Helligkeit';const r=document.createElement('input');r.type='range';r.min=1;r.max=100;r.value=Math.round(l.state.bri/2.54);r.onchange=()=>guard(async()=>{stopAll();const command={on:true,bri:Math.max(1,Math.round(+r.value*2.54))};const reply=await request('PUT','/lights/'+id+'/state',command);reflectLightState(id,command,reply);status(l.name+' · '+r.value+' %')});label.append(r);row.append(label)}el('lightList').append(row)}}
+function renderGroups(){ensureGroups();groupUI.render()}
+function renderOrder(){/* Lampenreihenfolge wird über den Editor des zentralen Gruppenmodells verwaltet. */}
+function tab(name){
+ for(const id of ['light','scene','group','music','connection','lampSettings'])el(id+'Pane').hidden=id!==name;
+ el('targetCard').hidden=false; // one persistent group tree lives in the floating quick-control sheet
+ document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.pane===name)));
+ el('settingsMenu').hidden=true;
+ if(name==='group'&&groupEngine)renderGroups();
+}
+for(const [id,label] of [['light','Licht'],['scene','Szenen'],['music','Musik']]){
+ const b=document.createElement('button');b.textContent=label;b.dataset.pane=id;b.setAttribute('aria-selected','false');b.onclick=()=>tab(id);el('tabs').append(b)
+}
+const settingsButton=document.createElement('button');settingsButton.type='button';settingsButton.textContent='⚙';settingsButton.className='g-settings-toggle';settingsButton.setAttribute('aria-label','Einstellungen');settingsButton.onclick=()=>{el('settingsMenu').hidden=!el('settingsMenu').hidden};el('tabs').append(settingsButton);
+el('settingsGroups').onclick=()=>{tab('group')};
+el('settingsBridge').onclick=()=>tab('connection');
+el('settingsLamps').onclick=()=>{renderLampSettings();tab('lampSettings')};
+el('liBack').onclick=()=>tab('light');
+function renderLampSettings(){
+ const list=el('liList');list.replaceChildren();
+ const entries=Object.entries(lights);
+ if(!connected||entries.length===0){
+  const note=document.createElement('p');note.className='muted';note.textContent='Bitte zuerst mit deiner Hue Bridge verbinden, damit deine Lampen hier erscheinen.';list.append(note);el('liEditor').hidden=true;return;
+ }
+ if(editLampId&&!lights[editLampId])editLampId=null;
+ for(const [id,device] of entries){
+  const button=document.createElement('button');button.type='button';button.className='li-light-item';
+  button.setAttribute('aria-pressed',String(editLampId===id));
+  button.append(window.LumaLampIcons.svg(lampIconPrefs.icon(bridgeIdentity,id,device),'li-list-svg'));
+  const labels=document.createElement('span');labels.className='li-light-name';
+  const strong=document.createElement('strong');strong.textContent=device.name||'Lampe '+id;
+  const small=document.createElement('small');small.textContent=lampIconPrefs.get(bridgeIdentity,id)?'Eigenes Symbol':'Automatisch';
+  labels.append(strong,small);button.append(labels);
+  const chevron=document.createElement('span');chevron.textContent='›';chevron.className='li-chevron';button.append(chevron);
+  button.onclick=()=>{editLampId=id;renderLampSettings()};
+  list.append(button);
+ }
+ const selected=editLampId?lights[editLampId]:null;
+ el('liEditor').hidden=!selected;if(!selected)return;
+ el('liEditorTitle').textContent='Symbol für '+(selected.name||'Lampe '+editLampId);
+ const picker=el('liChoices');picker.replaceChildren();
+ const override=lampIconPrefs.get(bridgeIdentity,editLampId);
+ const choices=[['auto','Automatisch'],...Object.entries(window.LumaLampIcons.icons).map(([id,entry])=>[id,entry.label])];
+ for(const [id,label]of choices){
+  const button=document.createElement('button');button.type='button';button.className='li-choice';
+  const chosen=id==='auto'?!override:override===id;
+  button.setAttribute('aria-pressed',String(chosen));
+  const iconId=id==='auto'?window.LumaLampIcons.guess(selected):id;
+  button.append(window.LumaLampIcons.svg(iconId,'li-choice-svg'));
+  const text=document.createElement('span');text.textContent=label;button.append(text);
+  button.onclick=()=>{
+   try{
+    lampIconPrefs.set(bridgeIdentity,editLampId,id==='auto'?null:id);
+    groupTree?.updateLampIcons();
+    renderLampSettings();el('liResult').textContent='✓ '+label+' gespeichert – nur in Luma. Keine Lampe geschaltet.';
+   }catch(e){el('liResult').textContent='Speichern fehlgeschlagen: '+e.message}
+  };
+  picker.append(button);
+ }
+}
+const firstMusicCard=el('musicPane').querySelector('section');el('miOutputHost').append(el('musicOutput'));
+
+const quickLauncher=el('quickLauncher'),quickOverlay=el('quickOverlay'),quickSheet=quickOverlay.querySelector('.quick-sheet');
+el('quickPanelBody').append(el('targetCard'));
+let quickClosing=false,quickCloseAnimation=null,quickFinishTimer=0;
+const quickClose=(options={})=>{
+ if(quickOverlay.hidden||quickClosing)return;
+ quickClosing=true;
+ const finish=()=>{
+  if(quickFinishTimer){clearTimeout(quickFinishTimer);quickFinishTimer=0}
+  if(quickOverlay.hidden)return;
+  quickOverlay.hidden=true;quickClosing=false;quickCloseAnimation=null;
+  quickLauncher.setAttribute('aria-expanded','false');
+  document.body.classList.remove('quick-page-lock');
+  document.body.style.top='';
+  window.scrollTo(0,quickScrollPosition);
+  window.lumaQuickPull?.reset?.();
+  quickLauncher.focus({preventScroll:true});
+ };
+ if(options?.immediate===true){finish();return}
+ const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ if(!reduce&&typeof quickSheet.animate==='function'){
+  try{
+   const from=quickSheet.getBoundingClientRect().left;
+   quickCloseAnimation=quickSheet.animate([
+    {transform:'translate3d(0,0,0)',opacity:1},
+    {transform:document.documentElement.dataset.v4Hand==='left'?'translate3d(-100%,0,0)':'translate3d(100%,0,0)',opacity:.7}
+   ],{duration:210,easing:'cubic-bezier(.45,0,.95,.75)'});
+   quickCloseAnimation.finished.then(finish,finish);
+   // WebKit sometimes keeps a finished promise pending while touch-scrolling.
+   // Guaranteed dismissal prevents a drawer that appears to ignore the right swipe.
+   quickFinishTimer=window.setTimeout(finish,235);
+  }catch{finish()}
+ }else finish();
+};
+let quickScrollPosition=0;
+const quickOpen=()=>{
+ const wasPulled=quickOverlay.dataset.pulledOpen==='true';
+ if(!quickOverlay.hidden&&!wasPulled)return;
+ quickScrollPosition=window.scrollY||window.pageYOffset||0;
+ // The exact same tree is revealed; no cloning, no new Hue requests.
+ el('targetCard').hidden=false;
+ quickOverlay.hidden=false;
+ quickOverlay.classList.remove('quick-preview','quick-retract');
+ quickSheet.inert=false;
+ quickSheet.style.animation='';
+ quickSheet.style.transition='';
+ quickSheet.style.transform='translate3d(0,0,0)';
+ quickOverlay.querySelector('.quick-backdrop').style.opacity='';
+ quickOverlay.style.pointerEvents='';
+ quickLauncher.setAttribute('aria-expanded','true');
+ window.lumaQuickPull?.showOpened?.();
+ document.body.style.top='-'+quickScrollPosition+'px';
+ document.body.classList.add('quick-page-lock');
+ const chosen=el('target').selectedOptions?.[0]?.textContent||'All';
+ el('quickStatus').textContent='Aktueller Lichtbereich: '+chosen;
+ el('quickClose').focus({preventScroll:true});
+};
+quickLauncher.onclick=quickOpen;
+window.lumaQuickControl={open:quickOpen,close:quickClose,isOpen:()=>!quickOverlay.hidden};
+el('quickClose').onclick=quickClose;
+el('quickSwipeClose').onclick=quickClose;
+el('quickBackdrop').onclick=quickClose;
+window.addEventListener('keydown',event=>{
+ if(quickOverlay.hidden)return;
+ if(event.key==='Escape'){event.preventDefault();if(quickOverlay.classList.contains('quick-preview'))window.lumaQuickPull?.reset?.();else quickClose();return}
+ if(event.key==='Tab'){
+  const focusables=[...quickSheet.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')].filter(node=>node.getClientRects().length>0);
+  if(!focusables.length)return;
+  const start=focusables[0],end=focusables[focusables.length-1];
+  if(event.shiftKey&&document.activeElement===start){event.preventDefault();end.focus()}
+  else if(!event.shiftKey&&document.activeElement===end){event.preventDefault();start.focus()}
+ }
+});
+
+
+const toggleTargetTree=()=>{
+ const button=el('targetTreeToggle'),panel=el('targetFastTree'),help=el('targetHelp');
+ const show=panel.hidden;
+ panel.hidden=!show;help.hidden=!show;
+ button.setAttribute('aria-expanded',String(show));
+ button.setAttribute('aria-label',show?'Gruppenauswahl einklappen':'Gruppenauswahl ausklappen');
+ button.textContent=show?'▴':'▾';
+};
+el('targetTreeToggle').addEventListener('click',toggleTargetTree);
+
+el('bridgeIp').value=read('ip','192.168.1.2');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.setItem('luma_live_key',JSON.stringify(''))}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;el('miBridgeStatus').textContent='Bridge-Verbindung getrennt';status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();groupTree?.updateLampStates();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';el('quickStatus').textContent='Ausgewählt: '+(el('target').selectedOptions[0]?.textContent||'All');renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ catch(e){status('Gruppenauswahl: '+e.message)}
+};
+el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
+for(const id of ['transition','interval','phaseOut'])el(id).oninput=()=>el(id+'Val').textContent=el(id).value+(id==='phaseOut'?'':' s');el('motionStop').onclick=()=>{stopMotion();status('Dynamik gestoppt. Letzter Zustand bleibt.')};const sceneError=e=>{const msg=e?.name==='AbortError'?'Bridge-Antwort hat zu lange gedauert.':e?.message||String(e);status('Dynamik: '+msg);const details=el('sceneMotionError');if(details)details.textContent='Dynamik pausiert: '+msg+' · Bitte Verbindung prüfen und erneut starten.'};
+el('motionStart').onclick=async()=>{
+ el('sceneMotionError').textContent='';
+ stopAll();
+ if(!connected){status('Bitte zuerst mit der Bridge verbinden.');return}
+ const token=motion;let tick=0;
+ async function step(){
+  if(token!==motion)return;
+  try{
+   await paint(tick++,true,token);
+   if(token===motion){const delay=Math.max(1000,+el('interval').value*1000);motionTimer=setTimeout(step,delay)}
+  }catch(e){if(token===motion){stopMotion();sceneError(e)}}
+ }
+ await step();
+};document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMotion()});window.addEventListener('pagehide',stopAll);renderMood();el('hueKey').value=read('key','');tab('music');if(el('hueKey').value)guard(connect);else el('miBridgeStatus').textContent='Bridge nicht verbunden – öffne ⚙ → Bridge & Verbindung';
+})();
+</script><script src="scenes-v1.js" defer></script>
+</body></html>
