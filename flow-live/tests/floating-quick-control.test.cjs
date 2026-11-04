@@ -29,7 +29,7 @@ test('Both close surfaces and Escape restore current page and dialog focus',()=>
  const controller=html.slice(start,end);
  const nodes=new Map();
  const make=id=>{
-  const n={id,hidden:id==='quickOverlay',attrs:{},children:[],style:{top:''},classList:{add(){},remove(){}},
+  const n={id,hidden:id==='quickOverlay',attrs:{},dataset:{},children:[],style:{top:''},classList:{add(){},remove(){},contains(){return false}},
    setAttribute(k,v){this.attrs[k]=v},getAttribute(k){return this.attrs[k]},focus(){n.focused=true},
    append(x){this.children.push(x)},querySelector(){return make('quickSheet')},querySelectorAll(){return []}};
   nodes.set(id,n);return n;
