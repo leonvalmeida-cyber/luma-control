@@ -108,11 +108,11 @@ test('Fast tree DOM renders and direct lamp pick updates shared selection',()=>{
   const treeItems=()=>descendants(container).filter(x=>x.getAttribute?.('role')==='treeitem');
   assert.ok(treeItems().some(x=>x.getAttribute('aria-level')==='3'));
   const candidates=descendants(container).filter(x=>x.tag==='button'&&x.getAttribute('aria-pressed')==='false');
-  const lampButton=candidates.find(x=>x.children.some(n=>n.textContent==='Iris'));
+  const lampButton=candidates.find(x=>descendants(x).some(n=>n.textContent==='Iris'));
   assert.ok(lampButton,'Lamp must be present and directly selectable in expanded room');
   lampButton.onclick();
   assert.equal(engine.currentTarget(),'lamp:a');
-  assert.ok(descendants(container).some(x=>x.getAttribute?.('aria-pressed')==='true'&&x.children?.some(y=>y.textContent==='Iris')));
+  assert.ok(descendants(container).some(x=>x.getAttribute?.('aria-pressed')==='true'&&descendants(x).some(y=>y.textContent==='Iris')));
  }finally{global.document=oldDocument}
 });
 
