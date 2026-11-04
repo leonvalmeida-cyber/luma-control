@@ -1,0 +1,29 @@
+name: Luma Groups v1 checks
+on:
+  push:
+    branches: [feature/groups-v1]
+  pull_request:
+    paths:
+      - 'groups-v1.js'
+      - 'groups-v1-ui.js'
+      - 'groups-v1.css'
+      - 'tests/groups-v1.test.cjs'
+      - 'index.html'
+jobs:
+  node-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pure group model regression tests
+        run: node --test tests/groups-v1.test.cjs
+      - name: Browser script syntax
+        run: |
+          node --check groups-v1.js
+          node --check groups-v1-ui.js
+          node --check groups-v1-tree.js
+          node --check scenes-v1.js

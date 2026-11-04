@@ -30,7 +30,18 @@ header{padding:15px 0 8px}header h1{font-size:clamp(24px,6vw,30px)}
 .target-card details summary{padding:8px 0;font-size:12px}
 .target-card .target-help{margin:6px 0 0;font-size:11px}
 @media(max-width:420px){body{padding-left:12px;padding-right:12px}.card{padding:13px}.tabs button{padding:8px 10px}}
-</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs"></nav><div id="targetCard" class="card target-card" hidden><div class="row"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span></div><details id="targetDetails"><summary>Gruppen und Lampen anzeigen / einklappen</summary><p class="note">All → Wohnzimmer → Lampen. Weitere automatisch erkannte Gruppen bleiben ausgeblendet.</p><div id="targetTree" class="target-tree"></div></details><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden>
+</style><style>
+/* Three-section navigation and group quick controls, scoped additions */
+#tabs.tabs{align-items:center;justify-content:space-around;background:#090b18f5;border-bottom:1px solid #ffffff15;padding:8px 0;gap:5px}
+#tabs.tabs button:not(.g-settings-toggle){flex:1;border-radius:14px;min-height:44px;font-size:14px;background:#22213a;color:#cbbfdf}
+#tabs.tabs button[aria-selected=true]{background:linear-gradient(120deg,#8665c8,#503b93);color:#fff}
+#tabs.tabs button.g-settings-toggle{flex:0 0 46px;background:#292441;border:1px solid #ffffff20;min-height:44px;font-size:21px}
+.g-settings-menu{position:sticky;top:61px;display:flex;gap:8px;flex-wrap:wrap;padding:8px 0;z-index:6;background:#0b0e18}
+.g-settings-menu[hidden]{display:none!important}.g-settings-menu button{flex:1;font-size:12px;padding:11px;border:1px solid #6b5c9c;border-radius:12px;background:#302943}
+.g-target-quick{display:flex;gap:8px;margin:12px 0 0}.g-quick-button{font-size:13px;padding:10px 13px;min-height:44px;background:#2b2846;border:1px solid #ffffff19;border-radius:13px}.g-quick-button[aria-pressed=true]{background:linear-gradient(125deg,#9174cc,#5b449c);border-color:#c3a5ff;color:white}
+#groupPane{background:radial-gradient(ellipse at 98% 0%,#56367533,transparent 46%);border-radius:19px}
+@media(max-width:360px){#tabs.tabs button:not(.g-settings-toggle){font-size:12px;padding:10px 7px}}
+</style><link rel="stylesheet" href="scenes-v1.css"><link rel="manifest" href="app.webmanifest"><link rel="icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Luma"><link rel="stylesheet" href="groups-v1.css"><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><script src="groups-v1-tree.js"></script></head><body><header><div class="sub">LUMA CONTROL · MUSIKLABOR</div><h1>Luma Control</h1><div class="sub">Szenenlabor 1.0 · Vorschau · nur Entwicklungsbranch · direkt im Heimnetz</div></header><p id="globalStatus" role="status" class="muted">Noch nicht verbunden · Verbindung öffnen</p><nav id="tabs" class="tabs" aria-label="Hauptbereiche"></nav><div id="settingsMenu" class="g-settings-menu" hidden><button type="button" id="settingsGroups">✦ Gruppen verwalten</button><button type="button" id="settingsBridge">◈ Bridge & Verbindung</button></div><div id="targetCard" class="card target-card" hidden><div class="row"><strong class="target-label">💡 Lichtbereich</strong><span id="targetSummary" class="muted">Noch nicht verbunden.</span></div><div id="targetFastTree" class="g-target-tree" aria-label="Gruppen und Lampen schnell auswählen"></div><select id="target" aria-label="Aktuelle Zielauswahl" hidden><option value="all">Alle Lampen</option></select><p class="note target-help" id="targetHelp">Auswahl gilt für Licht, Szenen und Musik. Der Gruppeneditor bleibt separat erhalten.</p></div><main id="musicPane" class="pane" hidden>
 <section class="card"><div class="row"><h2>Musiksteuerung</h2><span id="status" class="pill">Nicht gestartet</span></div><p class="muted">Musik über Lautsprecher abspielen. Die Analyse erfolgt nur auf deinem iPhone – keine Aufnahme und kein Upload.</p><div class="buttons"><button id="start">Musik starten</button><button id="stop" class="alt" disabled>Musik stoppen</button></div><p id="message" class="muted">Tipp: In Safari über eine HTTPS-Seite öffnen und Mikrofon erlauben.</p></section>
 <section class="card"><div class="row"><h2>Audioeingang · vor Filter</h2><span id="beat" class="pill">Beat: –</span></div><div class="buttons"><button id="noiseLearn" class="alt">Raumgeräusche einmessen · 2 s</button><button id="noiseReset" class="alt">Einmessung löschen</button></div><p id="noiseStatus" class="note">Noch kein Raumprofil. Zum Einmessen Musik pausieren und PC/Lüfter weiterlaufen lassen.</p><p class="note" id="effectiveStatus">Musiksignal nach Filter: –</p><p class="note" id="audioHint">Bass = Mikrofonenergie von 35–210 Hz. Raumgeräusche können ebenfalls Bass enthalten.</p><div class="meter"><div class="meter-top"><span>Bass</span><span id="bassNum">0%</span></div><div class="track"><div id="bass" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Mitten</span><span id="midNum">0%</span></div><div class="track"><div id="mid" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Höhen</span><span id="highNum">0%</span></div><div class="track"><div id="high" class="fill"></div></div></div><div class="meter"><div class="meter-top"><span>Gesamtpegel</span><span id="volumeNum">0%</span></div><div class="track"><div id="volume" class="fill"></div></div></div></section>
 <section class="card"><h2>Lichtvorschau · 7 Lampen</h2><div id="lamps"></div><p class="muted">Vorschau der Musiksteuerung für die ausgewählten Lampen.</p><div class="controls"><label class="range">Empfindlichkeit <span id="gainNum">50%</span><input id="gain" type="range" min="0" max="100" value="50" step="1"></label><label class="range">Tempo & Direktheit <span id="speedNum">60%</span><input id="speed" type="range" min="0" max="100" value="60" step="1"></label><label class="range">Helligkeit bei Ruhe <span id="lightNum">10%</span><input id="light" type="range" min="0" max="100" value="10" step="1"></label><label class="range">Maximale Musikhelligkeit <span id="peakNum">100%</span><input id="peak" type="range" min="0" max="100" value="100" step="1"></label><p class="note">Ruhe legt den Mindestwert fest, Maximum die obere Grenze. Empfindlichkeit: links nur laute Töne, rechts auch leise. Tempo: links weiche Übergänge, rechts direkte Reaktion und schnellere Farbwechsel.</p></div><h2 style="margin-top:20px">Farbstimmung</h2><p id="musicSelection" class="note" aria-live="polite"></p><div id="paletteSwatches" class="swatches" aria-label="Gewählte Farbpalette"></div><div id="palettes" class="chips"><button class="chip on" data-palette="neon">Neon</button><button class="chip" data-palette="sunset">Sonnenuntergang</button><button class="chip" data-palette="ocean">Ozean</button><button class="chip" data-palette="warm">Warm</button></div><h2 style="margin-top:20px">Reaktionsfokus</h2><div class="buttons" id="focusPresets"></div><label class="range">Takt ↔ Gesang <span id="focusNum">Mischung · 50%</span><input id="focus" type="range" min="0" max="100" value="50" step="1"></label><p class="note">Links: Bassimpulse und Anschläge. Rechts: Energie im Stimmenbereich (250–3500 Hz), auch Instrumente in diesem Bereich. Mitte: Mischung. Keine isolierte Gesangserkennung.</p><label class="range">Geräuschgrenze <span id="gateNum">−85 dB</span><input id="gate" type="range" min="-95" max="-40" value="-85" step="1"></label><p class="note">Bei zu wenig Reaktion nach links, bei störenden Raumgeräuschen nach rechts. Die dB-Werte sind digitale Mikrofonpegel, keine gemessene Raumlautstärke.</p><h2 style="margin-top:20px">Schnelleinstellungen</h2><div class="buttons" id="musicPresets"></div><h2 style="margin-top:20px">Lichtmodus</h2><div id="modes" class="chips"><button class="chip on" data-mode="bass">Bass-Puls</button><button class="chip" data-mode="wave">Raumwelle</button><button class="chip" data-mode="spectrum">Frequenzen</button><button class="chip" data-mode="beatcolor">Beat-Farbwechsel</button><button class="chip" data-mode="fast">Schneller Farbfluss</button></div></section>
@@ -198,11 +209,14 @@ q('musicOn').onclick=()=>{window.lumaStopMotion();if(!analyser){say('Zuerst oben
  <p id="sceneEditorStatus" class="note"></p>
 </form></dialog>
 </main>
-<main id="groupPane" class="pane" hidden><section class="card"><h2>Gruppen verwalten</h2><p class="muted">Hue-Räume und eigene Luma-Gruppen bleiben verwaltbar. Identische Gruppenzusammenstellungen werden nur in der Schnellwahl zusammengefasst, nicht gelöscht. Eigene Gruppen sind bisher auf jedem Handy separat gespeichert.</p><div class="buttons"><button id="groupExport" class="alt" type="button">Gruppen sichern</button><button id="groupImportButton" class="alt" type="button">Gruppen importieren</button><input id="groupImportFile" type="file" accept=".json,application/json" hidden></div><p id="groupTransferStatus" class="note"></p><label>Gruppe bearbeiten<select id="groupEdit"><option value="">Neue Gruppe</option></select></label><label>Name<input id="groupName" type="text" maxlength="60" placeholder="z. B. Fernseher"></label><div id="groupMembers"></div><h2>Andere Luma-Gruppen einschließen</h2><div id="nestedGroups"></div><div class="buttons"><button id="groupSave">Speichern</button><button id="groupDelete" class="alt">Gruppe löschen</button></div></section><section class="card"><h2>Reihenfolge im Raum</h2><p class="muted">Für Raumwelle und Musik. Mit ↑ und ↓ sortieren; wird automatisch gespeichert.</p><div id="orderList"></div></section></main>
+<main id="groupPane" class="pane" hidden><div id="groupsV1Root" role="region" aria-label="Gruppenverwaltung"></div></main>
+
+
 
 <script>
 (()=>{'use strict';const el=id=>document.getElementById(id),save=(k,v)=>{try{localStorage.setItem('luma07_'+k,JSON.stringify(v))}catch{}},read=(k,f)=>{try{return JSON.parse(localStorage.getItem('luma07_'+k))??f}catch{return f}};
 let lights={},bridgeGroups={},groups=read('groups',[]),order=read('order',[]),favorites=read('favorites',[]),selected=read('selected',0),mood=read('mood',{brightness:75,saturation:85,contrast:50}),onlyFav=false,motion=0,motionTimer=0,connected=false,chain=Promise.resolve();
+let groupEngine=null,groupUI=null,groupTree=null,bridgeIdentity='';
 const status=s=>el('globalStatus').textContent=s;
 const SCENE_THEMES = [
  ['Sonnenuntergänge',['#FF6A36','#F5C15D','#A83B93','#FF9E7A'],'🌅'],
@@ -267,8 +281,29 @@ const sceneList=Array.from({length:192},(_,i)=>sceneAt(i));
 window.lumaLegacyScenes=sceneList.map((v,i)=>({id:'legacy-'+i,legacyIndex:i,name:v.name,colors:v.colors}));
 function stopMotion(){motion++;clearTimeout(motionTimer)}window.lumaStopMotion=stopMotion;
 function stopAll(){stopMotion();window.lumaStopMusic?.()}
-function resolveGroup(id,seen=new Set()){if(seen.has(id))throw Error('Gruppen dürfen keinen Kreis bilden.');const g=groups.find(x=>x.id===id);if(!g)return [];const next=new Set(seen);next.add(id);return [...new Set([...g.lights,...(g.groups||[]).flatMap(k=>resolveGroup(k,next))])]}
-function targetIds(){const t=el('target').value;let ids=t==='all'?Object.keys(lights):t.startsWith('lamp:')?[t.slice(5)]:t.startsWith('bridge:')?bridgeGroups[t.slice(7)]?.lights||[]:resolveGroup(t);return [...order.filter(x=>ids.includes(x)),...ids.filter(x=>!order.includes(x))].filter(x=>lights[x]?.state?.reachable!==false)}window.lumaTargetIds=targetIds;window.lumaMusicGroup=()=>{const t=el('target').value;return ['bass','beatcolor','fast'].includes(mode)?t==='all'?'/groups/0/action':t.startsWith('bridge:')?'/groups/'+encodeURIComponent(t.slice(7))+'/action':null:null};
+function ensureGroups(){
+ if(!bridgeIdentity){const ip=el('bridgeIp').value.trim();bridgeIdentity=read('identity_ip','')===ip?read('bridge_identity','ip:'+ip):'ip:'+ip;}
+ if(!window.LumaGroupsV1||!window.LumaGroupsUI)throw Error('Gruppenmodul konnte nicht geladen werden.');
+ if(!groupEngine)groupEngine=new window.LumaGroupsV1.Engine({storage:localStorage});
+ groupEngine.sync({bridgeId:bridgeIdentity||'offline',lights,bridgeGroups,legacyGroups:groups,legacyOrder:order});
+ if(!groupUI)groupUI=new window.LumaGroupsUI.UI(groupEngine,el('groupsV1Root'),{
+  onChange:()=>{
+   const selectedValue=el('target').value;
+   order=groupEngine.globalOrder();
+   renderTargets();
+   if(selectedValue&&!groupEngine.group(selectedValue)){stopAll();status('Der gewählte Lichtbereich wurde entfernt. All ist aktiv.')}
+  },
+  onSelect:id=>{
+   const target=el('target');if(!groupEngine.group(id))return;
+   target.value=id;if(target.value===id){target.onchange();tab('light')}
+  }
+ });
+ return groupEngine
+}
+function resolveGroup(id){return ensureGroups().resolve(id,{reachableOnly:false})}
+function targetIds(){return ensureGroups().resolve(el('target').value||'all')}
+window.lumaTargetIds=targetIds;
+window.lumaMusicGroup=()=>{const t=el('target').value;return ['bass','beatcolor','fast'].includes(mode)?t==='all'?'/groups/0/action':t.startsWith('bridge:')?'/groups/'+encodeURIComponent(t.slice(7))+'/action':null:null};
 let musicTransportEpoch=0;const musicControllers=new Set();let transportActive=0;window.lumaCancelMusicRequests=()=>{musicTransportEpoch++;for(const ctrl of musicControllers)ctrl.abort();musicControllers.clear()};window.lumaTransportState=()=>({active:transportActive,musicActive:musicControllers.size});
 async function raw(method,path,body,ip,key,music){const c=new AbortController(),timer=setTimeout(()=>c.abort(),music?1800:6000);if(music)musicControllers.add(c);transportActive++;try{const pending=fetch('https://'+ip+'/api/'+encodeURIComponent(key)+path,{method,mode:'cors',credentials:'omit',cache:'no-store',signal:c.signal,...(body?{headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const aborted=new Promise((resolve,reject)=>{c.signal.addEventListener('abort',()=>{const e=Error('Anfrage abgebrochen');e.name='AbortError';reject(e)},{once:true})});const r=await Promise.race([pending,aborted]);if(!r.ok)throw Error('Bridge HTTP '+r.status);const d=await Promise.race([r.json(),aborted]);if(Array.isArray(d)&&d.some(x=>x.error))throw Error(d.filter(x=>x.error).map(x=>x.error.description).join('; '));return d}finally{clearTimeout(timer);musicControllers.delete(c);transportActive--}}
 function request(method,path,body,options={}){const ip=el('bridgeIp').value.trim(),key=el('hueKey').value.trim(),epoch=musicTransportEpoch;if(!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip)||ip.split('.').some(x=>+x>255)||!key)return Promise.reject(Error('IP und Schlüssel unter Verbindung eingeben.'));if(options.music){if(epoch!==musicTransportEpoch)return Promise.reject(Object.assign(Error('Veralteter Musikbefehl'),{name:'AbortError'}));return raw(method,path,body,ip,key,true)}const task=chain.catch(()=>{}).then(()=>raw(method,path,body,ip,key,false));chain=task.then(()=>{},()=>{});return task}window.lumaRequest=request;window.lumaEnsureConnection=async()=>{if(!connected)await connect();else await window.lumaMusicRefresh();tab('music');};
@@ -293,6 +328,9 @@ async function connectInner(){
    const g=await request('GET','/groups');
    if(g&&typeof g==='object'&&!Array.isArray(g))bridgeGroups=g;else throw Error('Gruppenformat');
   }catch(e){bridgeGroups={};warning=' · Hue-Gruppen konnten nicht geladen werden: '+e.message}
+  const configuredIp=el('bridgeIp').value.trim();bridgeIdentity=read('identity_ip','')===configuredIp?read('bridge_identity','ip:'+configuredIp):'ip:'+configuredIp;
+  try{const c=await request('GET','/config');if(c?.bridgeid&&typeof c.bridgeid==='string'&&/^[A-Za-z0-9-]{6,50}$/.test(c.bridgeid)){bridgeIdentity='hue:'+c.bridgeid.toLowerCase();save('bridge_identity',bridgeIdentity);save('identity_ip',configuredIp)}}catch{/* Bridge-Konfiguration ist optional; fallback auf bekannte Identität */}
+  ensureGroups();order=groupEngine.globalOrder();
   renderTargets();
   renderLights();
   try{renderGroups();renderOrder()}catch(e){warning+=' · Gruppenansicht: '+e.message}
@@ -303,42 +341,30 @@ async function connectInner(){
   tab('light');
  }finally{el('hueLoad').disabled=false;el('hueLoad').textContent='Verbinden'}
 }
-function livingRoom(){return Object.entries(bridgeGroups).find(([id,g])=>String(g.name||'').trim().toLocaleLowerCase('de')==='wohnzimmer'&&Array.isArray(g.lights))}
-function livingRoomEntry(){
- return Object.entries(bridgeGroups).find(([id,g])=>String(g.name||'').trim().toLocaleLowerCase('de')==='wohnzimmer'&&Array.isArray(g.lights));
-}
 function renderTargets(){
- const prev=el('target').value,room=livingRoomEntry();
- el('target').replaceChildren(new Option('All','all'));
- if(room)el('target').add(new Option('Wohnzimmer','bridge:'+room[0]));
- for(const id of order)if(lights[id])el('target').add(new Option(lights[id].name||id,'lamp:'+id));
- if([...el('target').options].some(o=>o.value===prev))el('target').value=prev;
- else el('target').value='all';
+ const engine=ensureGroups(),select=el('target'),old=select.dataset.bridgeIdentity===engine.bridgeId?select.value:engine.currentTarget();
+ select.replaceChildren();
+ for(const entry of engine.options())select.add(new Option(entry.name,entry.id));
+ select.value=engine.group(old)?old:engine.currentTarget();
+ if(!select.value)select.value='all';
+ select.dataset.bridgeIdentity=engine.bridgeId;
  renderTree();
 }
 function renderTree(){
- const root=el('targetTree');root.replaceChildren();
- const room=livingRoomEntry();
- const roomIds=room?order.filter(id=>room[1].lights.includes(id)&&lights[id]):[];
- function item(id,title,count,children=[]){
-  const row=document.createElement('div');row.className='tree-node';
-  const button=document.createElement('button');button.type='button';button.className='tree-pick';
-  button.setAttribute('aria-pressed',String(el('target').value===id));
-  button.append(document.createTextNode(title));
-  const small=document.createElement('small');small.textContent=count+' '+(count===1?'Lampe':'Lampen');button.append(small);
-  button.onclick=()=>{el('target').value=id;el('target').onchange();el('targetDetails').open=false};
-  row.append(button);
-  if(children.length){
-   const branch=document.createElement('div');branch.className='tree-children';
-   for(const child of children)branch.append(child);
-   row.append(branch);
-  }
-  return row;
+ const engine=ensureGroups();
+ if(!groupTree){
+  if(!window.LumaGroupsTree)throw Error('Baumansicht konnte nicht geladen werden.');
+  groupTree=new window.LumaGroupsTree.Tree(engine,el('targetFastTree'),{
+   getSelected:()=>el('target').value||engine.currentTarget(),
+   onSelect:id=>{
+    if(!engine.group(id))return;
+    el('target').value=id;
+    if(el('target').value===id)el('target').onchange();
+   }
+  });
  }
- const lampNode=id=>item('lamp:'+id,lights[id]?.name||id,1);
- const roomNode=room?item('bridge:'+room[0],'Wohnzimmer',roomIds.length,roomIds.map(lampNode)):null;
- const otherLamps=order.filter(id=>lights[id]&&!roomIds.includes(id)).map(lampNode);
- root.append(item('all','All',order.filter(id=>lights[id]).length,[...(roomNode?[roomNode]:[]),...otherLamps]));
+ groupTree.engine=engine;
+ groupTree.render();
  el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';
 }
 async function apply(body){if(!connected)throw Error('Zuerst unter Verbindung verbinden.');const ids=targetIds();if(!ids.length)throw Error('Keine erreichbaren Lampen in der Auswahl.');for(const id of ids)await request('PUT','/lights/'+encodeURIComponent(id)+'/state',body);status(ids.length+' Lampen aktualisiert.')}
@@ -348,46 +374,26 @@ function renderScenes(){window.lumaScenesV1?.render()}
 window.lumaApplyCuratedScene=async scene=>{stopAll();window.lumaSceneSelection=scene;await paint();};
 function renderMood(){el('moodControls').replaceChildren();for(const [k,name,help] of [['brightness','Helligkeit','Gesamte Lichtstärke'],['saturation','Farbintensität','Von dezent bis kräftig'],['contrast','Kontrast','Unterschiede zwischen den Lampen']]){const label=document.createElement('label');label.className='range';label.textContent=name+' · '+mood[k]+' %';const input=document.createElement('input');input.type='range';input.min=k==='brightness'?1:0;input.max=100;input.value=mood[k];input.oninput=()=>{mood[k]=+input.value;label.firstChild.textContent=name+' · '+input.value+' %';save('mood',mood)};const note=document.createElement('p');note.className='note';note.textContent=help;label.append(input,note);el('moodControls').append(label)}}
 for(const [n,v] of [['Gemütlich',[45,55,25]],['Natürlich',[75,65,50]],['Lebendig',[85,100,80]],['Kino',[20,75,70]],['Standard',[75,85,50]]]){const b=document.createElement('button');b.className='alt';b.textContent=n;b.onclick=()=>{[mood.brightness,mood.saturation,mood.contrast]=v;save('mood',mood);renderMood()};el('moodPresets').append(b)}
-function renderLights(){el('lightList').replaceChildren();for(const id of order){const l=lights[id],row=document.createElement('div');row.className='lightrow';const name=document.createElement('strong');name.textContent=l.name+(l.state.reachable===false?' · nicht erreichbar':'');const b=document.createElement('button');b.textContent=l.state.on?'Aus':'Ein';b.className='alt';b.onclick=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:!l.state.on});l.state.on=!l.state.on;renderLights();status(l.name+' geschaltet.')});row.append(name,' ',b);if('bri' in l.state){const label=document.createElement('label');label.textContent='Helligkeit';const r=document.createElement('input');r.type='range';r.min=1;r.max=100;r.value=Math.round(l.state.bri/2.54);r.onchange=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:true,bri:Math.max(1,Math.round(+r.value*2.54))});status(l.name+' · '+r.value+' %')});label.append(r);row.append(label)}el('lightList').append(row)}}
-function renderGroups(){const prev=el('groupEdit').value;el('groupEdit').replaceChildren(new Option('Neue Gruppe',''));groups.forEach(g=>el('groupEdit').add(new Option(g.name,g.id)));el('groupEdit').value=groups.some(g=>g.id===prev)?prev:'';editGroup()}
-function checks(container,items,chosen,prefix){container.replaceChildren();items.forEach(([id,name])=>{const label=document.createElement('label');label.className='groupcheck';const box=document.createElement('input');box.type='checkbox';box.value=id;box.dataset.kind=prefix;box.checked=chosen.includes(id);label.append(box,document.createTextNode(name));container.append(label)})}
-function editGroup(){const id=el('groupEdit').value,g=groups.find(x=>x.id===id);el('groupName').value=g?.name||'';checks(el('groupMembers'),order.map(id=>[id,lights[id].name]),g?.lights||[],'lamp');checks(el('nestedGroups'),groups.filter(x=>x.id!==id).map(x=>[x.id,x.name]),g?.groups||[],'group')}
-function renderOrder(){el('orderList').replaceChildren();order.forEach((id,i)=>{const row=document.createElement('div');row.className='row';const name=document.createElement('span');name.textContent=(i+1)+'. '+lights[id].name;row.append(name);for(const [d,text] of [[-1,'↑'],[1,'↓']]){const b=document.createElement('button');b.textContent=text;b.className='alt';b.disabled=i+d<0||i+d>=order.length;b.onclick=()=>{stopAll();[order[i],order[i+d]]=[order[i+d],order[i]];save('order',order);renderOrder();renderTargets();window.lumaMusicRefresh?.()};row.append(b)}el('orderList').append(row)})}
-// Device-to-device group backup. Never export bridge credentials.
-el('groupExport').onclick=()=>{
- const payload={format:'luma-groups',version:1,exportedAt:new Date().toISOString(),groups};
- const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
- const a=document.createElement('a');const url=URL.createObjectURL(blob);
- a.href=url;a.download='luma-gruppen-'+new Date().toISOString().slice(0,10)+'.json';
- document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
- el('groupTransferStatus').textContent=groups.length+' eigene Gruppen gesichert. Diese Datei auf dem neuen Handy importieren.';
-};
-el('groupImportButton').onclick=()=>el('groupImportFile').click();
-el('groupImportFile').onchange=async(e)=>{
- const file=e.target.files?.[0];if(!file)return;
- try{
-  if(file.size>250000)throw Error('Datei zu groß.');
-  const payload=JSON.parse(await file.text());
-  if(payload?.format!=='luma-groups'||payload.version!==1||!Array.isArray(payload.groups))throw Error('Keine gültige Luma-Gruppensicherung.');
-  if(payload.groups.length>100)throw Error('Zu viele Gruppen in der Datei.');
-  const input=payload.groups.map(g=>{
-   if(typeof g.id!=='string'||typeof g.name!=='string'||!Array.isArray(g.lights)||!Array.isArray(g.groups)||g.name.length>80||g.id.length>100||g.lights.some(x=>typeof x!=='string')||g.groups.some(x=>typeof x!=='string'))throw Error('Ungültige Gruppendaten.');
-   return {id:g.id,name:g.name,lights:[...new Set(g.lights)],groups:[...new Set(g.groups)]};
-  });
-  const existing=new Set(groups.map(g=>g.id));
-  const incoming=input.filter(g=>!existing.has(g.id));
-  if(!incoming.length){el('groupTransferStatus').textContent='Alle Gruppen sind bereits vorhanden.';return}
-  groups=[...groups,...incoming];save('groups',groups);renderGroups();renderTargets();
-  el('groupTransferStatus').textContent=incoming.length+' neue Gruppen importiert. Vorhandene Gruppen nicht überschrieben.';
- }catch(err){el('groupTransferStatus').textContent='Import fehlgeschlagen: '+err.message}
- finally{e.target.value=''}
-};
-el('groupSave').onclick=()=>guard(async()=>{const name=el('groupName').value.trim();if(!name)throw Error('Gruppenname eingeben.');const id=el('groupEdit').value||'local:'+Date.now(),g={id,name,lights:[...el('groupMembers').querySelectorAll('input:checked')].map(x=>x.value),groups:[...el('nestedGroups').querySelectorAll('input:checked')].map(x=>x.value)},prev=groups;groups=[...groups.filter(x=>x.id!==id),g];try{if(!resolveGroup(id).length)throw Error('Mindestens eine Lampe wählen.')}catch(e){groups=prev;throw e}stopAll();save('groups',groups);renderTargets();renderGroups();status('Gruppe gespeichert: '+name)});
-el('groupDelete').onclick=()=>{const id=el('groupEdit').value;if(!id)return;stopAll();groups=groups.filter(x=>x.id!==id).map(g=>({...g,groups:(g.groups||[]).filter(x=>x!==id)}));save('groups',groups);renderTargets();renderGroups();status('Luma-Gruppe gelöscht. Lampen unverändert.')};el('groupEdit').onchange=editGroup;
-function tab(name){for(const id of ['light','scene','group','music','connection'])el(id+'Pane').hidden=id!==name;el('targetCard').hidden=!['light','scene','music'].includes(name);document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.pane===name)))}
-for(const [id,label] of [['light','Licht'],['scene','Szenen'],['group','Gruppen'],['music','Musik'],['connection','Verbindung']]){const b=document.createElement('button');b.textContent=label;b.dataset.pane=id;b.setAttribute('aria-selected',String(id==='connection'));b.onclick=()=>tab(id);el('tabs').append(b)}
+function renderLights(){el('lightList').replaceChildren();const visible=ensureGroups().resolve(el('target').value||'all',{reachableOnly:false});for(const id of visible){const l=lights[id];if(!l)continue;const row=document.createElement('div');row.className='lightrow';const name=document.createElement('strong');name.textContent=l.name+(l.state.reachable===false?' · nicht erreichbar':'');const b=document.createElement('button');b.textContent=l.state.on?'Aus':'Ein';b.className='alt';b.onclick=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:!l.state.on});l.state.on=!l.state.on;renderLights();status(l.name+' geschaltet.')});row.append(name,' ',b);if('bri' in l.state){const label=document.createElement('label');label.textContent='Helligkeit';const r=document.createElement('input');r.type='range';r.min=1;r.max=100;r.value=Math.round(l.state.bri/2.54);r.onchange=()=>guard(async()=>{stopAll();await request('PUT','/lights/'+id+'/state',{on:true,bri:Math.max(1,Math.round(+r.value*2.54))});status(l.name+' · '+r.value+' %')});label.append(r);row.append(label)}el('lightList').append(row)}}
+function renderGroups(){ensureGroups();groupUI.render()}
+function renderOrder(){/* Lampenreihenfolge wird über den Editor des zentralen Gruppenmodells verwaltet. */}
+function tab(name){
+ for(const id of ['light','scene','group','music','connection'])el(id+'Pane').hidden=id!==name;
+ el('targetCard').hidden=!['light','scene','music'].includes(name);
+ document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.pane===name)));
+ el('settingsMenu').hidden=true;
+ if(name==='group'&&groupEngine)renderGroups();
+}
+for(const [id,label] of [['light','Licht'],['scene','Szenen'],['music','Musik']]){
+ const b=document.createElement('button');b.textContent=label;b.dataset.pane=id;b.setAttribute('aria-selected','false');b.onclick=()=>tab(id);el('tabs').append(b)
+}
+const settingsButton=document.createElement('button');settingsButton.type='button';settingsButton.textContent='⚙';settingsButton.className='g-settings-toggle';settingsButton.setAttribute('aria-label','Einstellungen');settingsButton.onclick=()=>{el('settingsMenu').hidden=!el('settingsMenu').hidden};el('tabs').append(settingsButton);
+el('settingsGroups').onclick=()=>{tab('group')};el('settingsBridge').onclick=()=>tab('connection');
 const firstMusicCard=el('musicPane').querySelector('section');firstMusicCard.after(el('musicOutput'));
-el('bridgeIp').value=read('ip','192.168.178.177');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.removeItem('luma07_key')}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=()=>guard(async()=>{stopAll();await window.lumaMusicRefresh();status('Auswahl: '+el('target').selectedOptions[0].textContent)});
+el('bridgeIp').value=read('ip','192.168.178.177');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.removeItem('luma07_key')}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ catch(e){status('Gruppenauswahl: '+e.message)}
+};
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
 for(const id of ['transition','interval','phaseOut'])el(id).oninput=()=>el(id+'Val').textContent=el(id).value+(id==='phaseOut'?'':' s');el('motionStop').onclick=()=>{stopMotion();status('Dynamik gestoppt. Letzter Zustand bleibt.')};const sceneError=e=>{const msg=e?.name==='AbortError'?'Bridge-Antwort hat zu lange gedauert.':e?.message||String(e);status('Dynamik: '+msg);const details=el('sceneMotionError');if(details)details.textContent='Dynamik pausiert: '+msg+' · Bitte Verbindung prüfen und erneut starten.'};
 el('motionStart').onclick=async()=>{
