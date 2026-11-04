@@ -66,17 +66,16 @@ test('Entire group chooser can be collapsed to the current selection and reopene
  const css=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
  assert.ok(css.includes('.target-card:has(#targetFastTree[hidden])'));
 });
-test('Music gallery uses compact symbolic lamp icons and live Hue names, never product pictures',()=>{
- assert.ok(html.includes('id="miLampGallery"'));
- assert.ok(html.includes('id="miLampCount"'));
- assert.ok(html.includes('id="lamps"'));
- assert.ok(html.includes('const miLampGlyphs='));
- assert.ok(html.includes("document.createElementNS('http://www.w3.org/2000/svg','svg')"));
- assert.ok(html.includes("card.querySelector('.mi-lamp-name').textContent="));
- assert.ok(html.includes("window.lumaUpdateMusicPreview?.(devices)"));
- assert.ok(html.includes("name:d.name||'Lampe '+id"));
- assert.ok(html.includes("'--mi-lamp-level'"));
- const css=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
- assert.ok(css.includes('#musicPane #lamps .lamp.mi-lamp-card'));
- assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
+test('Device glow cards now live only in groups, and palette previews live in Music',()=>{
+ assert.ok(!html.includes('id="miLampGallery"'));
+ assert.ok(!html.includes('id="lamps"'));
+ assert.ok(html.includes("button.classList.add('mi-mood-card')"));
+ assert.ok(html.includes("onPower:async(lightId,on)=>"));
+ const tree=fs.readFileSync(path.join(base,'groups-v1-tree.js'),'utf8');
+ const treeCss=fs.readFileSync(path.join(base,'groups-v1-tree.css'),'utf8');
+ const musicCss=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
+ assert.ok(tree.includes("'g-tree-lamp-card'"));
+ assert.ok(tree.includes("'g-lamp-power'"));
+ assert.ok(treeCss.includes('.g-tree-lamp-grid'));
+ assert.ok(musicCss.includes('.mi-mood-card'));
 });
