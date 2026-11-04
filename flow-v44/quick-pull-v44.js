@@ -119,7 +119,6 @@ function attach({doc=root.document,win=root}={}){
  const now=()=>win.performance?.now?.()??Date.now();
  let current=0,session=null,animation=0,frame=0,queued=null,preview=false,ignoreClickUntil=0,settleTimer=0,dock=0,targetDock=0,dockFrame=0,magnet=0,magnetTarget=0,magnetFrame=0;
  const initialTop=launcher.getBoundingClientRect().top;
- const socket=doc?.getElementById?.('v44DockSocket');
  // All positions share the same fixed wall anchor, not a translated page.
  const fixedY=()=>launcher.getBoundingClientRect().top;
  const opened=()=>launcher.getAttribute?.('aria-expanded')==='true';
@@ -152,7 +151,7 @@ function attach({doc=root.document,win=root}={}){
   rootStyle.setProperty('--v43-dock-px',round(dock)+'px');
   rootStyle.setProperty('--v44-magnet',String(round(magnet)));
   launcher.dataset.v44Docked=String(magnet>.82&&current>.98&&opened());
-  socket?.setAttribute?.('aria-pressed',String(magnetTarget>0&&opened()));
+  doc.getElementById?.('v44DockSocket')?.setAttribute?.('aria-pressed',String(magnetTarget>0&&opened()));
   const carriageY=round((g.lift+dock)*100/g.svgWidth);
   movingAssembly.setAttribute('transform','translate(0 '+(-carriageY)+')');
   railCarriage.setAttribute('data-offset',String(carriageY));
