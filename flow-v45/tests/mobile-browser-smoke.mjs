@@ -24,6 +24,16 @@ try{
  await page.locator('#quickLauncher').tap();
  await page.waitForFunction(()=>document.getElementById('quickLauncher')?.getAttribute('aria-expanded')==='true',null,{timeout:5000});
  assert.equal(await page.locator('#quickOverlay').isVisible(),true,'quick control opens on a single tap');
+ const geometry=await page.evaluate(()=>{
+  const get=id=>{
+   const r=document.getElementById(id)?.getBoundingClientRect();
+   return r?{x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)}:null;
+  };
+  return {home:get('v45LampHome'),head:get('ambientMovingHead'),grip:get('quickLampGrip'),
+   launcher:get('quickLauncher'),rail:get('v43FixedRail'),settings:get('settingsMenu')};
+ });
+ console.log('V45_BROWSER_GEOMETRY '+JSON.stringify(geometry));
+ await page.screenshot({path:'/tmp/luma-v45-open.png'});
  const home=await page.locator('#v45LampHome').boundingBox();
  const launcher=await page.locator('#quickLauncher').boundingBox();
  assert.ok(home&&home.height>145,'living room stage rendered');
