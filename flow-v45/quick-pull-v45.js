@@ -70,11 +70,11 @@ function armPath(pull,svgWidth=73,design='vintage',leftHand=false){
   +' Q'+x(99)+' '+y(3)+' '+x(103)+' 106'
   +' H86';
 }
-function beamGeometry(width,height,x,y,topOffset=32){
+function beamGeometry(width,height,x,y,topOffset=32,lipHalf=19){
  // A truly symmetrical lamp cone, measured from the *moving shade lip*.
  // Neither outside edge is vertical: the right side mirrors the left side.
  const w=Math.max(1,width),h=Math.max(1,height),cx=round(x),rimY=round(y);
- const halfLip=19,spread=round(Math.min(w*.44,Math.max(128,h*.24)));
+ const halfLip=clamp(lipHalf,10,24),spread=round(Math.min(w*.44,Math.max(128,h*.24)));
  const leftLip=round(x-halfLip),rightLip=round(x+halfLip);
  const farLeft=round(x-spread),farRight=round(x+spread);
  const bottomY=round(Math.max(h+24,y+h*.70));
@@ -133,13 +133,15 @@ function attach({doc=root.document,win=root}={}){
   const style=doc.documentElement?.dataset?.v42Design||'vintage';
   const lipSvg=({vintage:78,deco:61,washi:90,halo:87})[style]||78;
   const topOffset=({vintage:37,deco:23,washi:53,halo:33})[style]||37;
+  // Each model's real bottom aperture has a different physical width.
+  const lipHalf=({vintage:20,deco:22,washi:13,halo:18})[style]||20;
   const rimY=art.top+(lipSvg/124*96)-lift-dock;
-  return {distance,lift,svgWidth,width,height,headX,rimY,topOffset};
+  return {distance,lift,svgWidth,width,height,headX,rimY,topOffset,lipHalf};
  }
  function paint(p){
   current=clamp(p);
   const g=position(current);
-  const glow=beamGeometry(g.width,g.height,g.headX,g.rimY,g.topOffset);
+  const glow=beamGeometry(g.width,g.height,g.headX,g.rimY,g.topOffset,g.lipHalf);
   rootStyle.setProperty('--luma-pull-px',round(g.distance)+'px');
   // The rail and wall are completely fixed. Only the metal carriage and
   // connected lampshade/arm group travel. Use SVG user-space transforms:
