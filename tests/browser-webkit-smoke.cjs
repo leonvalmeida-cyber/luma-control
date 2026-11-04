@@ -161,7 +161,7 @@ const close=()=>new Promise(resolve=>server.close(resolve));
     t.launcher.dispatchEvent(evt)};
    touch('touchstart',0);touch('touchmove',t.drag*.17);touch('touchend',t.drag*.17);
   });
-  await page.waitForTimeout(290);
+  await page.waitForTimeout(380);
   const rolledBack=await page.evaluate(()=>({closed:document.getElementById('quickOverlay').hidden,
     shade:document.getElementById('quickLauncher').dataset.pullProgress,
     arm:document.getElementById('ambientLampArm').getAttribute('d'),
