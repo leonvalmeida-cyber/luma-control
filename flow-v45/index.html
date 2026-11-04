@@ -750,6 +750,7 @@ function renderTree(){
  }
  groupTree.engine=engine;
  groupTree.render();
+ window.lumaGroupsTreeInstance=groupTree;
  el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';
 }
 function reflectLightState(id,body,response){
