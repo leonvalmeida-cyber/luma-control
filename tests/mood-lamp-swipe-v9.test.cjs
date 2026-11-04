@@ -21,7 +21,7 @@ test('Custom launch icon is a left-facing floor lamp with shade-left and stand-r
  assert.ok(html.includes('viewBox="0 0 100 124"'));
  assert.ok(html.includes('class="ambient-lamp-silhouette"'));
  assert.ok(html.includes('class="ambient-lamp-base"'));
- assert.ok(html.includes('class="ambient-lamp-stem"'));
+ assert.ok(html.includes('id="ambientLampArm"'),'telescopic wall arm remains present');
  assert.ok(html.includes('class="ambient-lamp-lumen ambient-lamp-lumen-one"'));
  assert.ok(quickCSS.includes('.quick-launcher .ambient-lamp-lumen-three'));
 });
@@ -36,7 +36,7 @@ test('Multi-color lamp beams are derived from distinct selected Hue lights',()=>
  assert.ok(quickCSS.includes('.ambient-room-glow .ambient-ray-2'));
  assert.ok(quickCSS.includes('.ambient-room-glow .ambient-ray-3'));
  assert.ok(quickCSS.includes('clip-path:polygon(100% 0%,100% 2%,0 99%,0 78%)'));
- assert.ok(html.includes('class="ambient-ray ambient-ray-1"'));
+ assert.ok(html.includes('id="ambientBeam1"'),'first physically anchored beam remains present');
 });
 test('One light or lights-off never invents multiple distinct beams',()=>{
  const first=lamp.calculate({hue:{connected:true,devices:[{state:{on:true,reachable:true,hue:0,sat:254,bri:100}}]}});
