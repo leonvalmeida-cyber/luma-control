@@ -74,7 +74,7 @@ test('Device glow cards now live only in groups, and palette previews live in Mu
  const tree=fs.readFileSync(path.join(base,'groups-v1-tree.js'),'utf8');
  const treeCss=fs.readFileSync(path.join(base,'groups-v1-tree.css'),'utf8');
  const musicCss=fs.readFileSync(path.join(base,'music-immersive-v1.css'),'utf8');
- assert.ok(tree.includes("'g-tree-lamp-card'"));
+ assert.ok(tree.includes('g-tree-lamp-card'))
  assert.ok(tree.includes("'g-lamp-power'"));
  assert.ok(treeCss.includes('.g-tree-lamp-grid'));
  assert.ok(musicCss.includes('.mi-mood-card'));
