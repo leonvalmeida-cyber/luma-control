@@ -13,60 +13,110 @@ function attach({doc=root.document,win=root}={}){
  const panel=doc?.querySelector?.('.quick-titlebar');
  const sheet=doc?.querySelector?.('.quick-sheet');
  const backdrop=doc?.getElementById?.('quickBackdrop');
+ const closeGrip=doc?.getElementById?.('quickSwipeClose');
  if(!launcher||!panel||!sheet||!backdrop)return null;
+ if(launcher.dataset?.swipeReady==='true')return null;
+ if(launcher.dataset)launcher.dataset.swipeReady='true';
  const api=()=>win.lumaQuickControl;
- const handlers=[],on=(el,event,fn)=>{el.addEventListener(event,fn,{passive:false});handlers.push([el,event,fn])};
+ const handlers=[],on=(el,event,fn,opts={passive:false})=>{el.addEventListener(event,fn,opts);handlers.push([el,event,fn,opts])};
+ let suppressUntil=0;
+ function restore(){
+  sheet.style.transition='';
+  sheet.style.transform='';
+  backdrop.style.transition='';
+  backdrop.style.opacity='';
+ }
+ function commit(kind){
+  restore();
+  suppressUntil=Date.now()+550;
+  if(kind==='open')api()?.open?.();
+  else api()?.close?.();
+ }
  function bind(element,kind){
-  let position=null;
-  const reset=()=>{
-   position=null;
-   if(kind==='close'){
-    sheet.style.transition='';
-    sheet.style.transform='';
-    backdrop.style.transition='';
-    backdrop.style.opacity='';
-   }
+  let position=null,trackedTouch=null,handledByTouch=false;
+  const reset=()=>{position=null;trackedTouch=null;restore()};
+  const start=(x,y,id)=>{position={id,x,y};};
+  const end=(x,y,id,event)=>{
+   if(!position||id!==position.id)return false;
+   const dx=x-position.x,dy=y-position.y,accepted=gesture(dx,dy,kind);
+   reset();
+   if(accepted){commit(kind);event?.preventDefault?.();event?.stopPropagation?.();}
+   return accepted;
   };
-  on(element,'pointerdown',e=>{
-   if(e.pointerType==='mouse'&&e.button!==0)return;
-   if(kind==='close'&&e.target?.closest?.('button'))return; // close-button tap always wins
+  // iPhone Safari: Touch Events first. Relying only on pointer capture used to fail
+  // when WebKit canceled the pointer as part of a native gesture.
+  on(element,'touchstart',event=>{
+   if(event.touches?.length!==1)return;
+   if(kind==='close'&&event.target?.closest?.('button')&&event.target!==closeGrip)return;
    if(kind==='open'&&api()?.isOpen?.())return;
    if(kind==='close'&&!api()?.isOpen?.())return;
-   position={id:e.pointerId,x:e.clientX,y:e.clientY,moved:false};
+   const t=event.changedTouches?.[0]||event.touches[0];if(!t)return;
+   handledByTouch=true;trackedTouch=t.identifier;
+   start(t.clientX,t.clientY,t.identifier);
+  },{passive:true});
+  on(element,'touchmove',event=>{
+   if(!position||trackedTouch==null)return;
+   const t=[...(event.changedTouches||[])].find(t=>t.identifier===trackedTouch);if(!t)return;
+   const dx=t.clientX-position.x,dy=t.clientY-position.y;
+   // The launcher is a gesture target; prevent page scroll only once a clear swipe starts.
+   if(kind==='open'&&(dx< -12||dy< -18)){
+    event.preventDefault();
+   }else if(kind==='close'&&(dx>17||dy>24)){
+    const horizontal=dx>Math.abs(dy)*.9;
+    const vertical=dy>Math.abs(dx)*1.2;
+    if(horizontal||vertical){
+     event.preventDefault();
+     const distance=Math.min(310,horizontal?dx:dy);
+     sheet.style.transition='none';
+     sheet.style.transform=horizontal?'translate3d('+distance+'px,0,0)':'translate3d(0,'+distance+'px,0)';
+     backdrop.style.transition='none';
+     backdrop.style.opacity=String(Math.max(.33,1-distance/420));
+    }
+   }
+  });
+  on(element,'touchend',event=>{
+   if(trackedTouch==null)return;
+   const t=[...(event.changedTouches||[])].find(t=>t.identifier===trackedTouch);
+   if(t)end(t.clientX,t.clientY,t.identifier,event);
+  });
+  on(element,'touchcancel',reset);
+  // Pointer events remain a fallback for pen / mouse / non-WebKit mobile devices.
+  on(element,'pointerdown',e=>{
+   if(handledByTouch&&e.pointerType==='touch')return;
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   if(kind==='close'&&e.target?.closest?.('button')&&e.target!==closeGrip)return;
+   if(kind==='open'&&api()?.isOpen?.())return;
+   if(kind==='close'&&!api()?.isOpen?.())return;
+   start(e.clientX,e.clientY,e.pointerId);
    try{element.setPointerCapture?.(e.pointerId)}catch{}
   });
   on(element,'pointermove',e=>{
-   if(!position||position.id!==e.pointerId)return;
+   if(!position||position.id!==e.pointerId||handledByTouch&&e.pointerType==='touch')return;
    const dx=e.clientX-position.x,dy=e.clientY-position.y;
-   if(kind!=='close')return;
-   const right=dx>0&&Math.abs(dx)>Math.abs(dy)*ANGLE;
-   const down=dy>0&&Math.abs(dy)>Math.abs(dx)*ANGLE;
-   if(!right&&!down)return;
-   position.moved=true;
-   const distance=Math.min(320,right?dx:dy);
-   sheet.style.transition='none';
-   sheet.style.transform=right?'translate3d('+distance+'px,0,0)':'translate3d(0,'+distance+'px,0)';
-   backdrop.style.transition='none';
-   backdrop.style.opacity=String(Math.max(.34,1-distance/410));
-   e.preventDefault();
-  });
-  on(element,'pointerup',e=>{
-   if(!position||position.id!==e.pointerId)return;
-   const dx=e.clientX-position.x,dy=e.clientY-position.y;
-   const accepted=gesture(dx,dy,kind);
-   reset();
-   if(accepted){
-    if(kind==='open')api()?.open?.();
-    else api()?.close?.();
+   if(kind==='close'&&dx>18&&dx>Math.abs(dy)*ANGLE){
+    const distance=Math.min(310,dx);
+    sheet.style.transition='none';sheet.style.transform='translate3d('+distance+'px,0,0)';
+    backdrop.style.transition='none';backdrop.style.opacity=String(Math.max(.33,1-distance/420));
     e.preventDefault();
    }
+  });
+  on(element,'pointerup',e=>{
+   if(handledByTouch&&e.pointerType==='touch')return;
+   end(e.clientX,e.clientY,e.pointerId,e);
   });
   on(element,'pointercancel',reset);
   on(element,'lostpointercapture',()=>{if(position)reset()});
   return reset;
  }
- const a=bind(launcher,'open'),b=bind(panel,'close');
- return {destroy(){a();b();for(const [el,event,fn]of handlers)el.removeEventListener(event,fn)}};
+ const a=bind(launcher,'open'),b=bind(panel,'close'),c=closeGrip?bind(closeGrip,'close'):()=>{};
+ // Prevent a synthesized click after an accepted finger swipe from toggling again.
+ on(launcher,'click',event=>{
+  if(Date.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation?.()}
+ },true);
+ if(closeGrip)on(closeGrip,'click',event=>{
+  if(Date.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation?.()}
+ });
+ return {destroy(){a();b();c();for(const [el,event,fn,opts]of handlers)el.removeEventListener(event,fn,opts);if(launcher.dataset)delete launcher.dataset.swipeReady}};
 }
 const api={gesture,attach,THRESHOLD_OPEN,THRESHOLD_CLOSE};
 root.LumaQuickSwipe=api;
