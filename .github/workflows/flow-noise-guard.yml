@@ -6,6 +6,10 @@ on:
     paths:
       - 'flow/**'
       - 'tests/flow-noise-guard.test.cjs'
+      - 'tests/lamp-icons.test.cjs'
+      - 'lamp-icons.js'
+      - 'lamp-icons.css'
+      - 'groups-v1-tree.js'
       - '.github/workflows/flow-noise-guard.yml'
 jobs:
   dsp-verification:
@@ -20,4 +24,4 @@ jobs:
       - name: Syntax and signal-processing regressions
         run: |
           node --check flow/noise-guard.js
-          node --test tests/flow-noise-guard.test.cjs
+          node --test tests/flow-noise-guard.test.cjs tests/lamp-icons.test.cjs
