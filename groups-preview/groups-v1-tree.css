@@ -3,7 +3,7 @@
 .g-tree-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3px 8px 9px}
 .g-tree-kicker{font-size:10px;letter-spacing:1.2px;font-weight:790;color:#c8afff}
 .g-tree-current{font-size:11px;padding:5px 8px;border-radius:12px;background:#a986ec26;color:#e4d5ff;border:1px solid #ac90e04d;max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.g-tree-inner{max-height:310px;overflow:auto;overscroll-behavior:contain;scrollbar-color:#7762a87a transparent}
+.g-tree-inner{height:min(310px,34dvh);min-height:230px;max-height:none;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;overflow-anchor:none;scroll-behavior:auto;scrollbar-color:#7762a87a transparent}
 .g-tree-node{min-width:0}.g-tree-line{display:flex;gap:3px;align-items:stretch;min-width:0;padding-left:calc(var(--tree-depth,0)*10px)}
 .g-tree-toggle{width:27px;min-width:27px;min-height:42px;padding:0;background:transparent;color:#cbb6fa;font-size:23px;border-radius:10px;display:grid;place-items:center}
 .g-tree-toggle:disabled{color:#737187;opacity:1}
@@ -16,3 +16,5 @@
 .g-tree-kids{border-left:1px solid #7767a963;margin-left:14px}
 @media(max-width:360px){.g-tree-line{padding-left:calc(var(--tree-depth,0)*7px)}.g-tree-select{padding:6px 5px;gap:5px}}
 @media(prefers-reduced-motion:reduce){.g-fast-tree *{animation:none!important;transition:none!important}}
+
+.g-tree-kids[hidden]{display:none!important}.g-fast-tree{overflow-anchor:none}
