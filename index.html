@@ -391,7 +391,7 @@ const settingsButton=document.createElement('button');settingsButton.type='butto
 el('settingsGroups').onclick=()=>{tab('group')};el('settingsBridge').onclick=()=>tab('connection');
 const firstMusicCard=el('musicPane').querySelector('section');firstMusicCard.after(el('musicOutput'));
 el('bridgeIp').value=read('ip','192.168.178.177');el('hueLoad').onclick=()=>guard(connect);el('hueClear').onclick=()=>{stopAll();el('hueKey').value='';try{localStorage.removeItem('luma07_key')}catch{}connected=false;lights={};bridgeGroups={};el('musicOn').disabled=true;status('Schlüssel entfernt. Neu verbinden.');tab('connection')};el('target').onchange=async()=>{
- try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();renderTree();renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
+ try{const selected=el('target').value;ensureGroups().setTarget(selected);stopAll();groupTree?.updateSelection();el('targetSummary').textContent=(el('target').selectedOptions[0]?.textContent||'All')+' · '+targetIds().length+' erreichbar';renderLights();await window.lumaMusicRefresh?.();status('Auswahl: '+el('target').selectedOptions[0]?.textContent)}
  catch(e){status('Gruppenauswahl: '+e.message)}
 };
 el('targetOn').onclick=()=>guard(async()=>{stopAll();await apply({on:true})});el('targetOff').onclick=()=>guard(async()=>{stopAll();await apply({on:false})});el('lightRefresh').onclick=()=>guard(connect);// Scene-library controls are bound by scenes-v1.js after initialization.el('applyScene').onclick=()=>guard(async()=>{stopAll();save('mood',mood);await paint()});
