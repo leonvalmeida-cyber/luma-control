@@ -1,0 +1,30 @@
+/* Luma Flow floating light controls: a single movable tree, not a cloned second picker. */
+.quick-launcher{position:fixed;z-index:39000;top:clamp(135px,22dvh,238px);right:max(9px,env(safe-area-inset-right));width:56px;height:62px;min-width:56px;padding:7px 4px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border-radius:18px;color:#f8efff;background:linear-gradient(155deg,#7651c9,#30264c 80%);border:1px solid #dabaffaf;box-shadow:0 9px 30px #050412a8,0 0 15px #7d43b75c;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);touch-action:manipulation}
+.quick-launcher span{font-size:26px;line-height:29px;filter:drop-shadow(0 0 8px #ffd8a493)}
+.quick-launcher small{font-size:10px;line-height:1.1;font-weight:800;letter-spacing:.2px}
+.quick-launcher[aria-expanded=true]{visibility:hidden;pointer-events:none}
+.quick-launcher:focus-visible,.quick-sheet button:focus-visible{outline:2px solid #f4ddff;outline-offset:2px}
+.quick-overlay[hidden]{display:none!important}
+.quick-overlay{position:fixed;inset:0;z-index:39500;display:flex;align-items:flex-start;justify-content:flex-end;padding: max(env(safe-area-inset-top),12px) max(env(safe-area-inset-right),9px) max(env(safe-area-inset-bottom),12px);isolation:isolate;overscroll-behavior:contain}
+.quick-backdrop{position:absolute;inset:0;z-index:-1;border:0;border-radius:0;background:#060715cf;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);width:100%;height:100%;padding:0}
+.quick-sheet{position:relative;z-index:1;display:flex;flex-direction:column;width:min(94vw,560px);height:calc(100dvh - max(env(safe-area-inset-top),12px) - max(env(safe-area-inset-bottom),12px));max-height:95dvh;min-height:0;background:linear-gradient(165deg,#251d3b 0%,#161c32 54%,#101a2b 100%);border:1px solid #a98cc477;border-radius:26px;box-shadow:0 22px 80px #03020ded,0 0 35px #5d33a225;overflow:hidden}
+.quick-titlebar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 17px 5px;flex:0 0 auto}
+.quick-titlebar>div{min-width:0}.quick-titlebar small{font-size:10px;letter-spacing:1.3px;font-weight:800;color:#d6bcfa}
+.quick-titlebar h2{font-size:27px;letter-spacing:-.5px;margin:3px 0;line-height:1.12;color:#fcf3ff}
+.quick-titlebar button{width:46px;height:46px;flex:0 0 46px;min-height:46px;display:grid;place-items:center;border-radius:15px;padding:0;font-size:20px;background:#49335f;color:#f9eafd;border:1px solid #d7bdf48c}
+.quick-subtitle{font-size:11px;color:#d6c2ee;line-height:1.5;margin:4px 17px 13px;flex:0 0 auto}
+.quick-panel-body{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 12px 14px;scrollbar-width:thin;scrollbar-color:#80699c transparent}
+.quick-overlay #targetCard{display:block!important;position:static!important;margin:0;padding:10px;border:1px solid #9f86c554;border-radius:19px;background:#241f3f88;box-shadow:none;width:100%;min-width:0}
+.quick-overlay #targetCard .mi-target-head{min-height:42px}
+.quick-overlay #targetCard .target-help{font-size:10px}
+.quick-overlay .g-fast-tree{box-shadow:none;padding:10px 5px 12px}
+.quick-overlay .g-tree-inner{max-height:none!important;min-height:0;overflow:visible!important;contain:none!important}
+.quick-overlay .g-tree-kids{margin-left:9px}
+.quick-overlay .g-tree-lamp-grid{margin-left:8px;padding-left:9px}
+.quick-overlay .g-tree-lamp-line .g-tree-lamp-card{min-height:147px}
+.quick-overlay .g-tree-lamp-line{min-height:147px}
+.quick-overlay .g-tree-lamp-line .g-lamp-status{display:block}
+.quick-status{flex:0 0 auto;margin:0;min-height:46px;padding:11px 17px max(env(safe-area-inset-bottom),13px);border-top:1px solid #9a84c236;background:#151a2deb;font-size:11px;color:#badddf;line-height:1.4;max-height:68px;overflow:hidden}
+.quick-page-lock{position:fixed!important;left:0!important;right:0!important;margin-inline:auto!important;width:100%!important;max-width:700px!important;overflow:hidden!important}
+@media(max-width:370px){.quick-sheet{width:calc(100vw - 13px);border-radius:20px}.quick-panel-body{padding-left:7px;padding-right:7px}.quick-titlebar{padding-left:12px;padding-right:12px}.quick-overlay .g-tree-lamp-grid{padding-left:5px;margin-left:5px}}
+@media(prefers-reduced-motion:reduce){.quick-launcher,.quick-sheet{transition:none!important;animation:none!important}}
