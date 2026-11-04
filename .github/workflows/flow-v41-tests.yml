@@ -1,0 +1,29 @@
+name: Luma Flow V4.1 preview checks
+on:
+  push:
+    paths:
+      - 'flow-v41/**'
+      - '.github/workflows/flow-v41-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v41/**'
+      - '.github/workflows/flow-v41-tests.yml'
+jobs:
+  v41:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax verification
+        run: |
+          node --check flow-v41/v41.js
+          node --check flow-v41/quick-pull-v41.js
+          node --check flow-v41/groups-v41-tree.js
+      - name: New V4.1 regression tests
+        run: node --test flow-v41/tests/v41.test.cjs
+      - name: Existing LIVE and V4 regression checks
+        run: node --test flow-live/tests/flow-live.test.cjs flow-live/tests/quick-pull-v10.test.cjs flow-v4/tests/v4.test.cjs
