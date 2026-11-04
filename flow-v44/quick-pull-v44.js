@@ -149,6 +149,7 @@ function attach({doc=root.document,win=root}={}){
   // connected lampshade/arm group travel. Use SVG user-space transforms:
   // on Safari the corresponding CSS transform pixels are inconsistent.
   rootStyle.setProperty('--v43-dock-px',round(dock)+'px');
+  rootStyle.setProperty('--v44-open-progress',String(current));
   rootStyle.setProperty('--v44-magnet',String(round(magnet)));
   launcher.dataset.v44Docked=String(magnet>.82&&current>.98&&opened());
   doc.getElementById?.('v44DockSocket')?.setAttribute?.('aria-pressed',String(magnetTarget>0&&opened()));
