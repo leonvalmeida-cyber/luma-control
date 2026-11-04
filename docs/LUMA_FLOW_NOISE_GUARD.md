@@ -22,7 +22,9 @@ Der Nutzer möchte Luma Flow von Grund auf neu entwerfen; wichtiges Zusatzkriter
 ## Implementierter Forschungsstand
 - `flow/noise-guard.js`: unabhängig von Audioaufnahme, UI, Storage und Bridge. Enthält OFF/AMBIENT/CONVERSATION, Kalibrierung eines lokalen FFT-Rauschprofils, spektrale Subtraktion, bass-/impulsorientierte Signalgrößen, Schalter und sichere Rücksetzung.
 - `tests/flow-noise-guard.test.cjs`: synthetische Tests für Grundsignal, gleichbleibendes Geräusch, zugefügten Bass, Sprachbereich, unpassendes Audioformat und Privacy-Eigenschaften.
-- Code **noch nicht in Luma Music LIVE eingeschaltet**, weil die Erkennungsqualität bei echter Musik + Gesprächen zunächst getestet werden muss. Der Stand ist eine technische Grundlage, keine bestätigte Sprachtrennung.
+- **Experimentelle UI-Integration auf `feature/luma-flow-v1`**: Modus OFF/UMGEBUNG/GESPRÄCHE, manuelle Kalibrierung, Anwendungsstatus; standardmäßig OFF. Kein produktives Merge.
+- **Separater realer iPhone-/Hue-Test** auf `main:flow-live/` veröffentlicht: https://leonvalmeida-cyber.github.io/luma-control/flow-live/ (eigener Unterordner, Hauptanwendung `main:index.html` unverändert). Der Test verwendet die bestehende Bridge-/Mikrofonsteuerung, kein simuliertes Licht. Browser-/Hardwaremessungen stehen noch aus.
+- Syntax und 11 DSP-Tests auf dem Entwicklungsbranch grün; 6 statische Live-Integritätstests ebenfalls erfolgreich simuliert. Das ist keine Validierung der Filterqualität bei realen Gesprächen.
 
 ## Nächste Prüfungen
 1. In der bestehenden Live-Musikversion mit aktivem Störschutz (standardmäßig AUS) vier Situationen vergleichen: Musik allein; Musik + Unterhaltung; Staubsaugen allein; Musik + Staubsaugen.
