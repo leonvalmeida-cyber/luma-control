@@ -1,0 +1,230 @@
+/* LUMA FLOW 4.5 — cozy living room scene, real in-group brightness,
+   reliable full-size launcher, rail-guided light and softer fabric beams.
+   Only /flow-v45/ loads these overrides. */
+:root{
+ --v45-launcher-top:clamp(68px,11dvh,114px);
+ --v45-mauve:#ae82e7;
+}
+.quick-launcher,:root[data-v4-hand=left] .quick-launcher{
+ top:var(--v45-launcher-top)!important;
+ width:83px!important;min-width:83px!important;max-width:83px!important;
+ height:103px!important;min-height:103px!important;
+ touch-action:none!important;
+ -webkit-tap-highlight-color:transparent;
+}
+.quick-launcher svg.ambient-lamp-art{
+ transform:none!important;
+ width:73px;height:96px;
+}
+:root[data-v4-hand=left] .quick-launcher svg.ambient-lamp-art{
+ transform:scaleX(-1)!important;transform-origin:center;
+}
+.quick-launcher>.ambient-lamp-device{width:73px;height:98px}
+.quick-launcher:not([aria-expanded=true]) .v43-fixed-rail{
+ opacity:.12!important;
+}
+.quick-launcher:focus-visible{outline:2px solid #e1c7ff!important;outline-offset:3px!important}
+/* Real tap target is no longer shrunken: settings always remain above the
+   resting lantern, and the lantern yields while its settings popover is open. */
+#tabs .g-settings-toggle{
+ position:relative;z-index:39030!important;
+}
+body:has(#settingsMenu:not([hidden])) .quick-launcher:not([aria-expanded=true]){
+ opacity:.28;
+ pointer-events:none!important;
+}
+.quick-lamp-grip,:root[data-v4-hand=left] .quick-lamp-grip{
+ top:var(--v45-grip-top,calc(var(--v45-launcher-top) - var(--v43-dock-px) + 3px))!important;
+ left:var(--v45-grip-left,auto)!important;
+ right:auto!important;
+ width:76px;min-width:76px;
+ height:78px;min-height:78px;
+ border-radius:38px;
+ touch-action:none;
+}
+
+/* The warm room gives the extended actual lamp a permanent home at the top
+   of Quick Control. Art is decorative; it never blocks its sliders. */
+#v45LampHome{
+ position:relative;isolation:isolate;
+ width:100%;height:175px;min-height:175px;max-height:175px;
+ margin:1px 0 14px;
+ border:1px solid #aa8bbe70;border-radius:21px;
+ box-shadow:inset 0 1px 0 #f4dbe52a,0 10px 32px #05071455;
+ background:linear-gradient(132deg,#33243d 0%,#302943 40%,#202d3d 100%);
+ overflow:hidden;
+ pointer-events:none;
+}
+#v45LampHome .v45-room-wash{
+ position:absolute;inset:-25%;
+ background:
+  radial-gradient(ellipse at 57% 17%,rgb(var(--ambient-rgb)/.32),transparent 50%),
+  radial-gradient(ellipse at 80% 73%,rgb(var(--ambient-ray-2)/.11),transparent 55%);
+ opacity:var(--ambient-power);
+ filter:blur(10px);
+ z-index:0;
+}
+#v45LampHome .v45-room-illustration{
+ position:absolute;z-index:1;inset:5px 0 auto;
+ width:100%;height:100%;
+ opacity:.84;pointer-events:none;
+}
+#v45LampHome .v45-room-outline{stroke:#d9bca574;stroke-width:2;fill:none}
+#v45LampHome .v45-room-ceiling{stroke:#e5c4ac3b;stroke-width:1.4;fill:none}
+#v45LampHome .v45-window{
+ fill:rgb(var(--ambient-rgb)/.10);
+ stroke:#d6b9ddaa;stroke-width:1.7;
+}
+#v45LampHome .v45-window-bars,
+#v45LampHome .v45-window-star{stroke:#d9c7daaa;fill:none;stroke-width:1.35}
+#v45LampHome .v45-sofa-back{
+ fill:#695c8191;stroke:#c4a5cbcc;stroke-width:2.2;
+}
+#v45LampHome .v45-sofa-seat{
+ fill:#57496ab0;stroke:#af95b7bb;stroke-width:2.1;
+}
+#v45LampHome .v45-sofa-legs,#v45LampHome .v45-shelf{
+ stroke:#cfae8aad;stroke-width:2.2;fill:none;stroke-linecap:round;
+}
+#v45LampHome .v45-plant{stroke:#a0c8aaab;stroke-width:2;fill:none;stroke-linecap:round}
+#v45LampHome .v45-pot{fill:#c9a6889e;stroke:#f0d4bcbb;stroke-width:1}
+#v45LampHome .v45-rug{
+ fill:#a796a02b;stroke:#d4bcdd77;stroke-width:1.3;
+}
+#v45LampHome .v45-stage-copy{
+ position:absolute;z-index:2;
+ top:29px;left:16px;width:min(47%,175px);
+ display:grid;gap:7px;text-shadow:0 2px 13px #111021d9;
+}
+#v45LampHome .v45-stage-eyebrow{
+ font-size:10px;font-weight:850;letter-spacing:1.35px;color:#ead2ff;
+}
+#v45LampHome h3{
+ margin:0;font-size:clamp(19px,5vw,25px);line-height:1.1;
+ letter-spacing:-.5px;color:#fff0e0;
+}
+#v45LampHome p{margin:0;max-width:140px;font-size:10.5px;line-height:1.45;color:#e7d5e2}
+#v45LampHome .v45-stage-status{
+ margin-top:5px;padding:5px 7px;border-radius:10px;max-width:190px;
+ width:fit-content;background:#4d3b6580;border:1px solid #d2b5db48;
+ font-size:10px;font-weight:700;color:#f2e0ff;
+}
+#v45LampHome .v45-landing-mark{
+ position:absolute;right:15%;top:11px;font-size:21px;color:#f9e0ab66;
+}
+@media(max-width:360px){
+ #v45LampHome .v45-stage-copy{left:12px;top:26px;width:48%}
+ #v45LampHome{height:167px;min-height:167px;max-height:167px}
+}
+
+/* Move the master dimmer from the old, obstructed top card INTO the purple
+   selected group chip. Group selection, dimming, and expansion are different
+   interactive controls, so no native nested-button problems. */
+#targetFastTree .v45-group-shell{
+ display:block;flex:1;min-width:0;max-width:100%;
+ margin:2px 0;
+ border-radius:13px;
+ border:1px solid transparent;
+ overflow:hidden;
+}
+#targetFastTree .v45-group-shell.v45-dim-attention{
+ outline:2px solid #f6dcb8;outline-offset:3px;
+ box-shadow:0 0 18px #cba3fc82;
+}
+#targetFastTree .v45-group-shell.v45-selected{
+ border:1px solid #b99af6aa;
+ background:linear-gradient(110deg,#7255b195,#4c398677 66%,#3435578c);
+ box-shadow:0 2px 10px #54458754,inset 0 1px #e8d6ff20;
+}
+#targetFastTree .v45-group-shell .g-tree-select{
+ min-height:42px;width:100%;margin:0;
+}
+#targetFastTree .v45-group-shell .g-tree-select[aria-pressed=true]{
+ background:transparent!important;border-color:transparent!important;
+ box-shadow:none!important;color:#fff0ff!important;
+}
+#targetFastTree .v45-group-dim{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;
+ align-items:center;gap:6px;
+ padding:0 10px 9px;
+ min-height:45px;
+}
+#targetFastTree .v45-group-dim[hidden]{display:none!important}
+#targetFastTree .v45-group-range{
+ appearance:none;-webkit-appearance:none;
+ display:block;min-width:0;width:100%;height:30px;
+ padding:0;margin:0;
+ border:0;background:transparent;
+ cursor:pointer;touch-action:pan-x;
+}
+#targetFastTree .v45-group-range::-webkit-slider-runnable-track{
+ height:11px;border-radius:999px;
+ background:linear-gradient(90deg,#e6a9f7 0%,#a98eea var(--v45-level,65%),#393354 var(--v45-level,65%),#393354 100%);
+ border:1px solid #d9adf55e;
+}
+#targetFastTree .v45-group-range::-webkit-slider-thumb{
+ -webkit-appearance:none;appearance:none;
+ width:23px;height:23px;border-radius:50%;
+ margin-top:-7px;background:#fffcff;
+ border:2px solid #e2c7fa;
+ box-shadow:0 2px 7px #1c1025c7,0 0 0 2px #a87bc44c;
+}
+#targetFastTree .v45-group-range::-moz-range-track{
+ height:11px;border-radius:999px;background:#453659;
+}
+#targetFastTree .v45-group-range::-moz-range-progress{
+ height:11px;border-radius:999px;background:#bd9ef3;
+}
+#targetFastTree .v45-group-value{
+ min-width:40px;text-align:right;
+ color:#f9e8ff;font-weight:840;font-size:12px;
+ white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+#targetFastTree .v45-group-feedback{
+ grid-column:1 / -1;
+ color:#ddc8ef;font-size:9.5px;line-height:1.15;
+ min-height:12px;
+}
+#targetFastTree .v45-group-range:disabled{opacity:.4}
+#targetFastTree .v45-group-range:focus-visible{
+ outline:2px solid #f6d4ff;outline-offset:2px;border-radius:12px;
+}
+@media(max-width:360px){
+ #targetFastTree .v45-group-dim{padding:0 6px 7px}
+ #targetFastTree .v45-group-value{min-width:38px;font-size:11px}
+}
+/* Let the groups look native; nonselected groups retain old compact lines. */
+#targetFastTree .g-tree-node>.g-tree-line:not(.g-tree-lamp-line){align-items:center}
+
+/* Old custom brightness card/socket are never used in this isolated build. */
+#quickOverlay .v41-master,
+#quickOverlay #v44DockSocket{display:none!important}
+/* Soft falloff from actual fabric hem. Less saturated geometric triangles,
+   centered on the lamp lip, extending evenly below the shade. */
+.ambient-beam-canvas .ambient-beam-path{
+ filter:blur(17px)!important;opacity:.27!important;
+}
+.ambient-beam-canvas .ambient-beam-up{
+ filter:blur(11px)!important;opacity:.22!important;
+}
+body:has(#quickOverlay:not([hidden])) .ambient-beam-canvas .ambient-beam-path{
+ filter:blur(19px)!important;opacity:.26!important;
+}
+body:has(#quickOverlay:not([hidden])) .ambient-beam-canvas .ambient-beam-up{
+ filter:blur(12px)!important;opacity:.23!important;
+}
+#ambientBeamGradient1 stop:first-child,
+#ambientBeamGradient2 stop:first-child,
+#ambientBeamGradient3 stop:first-child{stop-opacity:.39!important}
+#ambientBeamGradient1 stop:nth-child(2),
+#ambientBeamGradient2 stop:nth-child(2),
+#ambientBeamGradient3 stop:nth-child(2){stop-opacity:.21!important}
+body:has(#quickOverlay:not([hidden])) .ambient-room-glow{
+ opacity:var(--ambient-power)!important;pointer-events:none!important;
+ z-index:39605!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .quick-launcher svg.ambient-lamp-art{transition:none!important}
+ .ambient-beam-canvas .ambient-beam-path,
+ .ambient-beam-canvas .ambient-beam-up{filter:none!important;opacity:.13!important}
+}
