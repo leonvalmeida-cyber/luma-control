@@ -90,7 +90,8 @@ test('beam originates at real fabric rim, both edges flare out and is more gentl
  assert.equal(b.origin[1],178);
  assert.ok(b.edges[0][0]<b.leftLip&&b.edges[1][0]>b.rightLip);
  assert.ok(Math.abs((b.edges[0][0]+b.edges[1][0])/2-174)<.25);
- assert.match(pull,/const halfLip=19,spread=/);
+ assert.match(pull,/const halfLip=clamp\(lipHalf,10,24\),spread=/);
+ assert.match(pull,/\(\{vintage:20,deco:22,washi:13,halo:18\}\)/);
  assert.match(css,/filter:blur\(19px\)!important;opacity:\.26!important/);
  assert.match(css,/#ambientBeamGradient1 stop:first-child/);
  assert.match(pull,/beamUp\.setAttribute\('d',glow\.up\)/);
