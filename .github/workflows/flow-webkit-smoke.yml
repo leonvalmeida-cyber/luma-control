@@ -1,0 +1,36 @@
+name: Luma Mobile WebKit visual smoke
+on:
+  push:
+    branches: [feature/luma-flow-v1]
+    paths:
+      - 'index.html'
+      - 'music-immersive-v1.css'
+      - 'quick-overlay.css'
+      - 'ambient-lamp.js'
+      - 'quick-swipe.js'
+      - 'tests/browser-webkit-smoke.cjs'
+      - '.github/workflows/flow-webkit-smoke.yml'
+jobs:
+  mobile-webkit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser smoke dependencies
+        run: |
+          npm install --no-save playwright@1.57.0
+          npx playwright install --with-deps webkit
+      - name: Render four real mood images and simulate iPhone touch swipes
+        run: node tests/browser-webkit-smoke.cjs
+      - name: Attach iPhone-size preview screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: luma-flow-webkit-moods
+          path: /tmp/luma-webkit-music.png
+          if-no-files-found: ignore
