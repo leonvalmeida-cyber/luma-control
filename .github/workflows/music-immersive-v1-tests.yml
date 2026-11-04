@@ -1,0 +1,27 @@
+name: Luma Music Immersive 1.0 checks
+on:
+  push:
+    branches: [feature/music-immersive-v1]
+  pull_request:
+    paths:
+      - 'music-immersive-v1.js'
+      - 'music-immersive-v1.css'
+      - 'tests/music-immersive.test.cjs'
+      - 'index.html'
+jobs:
+  music-regressions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: UI and underlying music feature checks
+        run: node --test tests/music-immersive.test.cjs tests/groups-v1.test.cjs
+      - name: Scripts syntax
+        run: |
+          node --check music-immersive-v1.js
+          node --check groups-v1-tree.js
+          node --check groups-v1.js
