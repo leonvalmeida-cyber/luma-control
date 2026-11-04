@@ -134,6 +134,18 @@ function create(doc=root.document,win=root){
  '<span class="v45-landing-mark" aria-hidden="true">⌂</span>';
  first.prepend(home);
  const info=el('v45HomeStatus');
+ let focusFlash=0;
+ function activateGroup(){
+  if(!win.lumaQuickControl?.isOpen?.())return;
+  const slider=doc.querySelector('#targetFastTree .v45-group-dim:not([hidden]) .v45-group-range');
+  if(!slider||slider.disabled){showFeedback('Wähle All oder einen Raum, um dessen Helligkeit zu ändern.');return;}
+  const shell=slider.closest('.v45-group-shell');
+  shell?.classList.add('v45-dim-attention');
+  slider.focus({preventScroll:true});
+  win.clearTimeout(focusFlash);
+  focusFlash=win.setTimeout(()=>shell?.classList.remove('v45-dim-attention'),1300);
+ }
+ win.lumaV45ActivateGroup=activateGroup;
  function showFeedback(message){
   if(info)info.textContent=message;
  }
@@ -149,15 +161,17 @@ function create(doc=root.document,win=root){
   // Refresh percent from already existing Hue state only; never recreate
   // the DOM or trigger a new network request while iOS is sliding.
   if(win.lumaQuickControl?.isOpen?.()){
-   const tree=el('targetFastTree');
-   const slider=tree?.querySelector?.('.v45-group-range:not([disabled])');
-   if(slider!==doc.activeElement)win.lumaGroupsTreeInstance?.updateGroupBrightness?.();
+   win.lumaGroupsTreeInstance?.updateGroupBrightness?.();
   }
  }
  const interval=win.setInterval(refresh,1350);
  el('target')?.addEventListener('change',()=>win.setTimeout(refresh,80));
  applyPrefs();refresh();
- win.addEventListener('pagehide',()=>win.clearInterval(interval),{once:true});
+ win.addEventListener('pagehide',()=>{
+  win.clearInterval(interval);
+  win.clearTimeout(focusFlash);
+  if(win.lumaV45ActivateGroup===activateGroup)delete win.lumaV45ActivateGroup;
+ },{once:true});
  return {get prefs(){return {...prefs}},applyPrefs,refresh};
 }
 const api={load,fromPercent,brightness,selected,shape,create};
