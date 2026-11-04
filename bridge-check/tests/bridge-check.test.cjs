@@ -42,6 +42,7 @@ function sandbox({withStoredCredentials=false}={}){
   fetched.push({url,method:opts?.method||'GET',body:opts?.body,headers:opts?.headers});
   const response={ok:true,json:async()=>{
    if(url.includes('/lights/')&&opts.method==='PUT')return [{success:true}];
+   if(url.endsWith('/lights')&&opts.method==='POST')return [{success:{'/lights':'Searching for new devices'}}];
    if(url.endsWith('/lights'))return lights;
    if(url.endsWith('/groups'))return groups;
    if(url.endsWith('/config'))return {bridgeid:'001788ABCDEF'};
@@ -111,5 +112,44 @@ test('Optional Hue v2 check is read-only',async()=>{
  assert.equal(x.fetched[0].method,'GET');
  assert.ok(x.fetched[0].url.endsWith('/clip/v2/resource/light'));
  assert.ok(x.fetched[0].headers['hue-application-key']);
+ assert.deepEqual(x.storageWrites,[]);
+});
+
+test('No serial search may start without explicit opt-in and valid serial',async()=>{
+ const x=sandbox({withStoredCredentials:true});
+ x.id('reuse').dispatch('click');await x.id('connect').dispatch('click');
+ x.id('serial').value='ABC123';x.id('serial').dispatch('input');
+ assert.equal(x.id('startSerialSearch').disabled,true);
+ await x.id('startSerialSearch').dispatch('click');
+ assert.equal(x.fetched.filter(c=>c.method==='POST').length,0);
+ x.id('serialConsent').checked=true;x.id('serialConsent').dispatch('change');
+ x.id('serial').value='WRONG!';x.id('serial').dispatch('input');
+ assert.equal(x.id('startSerialSearch').disabled,true);
+ assert.equal(x.fetched.filter(c=>c.method==='POST').length,0);
+});
+test('Consent-based serial search sends one targeted Bridge command',async()=>{
+ const x=sandbox({withStoredCredentials:true});
+ x.id('reuse').dispatch('click');await x.id('connect').dispatch('click');
+ x.id('serial').value=' ab c1 23 ';x.id('serial').dispatch('input');
+ x.id('serialConsent').checked=true;x.id('serialConsent').dispatch('change');
+ assert.equal(x.id('startSerialSearch').disabled,false);
+ await x.id('startSerialSearch').dispatch('click');
+ const writes=x.fetched.filter(c=>c.method!=='GET');
+ assert.equal(writes.length,1);
+ assert.equal(writes[0].method,'POST');
+ assert.ok(writes[0].url.endsWith('/lights'));
+ assert.deepEqual(JSON.parse(writes[0].body),{deviceid:['ABC123']});
+ assert.equal(x.fetched.some(c=>c.method==='PUT'),false);
+ assert.deepEqual(x.storageWrites,[]);
+});
+test('Explicit synchronization re-fetches both lights and rooms, read-only',async()=>{
+ const x=sandbox({withStoredCredentials:true});
+ x.id('reuse').dispatch('click');await x.id('connect').dispatch('click');
+ const start=x.fetched.length;
+ await x.id('syncDevices').dispatch('click');
+ assert.equal(x.fetched.length,start+2);
+ assert.deepEqual(x.fetched.slice(start).map(c=>c.method),['GET','GET']);
+ assert.ok(x.fetched.slice(start).some(c=>c.url.endsWith('/lights')));
+ assert.ok(x.fetched.slice(start).some(c=>c.url.endsWith('/groups')));
  assert.deepEqual(x.storageWrites,[]);
 });
