@@ -40,12 +40,12 @@ header{display:flex;align-items:center;justify-content:space-between;margin:0 0 
 @media(min-width:490px){.lamp-grid{grid-template-columns:repeat(3,1fr)}.scene-grid{grid-template-columns:repeat(3,1fr)}.shell{padding-left:25px;padding-right:25px}.mood-strip{margin-left:-25px;margin-right:-25px;padding-left:25px}}@media(max-width:345px){.shell{padding-left:13px;padding-right:13px}.music-option{padding:10px 8px}.scene-grid{gap:9px}.scene-info{padding:9px}.brand{font-size:17px}.demo-pill{letter-spacing:0}.hero-title{font-size:27px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
-<link rel="stylesheet" href="groups-v1.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><style>.g-back{min-height:44px;padding:11px 14px;border:1px solid #ffffff35;border-radius:13px;background:#ffffff14;font-size:13px;margin-bottom:12px}.g-preview-info{margin:5px 0 17px;padding:11px 12px;border-radius:13px;border:1px solid #a88bf94d;background:#2f244b60;font-size:12px;color:#d5c7f4}</style></head>
+<link rel="stylesheet" href="groups-v1.css"><script src="groups-v1.js"></script><script src="groups-v1-ui.js"></script><style>.g-back{min-height:44px;padding:11px 14px;border:1px solid #ffffff35;border-radius:13px;background:#ffffff14;font-size:13px;margin-bottom:12px}.g-preview-info{margin:5px 0 17px;padding:11px 12px;border-radius:13px;border:1px solid #a88bf94d;background:#2f244b60;font-size:12px;color:#d5c7f4}</style><link rel="stylesheet" href="groups-v1-tree.css"><script src="groups-v1-tree.js"></script></head>
 <body>
 <div class="shell">
 <header><div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span>LUMA</span></div><div class="head-right"><span class="demo-pill">DESIGN-DEMO</span><button id="settingsBtn" type="button" class="icon-btn" aria-label="Einstellungen öffnen">⚙</button></div></header>
 <section id="pageLight" class="page">
- <div class="eyebrow">Mein Zuhause · Licht</div><h1>Dein Raum.<br>Deine Stimmung.</h1><p class="lead">Eine Berührung genügt, um die Atmosphäre zu verändern.</p>
+ <div class="eyebrow">Mein Zuhause · Licht</div><h1>Dein Raum.<br>Deine Stimmung.</h1><p class="lead">Eine Berührung genügt, um die Atmosphäre zu verändern.</p><div id="demoFastTree" class="g-tree-holder" aria-label="Lichtbereiche und Lampen direkt auswählen" style="margin:16px 0 13px"></div>
  <div class="hero-light" id="lightHero">
   <div class="light-orb" id="lightOrb"></div>
   <div class="hero-light-inner">
@@ -53,7 +53,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin:0 0 
    <div class="hero-footer"><div><div id="heroRoom" class="hero-title">Wohnzimmer</div><span id="heroState" class="hero-blurb">6 Lampen · Eingeschaltet</span></div><button id="mainPower" type="button" class="round-power" aria-label="Licht ausschalten" aria-pressed="true">⏻</button></div>
   </div>
  </div>
- <div class="segment" role="group" aria-label="Lichtbereich"><button id="areaAll" type="button" aria-pressed="false">🌐 All</button><button id="areaLiving" type="button" aria-pressed="true">⌂ Wohnzimmer</button></div>
+ 
  <div class="card control-card" style="margin-top:13px"><div class="slider-line"><span>Helligkeit</span><strong id="lightBrightnessNum">72 %</strong></div><input id="lightBrightness" class="luma-slider" type="range" min="0" max="100" value="72" aria-label="Helligkeit" style="--value:72%"></div>
  <div class="row section-head"><h2>Deine Lampen</h2><small id="lampsCount">6 aktiv</small></div>
  <div id="lampGrid" class="lamp-grid" aria-label="Beispiel-Lampen"></div>
@@ -101,7 +101,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin:0 0 
 (function(){
 'use strict';
 const byId=function(id){return document.getElementById(id)};
-let currentPage='Light',area='living',lightsOn=true,brightness=72,musicPlaying=false,musicMode='pulse',musicIntensity=65,selectedScene='cyberpunk',sceneTab='explore',sceneFilter='Alle',demoTarget='bridge:1';let demoEngine=null;
+let currentPage='Light',area='living',lightsOn=true,brightness=72,musicPlaying=false,musicMode='pulse',musicIntensity=65,selectedScene='cyberpunk',sceneTab='explore',sceneFilter='Alle',demoTarget='bridge:1';let demoEngine=null,demoTree=null;
 const lamps=[
 {id:1,name:'Hue Twilight',subtitle:'Vorne · Wohnzimmer',icon:'◕',color:'#ca83ff',on:true,room:'living'},
 {id:2,name:'Hue Iris',subtitle:'Couch · Wohnzimmer',icon:'◉',color:'#75d6f2',on:true,room:'living'},
@@ -133,7 +133,6 @@ document.querySelectorAll('[data-page]').forEach(function(button){button.addEven
 byId('goScenes').addEventListener('click',function(){go('Scenes')});
 function lightArea(){if(demoEngine&&demoEngine.group(demoTarget)){const ids=demoEngine.resolve(demoTarget,{reachableOnly:false});return lamps.filter(l=>ids.includes(String(l.id)))}return lamps.filter(function(l){return area==='all'||l.room==='living'})}
 function renderLights(){
-byId('areaAll').setAttribute('aria-pressed',String(area==='all'));byId('areaLiving').setAttribute('aria-pressed',String(area==='living'));
 const list=lightArea(),count=list.filter(function(l){return l.on}).length;
 byId('heroRoom').textContent=area==='all'?'All':area==='living'?'Wohnzimmer':(demoEngine?.group(demoTarget)?.name||'Lichtbereich');byId('demoMusicTarget').textContent='Lichtbereich: '+(demoEngine?.group(demoTarget)?.name||'Wohnzimmer');
 byId('heroState').textContent=list.length+' Lampen · '+(count?'Eingeschaltet':'Ausgeschaltet');
@@ -141,6 +140,7 @@ byId('lampsCount').textContent=count+' von '+list.length+' aktiv';
 byId('lightHero').classList.toggle('off',!count);
 byId('mainPower').setAttribute('aria-pressed',String(count>0));byId('mainPower').setAttribute('aria-label',count?'Licht ausschalten':'Licht einschalten');
 byId('lightOrb').style.setProperty('--orb-scale',String(.62+brightness/180));
+if(demoTree)demoTree.render();
 const box=byId('lampGrid');box.replaceChildren();
 list.forEach(function(l){
 const btn=document.createElement('button');btn.type='button';btn.className='lamp-row'+(l.on?'':' off');btn.setAttribute('aria-label',l.name+(l.on?' ausschalten':' einschalten'));btn.innerHTML='<span class="lamp-top"><span class="lamp-icon" style="--lamp-color:'+l.color+'">'+l.icon+'</span><span class="tiny-toggle'+(l.on?' on':'')+'"></span></span><span><strong>'+l.name+'</strong><small>'+l.subtitle+'</small></span>';
@@ -148,8 +148,6 @@ btn.addEventListener('click',function(){l.on=!l.on;renderLights()});box.append(b
 })
 }
 byId('mainPower').addEventListener('click',function(){const allOn=lightArea().some(function(l){return l.on});lightArea().forEach(function(l){l.on=!allOn});renderLights()});
-byId('areaAll').addEventListener('click',function(){area='all';demoTarget='all';demoEngine?.setTarget('all');renderLights()});
-byId('areaLiving').addEventListener('click',function(){area='living';demoTarget='bridge:1';demoEngine?.setTarget(demoTarget);renderLights()});
 byId('lightBrightness').addEventListener('input',function(){brightness=+this.value;this.style.setProperty('--value',brightness+'%');byId('lightBrightnessNum').textContent=brightness+' %';renderLights()});
 function applyScene(scene){selectedScene=scene.id;const colors=scene.cols;lights.forEach(function(l,i){if(lightArea().some(x=>x.id===l.id))l.color=colors[i%colors.length]});lightArea().forEach(function(l){l.on=true});renderLights();renderScenes();toast('Lichtwelt „'+scene.name+'“ als Demo aktiviert')}
 const strip=byId('moodStrip');[['cyberpunk','Neon Night'],['cozy','Gemütlich'],['aurora','Aurora'],['movie','Kino']].forEach(function(pair){const scene=scenes.find(function(s){return s.id===pair[0]});const b=document.createElement('button');b.type='button';b.className='mood-button';b.textContent=pair[1];b.style.setProperty('--mood1',scene.cols[0]);b.style.setProperty('--mood2',scene.cols[1]);b.setAttribute('aria-pressed',String(selectedScene===scene.id));b.addEventListener('click',function(){applyScene(scene);document.querySelectorAll('.mood-button').forEach(function(bb){bb.setAttribute('aria-pressed',String(bb===b))})});strip.append(b)});
@@ -206,9 +204,19 @@ demoEngine.sync({bridgeId:'demo-bridge',lights:demoLights,bridgeGroups:{
 },legacyGroups:[],legacyOrder:['1','2','3','4','5','6','7']});
 demoEngine.createLocal({name:'Fernseher',lights:['1','2','4'],groups:[]});
 demoEngine.createLocal({name:'Dekoration',lights:['3','5','6'],groups:[]});
+function pickDemoTarget(id){
+ if(!demoEngine.group(id))return;
+ demoEngine.setTarget(id);demoTarget=id;
+ area=id==='all'?'all':id==='bridge:1'?'living':'custom';
+ renderLights();
+}
+demoTree=new window.LumaGroupsTree.Tree(demoEngine,byId('demoFastTree'),{
+ getSelected:()=>demoTarget,
+ onSelect:id=>{pickDemoTarget(id)}
+});
 const demoUI=new window.LumaGroupsUI.UI(demoEngine,byId('groupsV1Root'),{
  onChange:()=>{renderLights()},
- onSelect:id=>{demoEngine.setTarget(id);demoTarget=id;area=id==='all'?'all':id==='bridge:1'?'living':'custom';renderLights();go('Light');toast('Aktiver Lichtbereich: '+demoEngine.group(id).name)}
+ onSelect:id=>{pickDemoTarget(id);go('Light');toast('Aktiver Lichtbereich: '+demoEngine.group(id).name)}
 });
 byId('groupBack').addEventListener('click',()=>go('Light'));
 renderLights();renderScenes();
