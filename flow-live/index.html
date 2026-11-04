@@ -669,6 +669,7 @@ const quickClose=()=>{
   document.body.classList.remove('quick-page-lock');
   document.body.style.top='';
   window.scrollTo(0,quickScrollPosition);
+  window.lumaQuickPull?.reset?.();
   quickLauncher.focus({preventScroll:true});
  };
  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -688,11 +689,19 @@ const quickClose=()=>{
 };
 let quickScrollPosition=0;
 const quickOpen=()=>{
- if(!quickOverlay.hidden)return;
+ const wasPulled=quickOverlay.dataset.pulledOpen==='true';
+ if(!quickOverlay.hidden&&!wasPulled)return;
  quickScrollPosition=window.scrollY||window.pageYOffset||0;
- // The tree is moved, not cloned: selection, power state, disclosure, and focus survive.
+ // The exact same tree is revealed; no cloning, no new Hue requests.
  el('targetCard').hidden=false;
  quickOverlay.hidden=false;
+ quickOverlay.classList.remove('quick-preview','quick-retract');
+ quickSheet.inert=false;
+ quickSheet.style.animation='';
+ quickSheet.style.transition='';
+ quickSheet.style.transform='translate3d(0,0,0)';
+ quickOverlay.querySelector('.quick-backdrop').style.opacity='';
+ quickOverlay.style.pointerEvents='';
  quickLauncher.setAttribute('aria-expanded','true');
  document.body.style.top='-'+quickScrollPosition+'px';
  document.body.classList.add('quick-page-lock');
@@ -707,7 +716,7 @@ el('quickSwipeClose').onclick=quickClose;
 el('quickBackdrop').onclick=quickClose;
 window.addEventListener('keydown',event=>{
  if(quickOverlay.hidden)return;
- if(event.key==='Escape'){event.preventDefault();quickClose();return}
+ if(event.key==='Escape'){event.preventDefault();if(quickOverlay.classList.contains('quick-preview'))window.lumaQuickPull?.reset?.();else quickClose();return}
  if(event.key==='Tab'){
   const focusables=[...quickSheet.querySelectorAll('button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]')].filter(node=>node.getClientRects().length>0);
   if(!focusables.length)return;
