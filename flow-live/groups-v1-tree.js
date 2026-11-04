@@ -130,13 +130,14 @@ class Tree{
    if(!power)continue;
    const light=this.engine.lights[id.slice(5)],state=light?.state||{},reachable=state.reachable!==false;
    const active=Boolean(state.on),pending=this.pending.has(id.slice(5));
-   row.dataset.on=String(active);row.dataset.reachable=String(reachable);
-   row.dataset.pending=String(pending);
+   // Browser elements have dataset/style; lightweight test DOMs may only expose attributes.
+   if(row.dataset){row.dataset.on=String(active);row.dataset.reachable=String(reachable);row.dataset.pending=String(pending)}
+   else{row.setAttribute('data-on',String(active));row.setAttribute('data-reachable',String(reachable));row.setAttribute('data-pending',String(pending))}
    const brightness=Number(state.bri);
    const value=Number.isFinite(brightness)?Math.max(.17,Math.min(1,brightness/254)):.74;
-   row.style.setProperty('--g-light-level',String(active?value:0));
+   row.style?.setProperty?.('--g-light-level',String(active?value:0));
    const hue=Number(state.hue),sat=Number(state.sat);
-   row.style.setProperty('--g-light-color',active&&Number.isFinite(hue)&&Number.isFinite(sat)&&sat>30?
+   row.style?.setProperty?.('--g-light-color',active&&Number.isFinite(hue)&&Number.isFinite(sat)&&sat>30?
     'hsl('+Math.round(hue/65535*360)+'deg '+Math.round(Math.max(30,sat/254*90))+'% 65%)':'#efd19a');
    power.disabled=!reachable||pending;
    power.setAttribute('aria-pressed',String(active));
