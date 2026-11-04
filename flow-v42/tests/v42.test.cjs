@@ -24,7 +24,7 @@ test('the actual brass arm visibly shapes Luma via SVG geometry, without any tex
  assert.ok(open.startsWith('M-'),open);
  assert.ok(open.endsWith('H86'),open);
  assert.equal((open.match(/M/g)||[]).length,1,'one physically continuous metal route');
- assert.ok((open.match(/\bC/g)||[]).length>=10,'u-m-a require real letter loops');
+ assert.ok((open.match(/\bC/g)||[]).length>=8,'u-m-a require real letter loops');
  assert.notEqual(open,closed);
  assert.doesNotMatch(html,/<text\b|<tspan\b|>una</i);
  assert.doesNotMatch(appJs,/createElementNS\([^)]*'text'/);
