@@ -61,42 +61,107 @@ const close=()=>new Promise(resolve=>server.close(resolve));
   }
   await page.locator('#miQuickPalettes').scrollIntoViewIfNeeded();
   await page.screenshot({path:'/tmp/luma-webkit-music.png'});
-  // Real WebKit event dispatch to verify touch listeners are registered and work with the DOM.
-  const swipeResult=await page.evaluate(async()=>{
-   function flick(target,from,to){
-    const event=(type,x,y)=>{const evt=new Event(type,{bubbles:true,cancelable:true});
-     const p={identifier:15,clientX:x,clientY:y};
-     Object.defineProperty(evt,'touches',{value:type==='touchend'?[]:[p]});
-     Object.defineProperty(evt,'changedTouches',{value:[p]});
-     target.dispatchEvent(evt)};
-    event('touchstart',...from);event('touchmove',...to);event('touchend',...to);
-   }
-   const handle=document.getElementById('quickLauncher'),overlay=document.getElementById('quickOverlay');
-   const ready=handle.dataset.swipeReady;
-   flick(handle,[180,250],[65,250]);
-   const opened=!overlay.hidden;
-   const close=document.getElementById('quickSwipeClose');
-   const originalClose=window.lumaQuickControl.close;
-   let closeCalls=0;
-   window.lumaQuickControl.close=()=>{closeCalls++;return originalClose()};
-   flick(close,[12,251],[145,251]);
-   await new Promise(r=>setTimeout(r,370));
-   return {ready,opened,closed:overlay.hidden,rightGrip:!!close,closeCalls};
+  // Verify the actual rendered mechanics at THREE intermediate finger positions.
+  await page.waitForFunction(()=>document.getElementById('quickLauncher')?.dataset.pullReady==='true',{timeout:12000});
+  const capture=async(progress,label)=>{
+   await page.evaluate(({p})=>{
+    const t=window.__lumaPullSmoke;
+    const evt=new Event('touchmove',{bubbles:true,cancelable:true});
+    const finger={identifier:31,clientX:t.x-p*t.drag,clientY:t.y};
+    Object.defineProperty(evt,'touches',{value:[finger]});
+    Object.defineProperty(evt,'changedTouches',{value:[finger]});
+    t.launcher.dispatchEvent(evt);
+   },{p:progress});
+   await page.waitForTimeout(42); // at least two WebKit animation frames
+   const observation=await page.evaluate(()=>{
+    const t=window.__lumaPullSmoke,overlay=document.getElementById('quickOverlay');
+    const shade=document.getElementById('ambientMovingHead').getBoundingClientRect();
+    const mount=document.querySelector('.ambient-lamp-base').getBoundingClientRect();
+    return {pull:+document.getElementById('quickLauncher').dataset.pullProgress,
+      visible:!overlay.hidden,preview:overlay.classList.contains('quick-preview'),
+      sheet:document.querySelector('.quick-sheet').style.transform,
+      arm:document.getElementById('ambientLampArm').getAttribute('d'),
+      beam:document.getElementById('ambientBeam1').getAttribute('d'),
+      shadeX:shade.x,mountX:mount.x,
+      rayPower:getComputedStyle(document.documentElement).getPropertyValue('--ambient-power').trim()};
+   });
+   assert.ok(observation.visible&&observation.preview,label+' must display drawer before finger release');
+   assert.ok(Math.abs(observation.pull-progress)<.025,label+' drawer progress follows thumb');
+   assert.ok(observation.sheet.includes(Math.round((1-progress)*100)+'%'),label+' panel must move proportionately');
+   console.log('WEBKIT_PULL_'+label+'='+JSON.stringify(observation));
+   return observation;
+  };
+  await page.evaluate(()=>{
+   const launcher=document.getElementById('quickLauncher');
+   const x=Math.min(window.innerWidth-22,342),y=launcher.getBoundingClientRect().top+44;
+   const drag=window.LumaQuickPull.limits(window.innerWidth).drag;
+   window.__lumaPullSmoke={launcher,x,y,drag};
+   const evt=new Event('touchstart',{bubbles:true,cancelable:true});
+   const finger={identifier:31,clientX:x,clientY:y};
+   Object.defineProperty(evt,'touches',{value:[finger]});
+   Object.defineProperty(evt,'changedTouches',{value:[finger]});
+   launcher.dispatchEvent(evt);
   });
-  console.log('WEBKIT_SWIPE='+JSON.stringify(swipeResult));
-  assert.equal(swipeResult.ready,'true');
-  assert.equal(swipeResult.opened,true,'left thumb swipe should open without tapping');
-  assert.ok(swipeResult.closeCalls>0,'right-thumb gesture must reach the close handler');
-  assert.equal(swipeResult.closed,true,'right thumb swipe on same-height edge grip should close');
-  assert.equal(swipeResult.rightGrip,true);
+  const p25=await capture(.25,'25'),p50=await capture(.5,'50');
+  await page.screenshot({path:'/tmp/luma-webkit-half-pulled.png'});
+  const p75=await capture(.75,'75');
+  assert.ok(p25.shadeX>p50.shadeX&&p50.shadeX>p75.shadeX,'shade actually moves with the thumb');
+  assert.ok(Math.abs(p25.mountX-p50.mountX)<1&&Math.abs(p50.mountX-p75.mountX)<1,'wall mount stays fixed');
+  assert.notEqual(p25.arm,p50.arm,'arm must grow between progress steps');
+  assert.notEqual(p50.beam,p75.beam,'cone origin follows shade instead of staying static');
+  await page.evaluate(()=>{
+   const t=window.__lumaPullSmoke;
+   const evt=new Event('touchend',{bubbles:true,cancelable:true});
+   const finger={identifier:31,clientX:t.x-t.drag*.75,clientY:t.y};
+   Object.defineProperty(evt,'touches',{value:[]});
+   Object.defineProperty(evt,'changedTouches',{value:[finger]});
+   t.launcher.dispatchEvent(evt);
+  });
+  await page.waitForTimeout(340);
+  const opened=await page.evaluate(()=>({open:!document.getElementById('quickOverlay').hidden,
+    preview:document.getElementById('quickOverlay').classList.contains('quick-preview'),
+    pageLocked:document.body.classList.contains('quick-page-lock'),
+    expanded:document.getElementById('quickLauncher').getAttribute('aria-expanded')}));
+  console.log('WEBKIT_PULL_OPEN='+JSON.stringify(opened));
+  assert.deepEqual(opened,{open:true,preview:false,pageLocked:true,expanded:'true'});
+  await page.screenshot({path:'/tmp/luma-webkit-opened.png'});
+  await page.locator('#quickClose').click();
+  await page.waitForTimeout(320);
+  assert.equal(await page.locator('#quickOverlay').evaluate(e=>e.hidden),true,'close X restores page');
+  assert.equal(await page.locator('#quickLauncher').getAttribute('aria-expanded'),'false');
+  // Below threshold: after a short pull the lamp, beams and sheet must ALL retract.
+  await page.evaluate(()=>{
+   const t=window.__lumaPullSmoke;
+   const touch=(type,delta)=>{
+    const evt=new Event(type,{bubbles:true,cancelable:true});
+    const finger={identifier:35,clientX:t.x-delta,clientY:t.y};
+    Object.defineProperty(evt,'touches',{value:type==='touchend'?[]:[finger]});
+    Object.defineProperty(evt,'changedTouches',{value:[finger]});
+    t.launcher.dispatchEvent(evt)};
+   touch('touchstart',0);touch('touchmove',t.drag*.17);touch('touchend',t.drag*.17);
+  });
+  await page.waitForTimeout(290);
+  const rolledBack=await page.evaluate(()=>({closed:document.getElementById('quickOverlay').hidden,
+    shade:document.getElementById('quickLauncher').dataset.pullProgress,
+    arm:document.getElementById('ambientLampArm').getAttribute('d'),
+    pageLocked:document.body.classList.contains('quick-page-lock')}));
+  console.log('WEBKIT_PULL_RETRACT='+JSON.stringify(rolledBack));
+  assert.ok(rolledBack.closed&&rolledBack.shade==='0.000'&&!rolledBack.pageLocked);
+  // Tap remains a keyboard/touch fallback.
+  await page.locator('#quickLauncher').click();
+  assert.equal(await page.locator('#quickOverlay').evaluate(e=>e.hidden),false);
+  await page.locator('#quickClose').click();
+  await page.waitForTimeout(280);
+  assert.equal(await page.locator('#quickOverlay').evaluate(e=>e.hidden),true);
   // Independent touch targets: direct lamp selection and power live in one existing tree.
   const ui=await page.evaluate(()=>({lampPath:!!document.querySelector('.ambient-lamp-silhouette'),
-   lightRays:document.querySelectorAll('#ambientRoomGlow>.ambient-ray').length,
+   lightRays:document.querySelectorAll('#ambientBeamCanvas>.ambient-beam-path').length,
    onlyOneTree:document.querySelectorAll('#targetFastTree').length===1,
    offGlow:getComputedStyle(document.documentElement).getPropertyValue('--ambient-power').trim()}));
   console.log('WEBKIT_QUICK_UI='+JSON.stringify(ui));
   assert.ok(ui.lampPath&&ui.lightRays===3&&ui.onlyOneTree);
   if(pageErrors.length)console.log('WEBKIT_PAGE_ERRORS='+JSON.stringify(pageErrors.slice(0,8)));
+  assert.equal(pageErrors.length,0,'No unexpected client-side JavaScript errors');
   console.log('WEBKIT_FLOW_VISUAL_SMOKE=PASS');
  }catch(e){console.error('WEBKIT_FLOW_VISUAL_SMOKE=FAIL',e);process.exitCode=1}
  finally{if(browser)await browser.close();await close()}
