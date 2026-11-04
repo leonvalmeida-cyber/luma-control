@@ -28,3 +28,31 @@
 .quick-page-lock{position:fixed!important;left:0!important;right:0!important;margin-inline:auto!important;width:100%!important;max-width:700px!important;overflow:hidden!important}
 @media(max-width:370px){.quick-sheet{width:calc(100vw - 13px);border-radius:20px}.quick-panel-body{padding-left:7px;padding-right:7px}.quick-titlebar{padding-left:12px;padding-right:12px}.quick-overlay .g-tree-lamp-grid{padding-left:5px;margin-left:5px}}
 @media(prefers-reduced-motion:reduce){.quick-launcher,.quick-sheet{transition:none!important;animation:none!important}}
+
+/* v0.7 · Ambient Lamp — one custom light object and one *directional* wash across the app.
+   No box button. Wash sits above content but below controls, always pointer-events:none. */
+:root{--ambient-rgb:188 126 238;--ambient-power:0;--ambient-symbol:.12}
+.ambient-room-glow{position:fixed;inset:0;z-index:720;pointer-events:none;overflow:hidden;isolation:isolate;opacity:var(--ambient-power);transition:opacity .38s ease,background-color .45s ease;
+background:radial-gradient(ellipse 85vw 41vh at calc(100% - 26px) clamp(145px,22dvh,246px),rgb(var(--ambient-rgb) / .26) 0%,rgb(var(--ambient-rgb) / .105) 38%,transparent 81%);mix-blend-mode:screen}
+.ambient-room-glow::before{content:"";position:absolute;right:-5px;top:clamp(145px,22dvh,246px);width:min(96vw,720px);height:37vh;background:linear-gradient(268deg,rgb(var(--ambient-rgb) / .23),rgb(var(--ambient-rgb) / .07) 52%,transparent 98%);clip-path:polygon(100% 0,100% 36%,0 100%,0 78%);opacity:.59;filter:blur(17px)}
+.quick-launcher{width:64px;min-width:64px;height:83px;padding:2px 4px 5px;right:max(6px,env(safe-area-inset-right));border:0!important;border-radius:25px;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;isolation:isolate;overflow:visible;touch-action:none}
+.quick-launcher::before{content:"";position:absolute;width:96px;height:96px;right:-9px;top:-1px;background:radial-gradient(circle,rgb(var(--ambient-rgb) / .70),rgb(var(--ambient-rgb) / .24) 35%,transparent 73%);filter:blur(19px);opacity:var(--ambient-power);pointer-events:none;z-index:-1}
+.quick-launcher::after{content:"";position:absolute;width:135px;height:75px;right:31px;top:15px;background:linear-gradient(270deg,rgb(var(--ambient-rgb) / .23),rgb(var(--ambient-rgb) / .075) 56%,transparent);transform:skewY(-13deg);filter:blur(14px);opacity:var(--ambient-power);pointer-events:none;z-index:-1}
+.quick-launcher>.ambient-lamp-device{display:grid;place-items:center;position:relative;width:62px;height:69px;min-height:69px;line-height:1;z-index:1;filter:none}
+.quick-launcher .ambient-lamp-art{width:63px;height:76px;display:block;overflow:visible;filter:drop-shadow(0 5px 8px #08091dbb)}
+.quick-launcher .ambient-lamp-silhouette{fill:#332b4a;stroke:#d2c5e3;stroke-width:2.6;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-reflection{stroke:#f5e8ff;stroke-width:3.4;opacity:.35;stroke-linecap:round;fill:none}
+.quick-launcher .ambient-lamp-diffuser{fill:rgb(var(--ambient-rgb) / var(--ambient-symbol));stroke:rgb(var(--ambient-rgb) / .95);stroke-width:2.7;filter:drop-shadow(0 0 9px rgb(var(--ambient-rgb) / .82))}
+.quick-launcher .ambient-lamp-stem{stroke:#cfc1e5;stroke-width:5;stroke-linecap:round;fill:none}
+.quick-launcher .ambient-lamp-base{fill:#5c4f7a;stroke:#d1c3e1;stroke-width:2.3;stroke-linejoin:round}
+.quick-launcher .ambient-lamp-detail{stroke:#ffffff9c;stroke-width:2;fill:none}
+.quick-launcher>small{font-size:10px;line-height:1.1;font-weight:780;letter-spacing:.3px;display:block;z-index:2;position:relative;top:-7px;text-shadow:0 1px 6px #0b071d,0 0 15px #22143b;color:#f4eaff}
+.quick-launcher[data-ambient-state=disconnected] .ambient-lamp-art{filter:drop-shadow(0 4px 6px #070b16)}
+.quick-launcher[data-ambient-state=off] .ambient-lamp-diffuser{stroke:#947cae;fill:#6c61845c;filter:none}
+.quick-launcher[aria-expanded=true]{visibility:hidden;pointer-events:none}
+.quick-launcher:focus-visible{outline:2px solid #ddbcff;outline-offset:2px}
+.quick-titlebar{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;padding-top:23px;cursor:grab}
+.quick-swipe-grip{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:44px;height:4px;border-radius:8px;background:#c8b8e1a8;pointer-events:none}
+.quick-sheet{transform:translate3d(0,0,0);animation:quick-drawer-enter .24s cubic-bezier(.2,.8,.25,1) both}
+@keyframes quick-drawer-enter{from{transform:translate3d(34px,0,0);opacity:.74}to{transform:translate3d(0,0,0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.ambient-room-glow,.quick-launcher .ambient-lamp-art{transition:none!important}.quick-sheet{animation:none!important}}
