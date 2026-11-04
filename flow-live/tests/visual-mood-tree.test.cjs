@@ -108,12 +108,12 @@ test('Expanding/collapsing a room reuses the original DOM rather than rebuilding
  const {tree,rootNode}=treeFixture();
  const room=tree.expandables.find(x=>x.id==='bridge:7');
  const first=rootNode.children[1],existingCard=tree.selectables.find(x=>x.id==='lamp:1').pick;
- assert.equal(room.children.hidden,false);
- room.toggle.onclick();
  assert.equal(room.children.hidden,true);
+ room.toggle.onclick();
+ assert.equal(room.children.hidden,false);
  assert.equal(rootNode.children[1],first);
  room.toggle.onclick();
- assert.equal(room.children.hidden,false);
+ assert.equal(room.children.hidden,true);
  assert.equal(tree.selectables.find(x=>x.id==='lamp:1').pick,existingCard);
  assert.ok(treeCSS.includes('height:auto;min-height:0;max-height:'));
 });
