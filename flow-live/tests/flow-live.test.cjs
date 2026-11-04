@@ -5,8 +5,8 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const base=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
 const external=[...html.matchAll(/<(?:script|link)\b[^>]*?(?:src|href)="([^"]+)"/g)].map(m=>m[1]).filter(v=>/^[\w/-]+\.(?:js|css)$/.test(v));
-test('All 11 Flow LIVE assets exist in published folder',()=>{
- assert.equal(external.length,11);
+test('All 13 Flow LIVE assets exist in published folder',()=>{
+ assert.equal(external.length,13);
  for(const file of external)assert.ok(fs.existsSync(path.join(base,file)),file);
 });
 test('Inline and external JS compile',()=>{
