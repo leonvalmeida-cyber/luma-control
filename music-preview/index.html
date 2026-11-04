@@ -155,7 +155,7 @@ const scenes=[
 const favorites=new Set(['cyberpunk','aurora','cozy']);
 let toastTimer=0;
 function toast(msg){const t=byId('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show')},3000)}
-function go(page){currentPage=page;['Light','Scenes','Music','Groups'].forEach(function(name){byId('page'+name).hidden=name!==page;const nav=byId('nav'+name);if(nav){if(name===page)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current')}});window.scrollTo({top:0,behavior:'instant'})}
+function go(page){if(page!=='Music'&&micActive)stopMic();currentPage=page;['Light','Scenes','Music','Groups'].forEach(function(name){byId('page'+name).hidden=name!==page;const nav=byId('nav'+name);if(nav){if(name===page)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current')}});window.scrollTo({top:0,behavior:'instant'})}
 document.querySelectorAll('[data-page]').forEach(function(button){button.addEventListener('click',function(){go(button.dataset.page)})});
 byId('goScenes').addEventListener('click',function(){go('Scenes')});
 function lightArea(){if(demoEngine&&demoEngine.group(demoTarget)){const ids=demoEngine.resolve(demoTarget,{reachableOnly:false});return lamps.filter(l=>ids.includes(String(l.id)))}return lamps.filter(function(l){return area==='all'||l.room==='living'})}
@@ -214,11 +214,11 @@ byId('sceneSearch').addEventListener('input',renderScenes);
 
 const wave=byId('wave'),waveBars=[];for(let i=0;i<19;i++){const e=document.createElement('i');e.style.setProperty('--h',(7+i*13%26)+'px');e.style.setProperty('--h2',(16+i*19%48)+'px');e.style.setProperty('--speed',(.5+i%5*.16)+'s');e.style.animationDelay=(-i*.08)+'s';wave.append(e);waveBars.push(e)}
 const musicColors={neon:['#f21c5e','#8d24e6','#fb521a','#4c54f6','#f322b9','#49daf4','#fe4a31'],sunset:['#ff6331','#f8aa3a','#e94281','#fac151','#a72ca4','#ff7553','#ffdb71'],ocean:['#0d5fa1','#35c4d1','#267fb1','#36e0b3','#474cb7','#5fc5f5','#28a9ca'],warm:['#dd702e','#ffb863','#f18e3d','#ffd492','#b9522b','#f59d51','#ebc284']};
-let musicPalette='neon',musicFocus=50,micStream=null,micCtx=null,micAnalyser=null,micBuf=null,micRaf=0,micActive=false,lastAudioFrame=0,history=[0,0,0],lastPeak=0,sequence=0;
+let musicPalette='neon',musicFocus=50,micStream=null,micCtx=null,micAnalyser=null,micSink=null,micBuf=null,micRaf=0,micActive=false,lastAudioFrame=0,history=[0,0,0],lastPeak=0,sequence=0;
 function updateMusicColors(){byId('musicPaletteSwatches').replaceChildren();for(const c of musicColors[musicPalette]){const el=document.createElement('i');el.style.background=c;byId('musicPaletteSwatches').append(el)}}
 function setMusicState(state,source){byId('musicState').textContent=state;byId('musicInputSource').textContent=source}
 function updateMusicMode(){document.querySelectorAll('#musicModes [data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===musicMode)))}
-async function stopMic(){micActive=false;cancelAnimationFrame(micRaf);micRaf=0;const stream=micStream;micStream=null;stream?.getTracks().forEach(t=>t.stop());const ctx=micCtx;micCtx=null;micAnalyser=null;micBuf=null;if(ctx)try{await ctx.close()}catch{}byId('musicHero').classList.remove('mic-live');byId('musicMic').textContent='🎙 Mikrofon testen';byId('musicInputStatus').textContent='Mikrofon gestoppt';if(!musicPlaying){setMusicState('● Bereit','Aus');byId('musicVisualState').textContent='Musikvisualisierung';byId('musicVisualSource').textContent='Noch kein Audiosignal'}}
+async function stopMic(){micActive=false;cancelAnimationFrame(micRaf);micRaf=0;const stream=micStream;micStream=null;stream?.getTracks().forEach(t=>t.stop());const ctx=micCtx;micCtx=null;micAnalyser=null;micBuf=null;micSink?.disconnect();micSink=null;if(ctx)try{await ctx.close()}catch{}byId('musicHero').classList.remove('mic-live');byId('musicMic').textContent='🎙 Mikrofon testen';byId('musicInputStatus').textContent='Mikrofon gestoppt';if(!musicPlaying){setMusicState('● Bereit','Aus');byId('musicVisualState').textContent='Musikvisualisierung';byId('musicVisualSource').textContent='Noch kein Audiosignal'}}
 function stopDemo(){musicPlaying=false;byId('musicHero').classList.remove('active');byId('musicStart').textContent='▶ Demo'}
 byId('musicStart').addEventListener('click',async()=>{if(micActive)await stopMic();musicPlaying=!musicPlaying;byId('musicHero').classList.toggle('active',musicPlaying);byId('musicStart').textContent=musicPlaying?'■ Stoppen':'▶ Demo';setMusicState(musicPlaying?'● Simulation':'● Bereit',musicPlaying?'Demo':'Aus');byId('musicVisualState').textContent=musicPlaying?'Simuliertes Musiklicht':'Musikvisualisierung';byId('musicVisualSource').textContent=musicPlaying?'Simulation · keine Bridge-Steuerung':'Noch kein Audiosignal';});
 document.querySelectorAll('#musicModes [data-mode]').forEach(btn=>btn.addEventListener('click',()=>{musicMode=btn.dataset.mode;updateMusicMode()}));
@@ -263,7 +263,7 @@ byId('musicMic').addEventListener('click',async()=>{
   micStream=stream;await ctx.resume();
   const source=ctx.createMediaStreamSource(stream),analyser=ctx.createAnalyser();
   analyser.fftSize=2048;analyser.minDecibels=-110;analyser.maxDecibels=-10;analyser.smoothingTimeConstant=.04;
-  source.connect(analyser);micAnalyser=analyser;micBuf=new Float32Array(analyser.frequencyBinCount);
+  source.connect(analyser);const sink=ctx.createGain();sink.gain.value=0;analyser.connect(sink);sink.connect(ctx.destination);micSink=sink;micAnalyser=analyser;micBuf=new Float32Array(analyser.frequencyBinCount);
   micActive=true;lastAudioFrame=0;byId('musicHero').classList.add('mic-live');button.textContent='■ Mikrofon stoppen';
   byId('musicVisualState').textContent='Live-Mikrofonsignal';byId('musicVisualSource').textContent='Lokal analysiert · keine Aufnahme';setMusicState('● Live','Mikrofon');
   micRaf=requestAnimationFrame(frame)
