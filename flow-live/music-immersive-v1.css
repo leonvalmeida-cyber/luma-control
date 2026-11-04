@@ -109,3 +109,16 @@
 #musicPane #miQuickPalettes #palettes .mi-mood-card{height:214px;min-height:214px}
 #musicPane #miQuickPalettes .mi-mood-art{height:127px;min-height:127px}
 #musicPane #miQuickPalettes .mi-mood-card[aria-pressed=true] .mi-mood-art img.mi-mood-picture{filter:saturate(1.25) contrast(1.08)}
+
+/* v0.7 · Strong visible picture layer and local background fallback, including iPhone Safari. */
+#musicPane #miQuickPalettes .mi-mood-art{display:block!important;position:relative;overflow:hidden!important;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=neon] .mi-mood-art{background-image:url('media/neon.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=sunset] .mi-mood-art{background-image:url('media/sunset.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=ocean] .mi-mood-art{background-image:url('media/ocean.svg?v=7')!important}
+#musicPane #miQuickPalettes .mi-mood-card[data-mood-art=warm] .mi-mood-art{background-image:url('media/warm.svg?v=7')!important}
+#musicPane #miQuickPalettes img.mi-mood-picture{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;display:block!important;opacity:1!important;visibility:visible!important;z-index:2!important;object-fit:cover!important;mix-blend-mode:normal!important;filter:saturate(1.17) contrast(1.13)!important}
+#musicPane #miQuickPalettes .mi-mood-glow,#musicPane #miQuickPalettes .mi-mood-beam,#musicPane #miQuickPalettes .mi-mood-wave{opacity:.07;z-index:3!important}
+#musicPane #miQuickPalettes .mi-mood-art-tag{position:absolute;left:8px;bottom:7px;z-index:4;display:block;padding:4px 6px;border:1px solid #ffffff61;background:#0d142482;color:#fff5ff;font-size:9px;font-weight:850;letter-spacing:.95px;line-height:1.2;border-radius:6px;text-shadow:0 1px 3px #0009;box-shadow:0 2px 8px #0005}
+#musicPane #miQuickPalettes .mi-mood-art[data-image-failed=true] img.mi-mood-picture{display:none!important}
+#musicPane #miQuickPalettes .mi-mood-card:focus-visible{outline:2px solid #ebd8ff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#musicPane #miQuickPalettes img.mi-mood-picture{filter:saturate(1.1) contrast(1.1)!important}}
