@@ -1,0 +1,36 @@
+/* V4.8: intentional spatial layout, not a generated image or faux 3D */
+#v45LampHome.v48-room{background:linear-gradient(155deg,#2c2634,#1d2630);isolation:isolate;overflow:hidden}
+.v48-room .v45-room-illustration{display:none!important}
+.v48-scene{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.9}
+.v48-room .v46-lights{z-index:3}
+.v48-room .v46-note{z-index:5;left:10px;top:10px;background:#302a37ee;border:1px solid #8e7c8c;border-radius:3px;box-shadow:0 2px 6px #0004;transform:rotate(-1deg);font-family:inherit}
+.v48-room .v46-mini{width:40px;height:40px;min-height:40px}
+.v48-room .v46-mini .v46-fixture{width:19px;height:24px;filter:none;color:#a9a2ad}
+.v48-room .v46-mini svg{width:19px;height:24px;stroke-width:1.5}
+.v48-room .v46-mini.is-on .v46-fixture{color:rgb(var(--v46-rgb,255,215,160));filter:drop-shadow(0 0 3px rgba(var(--v46-rgb,255,215,160),.6))}
+.v48-room .v46-mini .v46-halo{width:66px;height:66px;opacity:calc(var(--v46-power,0)*.62);filter:blur(7px)}
+.v48-room .v46-mini:focus-visible{outline:2px solid #f0d7ff}
+@media(max-width:390px){.v48-room .v46-mini{width:38px;height:38px;min-height:38px}}
+@media(prefers-reduced-motion:reduce){.v48-room .v46-mini .v46-halo{transition:none}}
+
+/* V4.9: the real SVG is rendered by the browser, not a raster illustration */
+.v49-scene{opacity:1}
+.v48-room .v46-mini{width:34px;height:34px;min-height:34px;z-index:3}
+.v48-room .v46-mini .v46-fixture{width:16px;height:20px}
+.v48-room .v46-mini svg{width:16px;height:20px}
+.v48-room .v46-mini .v46-halo{width:52px;height:52px;filter:blur(10px)}
+
+/* V4.10: stronger legibility of the seven actual light controls */
+.v410-scene{opacity:1}
+.v48-room .v46-mini{width:42px;height:42px;min-height:42px}
+.v48-room .v46-mini .v46-fixture{width:22px;height:26px}
+.v48-room .v46-mini svg{width:22px;height:26px}
+.v48-room .v46-mini .v46-halo{width:64px;height:64px}
+
+/* V4.11: a readable, warm Home Sweet Home – no fake photo assets */
+.v48-room.v411-home{background:#2b2634}
+.v411-scene{opacity:1;filter:drop-shadow(0 2px 2px #0003)}
+.v48-room.v411-home::after{content:'HOME SWEET HOME';position:absolute;right:13px;top:13px;font-size:10px;letter-spacing:2px;font-weight:700;color:#c8b5d1;z-index:4;pointer-events:none}
+.v48-room.v411-home .v46-mini{width:42px;height:42px;min-width:42px;min-height:42px}
+.v48-room.v411-home .v46-mini .v46-fixture{width:20px;height:24px}
+.v48-room.v411-home .v46-mini svg{width:20px;height:24px}
