@@ -1,0 +1,13 @@
+/* V4.7 experimental monochrome-to-color cutaway */
+#v45LampHome.v47-room{background:radial-gradient(ellipse at 58% 30%,#39303a 0%,#1b1b24 67%,#11151c 100%);overflow:hidden}
+.v47-room .v45-room-illustration{opacity:0!important;pointer-events:none}
+.v47-room .v45-room-wash{opacity:0!important}
+.v47-sketch{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:.9;pointer-events:none;filter:grayscale(1)}
+.v47-tints{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none;mix-blend-mode:screen}
+.v47-wash{position:absolute;width:42%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(var(--wash-rgb,255,215,160),.72) 0%,rgba(var(--wash-rgb,255,215,160),.30) 23%,rgba(var(--wash-rgb,255,215,160),.08) 52%,transparent 74%);opacity:calc(var(--wash-power,0)*.86);transition:opacity .42s ease,background .42s ease;filter:blur(10px);pointer-events:none}
+.v47-room .v46-lights{z-index:4}
+.v47-room .v46-mini .v46-fixture{color:#c3bac4;filter:none}
+.v47-room .v46-mini.is-on .v46-fixture{color:rgb(var(--v46-rgb,255,215,160));filter:drop-shadow(0 0 2px rgba(var(--v46-rgb,255,215,160),.7))}
+.v47-room .v46-mini .v46-halo{opacity:calc(var(--v46-power,0)*.45)}
+.v47-room .v46-note{background:#302a35e8;border-color:#b7a6b7a6;transform:rotate(-3deg);font-family:Georgia,serif}
+@media(prefers-reduced-motion:reduce){.v47-wash{transition:none}}
