@@ -1,0 +1,14 @@
+name: iOS microphone build
+on:
+  push:
+    branches: [dev/ios-mikrofontest]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build iPhone simulator app
+        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
