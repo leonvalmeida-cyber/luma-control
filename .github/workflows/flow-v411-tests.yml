@@ -1,0 +1,15 @@
+name: Luma Flow V4.11 checks
+on:
+  push:
+    paths: ['flow-v411/**', '.github/workflows/flow-v411-tests.yml']
+  pull_request:
+    paths: ['flow-v411/**', '.github/workflows/flow-v411-tests.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test flow-v411/tests/v411.test.cjs
