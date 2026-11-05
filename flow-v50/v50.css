@@ -1,0 +1,38 @@
+/* Luma Flow V5.0 — browser-native functional Home dashboard */
+#v45LampHome.v50-home,#v45LampHome.v46-room.v50-home{
+ position:relative!important;height:auto!important;min-height:340px!important;max-height:none!important;
+ overflow:visible!important;margin-top:14px!important;padding:0!important;
+ background:linear-gradient(155deg,#30263d,#222337 65%,#202e36)!important;
+ border:1px solid #9b84b566!important;border-radius:22px!important;
+}
+#v45LampHome.v50-home .v45-room-illustration,
+#v45LampHome.v50-home .v45-room-wash,
+#v45LampHome.v50-home .v45-stage-copy,
+#v45LampHome.v50-home .v45-landing-mark{display:none!important}
+#v45LampHome.v50-home .v46-note{display:none!important}
+#v45LampHome.v50-home .v46-lights{position:absolute!important;inset:auto!important;width:0!important;height:0!important;overflow:hidden!important;pointer-events:none!important}
+#v45LampHome.v50-home .v50-dashboard{position:relative;z-index:3;padding:18px 16px 17px;color:#f9f3ff}
+.v50-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:15px}
+.v50-heading h3{position:static!important;margin:5px 0 3px!important;font-size:22px!important;line-height:1.2!important;letter-spacing:-.6px!important;color:#fff!important}
+.v50-heading p{position:static!important;max-width:none!important;font-size:11px!important;color:#b8b0c7!important}
+.v50-eyebrow{font-size:9px;letter-spacing:2.3px;font-weight:800;color:#d8b5e9}
+.v50-pill{flex-shrink:0;font-size:10px;border:1px solid #aa89b46e;border-radius:999px;padding:7px 9px;color:#e9d7f0;background:#6c4d7740}
+.v50-accent{display:flex;align-items:center;gap:11px;border:1px solid #a98eb43d;border-radius:16px;padding:13px;background:linear-gradient(120deg,#684e704f,#3b536044);margin-bottom:13px}
+.v50-accent-icon{font-size:24px;color:#f1c795}
+.v50-accent strong{display:block;font-size:12px;font-weight:700;line-height:1.4}
+.v50-accent small{display:block;margin-top:3px;font-size:10px;color:#c4b9cd;line-height:1.4}
+.v50-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.v50-card{position:relative;display:flex;align-items:center;gap:9px;min-width:0;min-height:78px;padding:10px 9px;border:1px solid #aa9aba35;border-radius:14px;background:linear-gradient(130deg,#ffffff0b,#1517254d);overflow:hidden}
+.v50-card.v50-on{border-color:rgba(var(--v50-rgb,205,161,240),.55);background:linear-gradient(135deg,rgba(var(--v50-rgb,205,161,240),.17),#252337a8)}
+.v50-color{position:absolute;top:0;left:0;width:3px;height:100%;background:rgb(var(--v50-rgb,205,161,240));opacity:.3}
+.v50-on .v50-color{opacity:1;box-shadow:0 0 18px rgba(var(--v50-rgb,205,161,240),.7)}
+.v50-device{min-width:0;flex:1}
+.v50-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:700}
+.v50-state{display:block;margin-top:5px;font-size:10px;color:#b7b0c2}
+.v50-button-slot{position:relative;flex:none;width:43px;height:43px;border-radius:12px;background:#ffffff0c;border:1px solid #ffffff19}
+#v45LampHome.v50-home .v50-button-slot .v46-mini{position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;display:grid!important;width:43px!important;height:43px!important;min-height:43px!important;pointer-events:auto!important}
+#v45LampHome.v50-home .v50-button-slot .v46-halo{width:46px;height:46px}
+#v45LampHome.v50-home .v50-button-slot .v46-fixture{width:25px;height:27px}
+#v45LampHome.v50-home .v50-button-slot .v46-mini svg{width:24px;height:26px}
+.v50-offline{opacity:.5}
+@media(max-width:390px){#v45LampHome.v50-home .v50-dashboard{padding:14px 10px}.v50-cards{gap:7px}.v50-card{padding:8px 6px;gap:5px}.v50-name{font-size:10px}.v50-pill{font-size:9px}}
