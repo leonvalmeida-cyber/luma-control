@@ -12,3 +12,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build iPhone simulator app
         run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
+      - name: Build iPhone device app
+        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphoneos -derivedDataPath /tmp/luma-derived CODE_SIGNING_ALLOWED=NO build
+      - name: Package unsigned test
+        run: |
+          mkdir -p /tmp/luma-package/Payload
+          cp -R /tmp/luma-derived/Build/Products/Debug-iphoneos/LumaApp.app /tmp/luma-package/Payload/
+          cd /tmp/luma-package
+          zip -qr Luma-Mikrofontest.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Luma-Mikrofontest-unsigniert
+          path: /tmp/luma-package/Luma-Mikrofontest.ipa
