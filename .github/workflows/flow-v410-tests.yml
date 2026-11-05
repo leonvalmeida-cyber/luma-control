@@ -1,0 +1,15 @@
+name: Luma Flow V4.10 checks
+on:
+  push:
+    paths: ['flow-v410/**', '.github/workflows/flow-v410-tests.yml']
+  pull_request:
+    paths: ['flow-v410/**', '.github/workflows/flow-v410-tests.yml']
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test flow-v410/tests/v410.test.cjs
