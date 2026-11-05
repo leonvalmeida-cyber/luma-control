@@ -42,7 +42,7 @@ function setup(){
  const svg=document.createElementNS(ns,'svg');svg.setAttribute('class','v47-sketch');svg.setAttribute('viewBox','0 0 460 217');svg.setAttribute('preserveAspectRatio','xMidYMid slice');svg.setAttribute('aria-hidden','true');svg.innerHTML=drawing;
  home.insertBefore(svg,home.firstChild);
  const tint=document.createElement('div');tint.className='v47-tints';home.insertBefore(tint,home.querySelector('.v46-lights'));
- const observer=new MutationObserver(()=>{const minis=home.querySelectorAll('.v46-mini');for(const mini of minis){
+ const observer=new MutationObserver(mutations=>{if(!mutations.some(m=>m.target?.closest?.('.v46-lights')||m.target?.classList?.contains('v46-lights')))return;const minis=home.querySelectorAll('.v46-mini');for(const mini of minis){
   let wash=tint.querySelector('[data-id="'+CSS.escape(mini.dataset.lightId)+'"]');
   if(!wash){wash=document.createElement('div');wash.className='v47-wash';wash.dataset.id=mini.dataset.lightId;tint.append(wash)}
   wash.style.left=mini.style.left;wash.style.top=mini.style.top;
