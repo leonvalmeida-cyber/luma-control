@@ -1,0 +1,19 @@
+name: Luma Flow V4.6 live room checks
+on:
+  push:
+    paths:
+      - 'flow-v46/**'
+      - '.github/workflows/flow-v46-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v46/**'
+      - '.github/workflows/flow-v46-tests.yml'
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test flow-v46/tests/v46.test.cjs
