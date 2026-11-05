@@ -1,0 +1,19 @@
+name: Luma Flow V4.7 sketch checks
+on:
+  push:
+    paths:
+      - 'flow-v47/**'
+      - '.github/workflows/flow-v47-tests.yml'
+  pull_request:
+    paths:
+      - 'flow-v47/**'
+      - '.github/workflows/flow-v47-tests.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test flow-v47/tests/v47.test.cjs
