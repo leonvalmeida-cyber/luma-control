@@ -26,6 +26,7 @@ if ($Busy) {
     exit 2
 }
 
+$NewToken = $false
 if (Test-Path $TokenFile) {
     $Cipher = (Get-Content $TokenFile -Raw).Trim()
     $Secure = ConvertTo-SecureString $Cipher
@@ -40,6 +41,7 @@ if (Test-Path $TokenFile) {
     $Encrypted = ConvertFrom-SecureString -SecureString $Secure
     New-Item -ItemType Directory -Force -Path (Split-Path $TokenFile) | Out-Null
     Set-Content -Path $TokenFile -Value $Encrypted -Encoding ASCII
+    $NewToken = $true
     Write-Host "Persoenlichen iPhone-Link einmalig erstellt und verschluesselt gespeichert." -ForegroundColor Green
 }
 
@@ -50,11 +52,12 @@ try {
     $env:LUMA_APP_KEY = [System.Net.NetworkCredential]::new("", (ConvertTo-SecureString $Saved.applicationKey)).Password
     $env:LUMA_CLIENT_KEY = [System.Net.NetworkCredential]::new("", (ConvertTo-SecureString $Saved.clientKey)).Password
     $env:LUMA_ACCESS_TOKEN = $Token
+    if ($NewToken) { $env:LUMA_SHOW_QR = "1" } else { $env:LUMA_SHOW_QR = "0" }
 
     Write-Host "Luma Flow wird gestartet ..." -ForegroundColor Cyan
     Write-Host "Dieses Fenster offen lassen. Strg+C beendet den Server." -ForegroundColor Yellow
     & $Python $Server
     if ($LASTEXITCODE -ne 0) { throw "Luma-Server beendet mit Fehlercode $LASTEXITCODE." }
 } finally {
-    Remove-Item Env:LUMA_BRIDGE,Env:LUMA_APP_KEY,Env:LUMA_CLIENT_KEY,Env:LUMA_ACCESS_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:LUMA_BRIDGE,Env:LUMA_APP_KEY,Env:LUMA_CLIENT_KEY,Env:LUMA_ACCESS_TOKEN,Env:LUMA_SHOW_QR -ErrorAction SilentlyContinue
 }
