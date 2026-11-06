@@ -10,6 +10,7 @@ import secrets
 import socket
 import time
 
+import aiohttp
 from aiohttp import web
 from hue_entertainment import EntertainmentSession, LightColorCommand
 
@@ -157,6 +158,46 @@ async def status(request):
     relay = protected(request)
     return web.json_response({"active": relay.session is not None, "frames": relay.count, "reason": relay.last_reason})
 
+async def bridge_info(request):
+    relay = protected(request)
+    return web.json_response({"bridge": relay.host, "mode": "local-relay"})
+
+async def bridge_proxy(request):
+    relay = protected(request)
+    tail = request.match_info["tail"]
+    if request.method == "GET":
+        if tail not in ("lights", "groups", "config"):
+            raise web.HTTPForbidden(text="Dieser Lesepfad ist gesperrt")
+        payload = None
+    elif request.method == "PUT":
+        import re
+        if not re.fullmatch(r"lights/[0-9]{1,3}/state", tail):
+            raise web.HTTPForbidden(text="Dieser Schreibpfad ist gesperrt")
+        try:
+            payload = await request.json()
+            if not isinstance(payload, dict):
+                raise ValueError("Ungültiger Befehlsinhalt")
+        except (ValueError, TypeError):
+            raise web.HTTPBadRequest(text="Ungültige JSON-Daten")
+    else:
+        raise web.HTTPMethodNotAllowed(request.method, ["GET", "PUT"])
+    address = "https://" + relay.host + "/api/" + relay.app_key + "/" + tail
+    try:
+        timeout = aiohttp.ClientTimeout(total=9)
+        async with aiohttp.ClientSession(timeout=timeout) as client:
+            async with client.request(request.method, address, json=payload, ssl=False) as response:
+                if response.status >= 400:
+                    raise web.HTTPBadGateway(text="Bridge HTTP " + str(response.status))
+                data = await response.json(content_type=None)
+        if isinstance(data, list) and any("error" in x for x in data if isinstance(x, dict)):
+            raise web.HTTPBadGateway(text="Hue hat einen Fehler zurückgemeldet")
+        return web.json_response(data)
+    except web.HTTPException:
+        raise
+    except Exception as exc:
+        print("Bridge-Proxy-Fehler:", type(exc).__name__, flush=True)
+        raise web.HTTPBadGateway(text="Lokaler Hue-Bridge-Zugriff fehlgeschlagen")
+
 async def setup(app):
     relay = app["relay"]
     relay.watchdog_task = asyncio.create_task(relay.watchdog())
@@ -187,6 +228,9 @@ def main():
     app.router.add_post("/api/frame", frame)
     app.router.add_post("/api/stop", stop)
     app.router.add_get("/api/status", status)
+    app.router.add_get("/api/bridge-info", bridge_info)
+    app.router.add_route("GET", "/api/hue/{tail:.*}", bridge_proxy)
+    app.router.add_route("PUT", "/api/hue/{tail:.*}", bridge_proxy)
     app.router.add_static("/", path=static_root, show_index=False)
     app.on_startup.append(setup)
     app.on_cleanup.append(cleanup)
