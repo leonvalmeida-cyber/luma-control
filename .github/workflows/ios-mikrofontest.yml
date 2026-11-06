@@ -1,13 +1,13 @@
 name: iOS microphone build
 on:
   push:
-    branches: [dev/ios-mikrofontest]
+    branches: [dev/ios-hue-diagnose]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   build:
-    runs-on: macos-15-intel
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v4
       - name: Build iPhone simulator app
