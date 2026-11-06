@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Luma Flow · iPhone Audio Proof</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,-apple-system;background:#101218;color:#f7f5fa}*{box-sizing:border-box}body{margin:0;padding:24px 18px 55px;max-width:680px;margin-inline:auto}
+h1{font-size:26px;margin-bottom:6px}.sub{color:#a9a9b5;line-height:1.5}.card{border:1px solid #343746;border-radius:20px;padding:18px;margin-top:18px;background:#1c1e27}
+button{background:#e9dbff;color:#17131d;font-size:16px;font-weight:700;border:0;border-radius:14px;padding:14px 20px;margin:6px 8px 6px 0}button:disabled{opacity:.5}.secondary{background:#343744;color:#fff}
+.meter{height:16px;background:#30323c;border-radius:10px;overflow:hidden;margin:6px 0 15px}.fill{height:100%;width:0%;background:linear-gradient(90deg,#6ac5ff,#b78cff)}
+.row{display:flex;justify-content:space-between;gap:10px;font-size:14px}.value{font-variant-numeric:tabular-nums}#message{white-space:pre-wrap;line-height:1.5;color:#cdd0dd}.small{font-size:13px;color:#aaaeba}
+</style></head><body><h1>🎵 Luma Flow · iPhone Audio-Test</h1>
+<div class="sub">Getrennter Machbarkeitstest. Prüft, ob Safari das iPhone-Mikrofon für Musikreaktionen nutzen kann. <b>Keine Hue-Zugangsdaten, keine Verbindung zur Bridge, keine Aufnahme-Datei.</b></div>
+<div class="card"><button id="start">Mikrofon testen</button><button id="stop" class="secondary" disabled>Stoppen</button>
+<div id="message" role="status">Bereit. Starte mit einem Musikstück auf einem zweiten Gerät. Danach teste Apple Music auf demselben iPhone.</div></div>
+<div class="card"><div class="row"><strong>Gesamtpegel</strong><span id="levelText" class="value">0%</span></div><div class="meter"><div id="level" class="fill"></div></div>
+<div class="row"><strong>Bass (45–180 Hz)</strong><span id="bassText" class="value">0%</span></div><div class="meter"><div id="bass" class="fill"></div></div>
+<div class="row"><strong>Mitten (180–2000 Hz)</strong><span id="midText" class="value">0%</span></div><div class="meter"><div id="mid" class="fill"></div></div>
+<div class="row"><strong>Höhen (2–8 kHz)</strong><span id="highText" class="value">0%</span></div><div class="meter"><div id="high" class="fill"></div></div>
+<div class="row"><strong>Audiozustand</strong><span id="state" class="value">Inaktiv</span></div></div>
+<div class="card small"><strong>Bitte beobachten:</strong><p>1. Bewegen sich die Balken bei externer Musik? 2. Bleiben sie aktiv, wenn Apple Music auf <em>diesem iPhone</em> startet? 3. Unterbricht iOS dabei Musik oder Mikrofon?</p>
+<p>Es werden nur lokale Pegel analysiert. Keine Audiodaten verlassen das iPhone. Bei Bildschirm-Sperre oder App-Wechsel kann iOS die Aufnahme stoppen.</p></div>
+<script>
+let stream=null,context=null,analyser=null,raf=0,timer=0;
+const $=id=>document.getElementById(id); const bands=[['bass',45,180],['mid',180,2000],['high',2000,8000]];
+function paint(id,v){v=Math.min(100,Math.max(0,Math.round(v)));$(id).style.width=v+'%';$(id+'Text').textContent=v+'%';}
+function stop(){cancelAnimationFrame(raf);clearInterval(timer);if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;if(context)context.close();context=null;analyser=null;$('start').disabled=false;$('stop').disabled=true;$('state').textContent='Inaktiv';}
+function draw(){if(!analyser)return;const bins=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(bins);let sum=0;for(const x of bins)sum+=x*x;paint('level',Math.sqrt(sum/bins.length)/2.55);for(const [name,low,high] of bands){let a=Math.max(1,Math.floor(low*analyser.fftSize/context.sampleRate));let b=Math.min(bins.length,Math.ceil(high*analyser.fftSize/context.sampleRate));let s=0;for(let i=a;i<b;i++)s+=bins[i];paint(name,(s/Math.max(1,b-a))/2.55);}raf=requestAnimationFrame(draw);}
+$('start').onclick=async()=>{try{
+stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+context=new (window.AudioContext||window.webkitAudioContext)();await context.resume();analyser=context.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=.55;const source=context.createMediaStreamSource(stream);source.connect(analyser);
+$('start').disabled=true;$('stop').disabled=false;$('message').textContent='Mikrofon aktiv. Teste erst Musik von außen, dann Apple Music auf demselben iPhone.';stream.getAudioTracks().forEach(track=>{track.onmute=()=>{$('message').textContent='iOS hat das Mikrofon stummgeschaltet.'};track.onended=()=>{$('message').textContent='Mikrofonaufnahme von iOS beendet.';stop()}});timer=setInterval(()=>{$('state').textContent=context.state+' · '+(stream?.getAudioTracks()[0]?.muted?'stumm':'Mikrofon aktiv')},400);draw();
+}catch(err){stop();$('message').textContent='Mikrofon nicht verfügbar: '+(err?.name||'Fehler')+'. Prüfe die Safari-Mikrofonfreigabe.';}};
+$('stop').onclick=()=>{stop();$('message').textContent='Test beendet.'};document.addEventListener('visibilitychange',()=>{if(document.hidden&&stream)$('message').textContent='Seite im Hintergrund. iOS könnte die Audioaufnahme unterbrechen.'});
+</script></body></html>
