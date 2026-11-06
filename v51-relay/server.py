@@ -293,6 +293,10 @@ def main():
         qr_path = private_dir / "v51-iphone-link.svg"
         qrcode.make(test_url, image_factory=SvgPathImage).save(str(qr_path))
         print("QR-Code für iPhone-Kamera: " + str(qr_path), flush=True)
+        if os.environ.get("LUMA_SHOW_QR") == "1":
+            with suppress(Exception):
+                import webbrowser
+                webbrowser.open(qr_path.as_uri(), new=2)
     except Exception:
         print("QR-Code optional nicht verfügbar; URL oben verwenden.", flush=True)
     if os.environ.get("LUMA_ACCESS_TOKEN"):
