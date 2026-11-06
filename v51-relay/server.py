@@ -7,6 +7,7 @@ from contextlib import suppress
 import os
 from pathlib import Path
 import secrets
+import re
 import socket
 import time
 
@@ -25,7 +26,12 @@ class Relay:
         self.host = os.environ["LUMA_BRIDGE"]
         self.app_key = os.environ["LUMA_APP_KEY"]
         self.client_key = os.environ["LUMA_CLIENT_KEY"]
-        self.token = secrets.token_urlsafe(24)
+        # Optional stable, DPAPI-protected Windows token from start-luma.ps1.
+        # Fallback remains a random per-run token for the manual test workflow.
+        saved_token = os.environ.get("LUMA_ACCESS_TOKEN", "")
+        if saved_token and not re.fullmatch(r"[A-Za-z0-9_-]{40,128}", saved_token):
+            raise ValueError("LUMA_ACCESS_TOKEN muss ein sicherer Base64-URL-Token sein")
+        self.token = saved_token or secrets.token_urlsafe(32)
         self.lock = asyncio.Lock()
         self.session = None
         self.channel_ids = []
@@ -247,6 +253,8 @@ def main():
         print("QR-Code für iPhone-Kamera: " + str(qr_path), flush=True)
     except Exception:
         print("QR-Code optional nicht verfügbar; URL oben verwenden.", flush=True)
+    if os.environ.get("LUMA_ACCESS_TOKEN"):
+        print("Link bleibt nach einem Neustart gleich, solange die PC-IP unverändert ist.", flush=True)
     print("Windows-PC und iPhone müssen im selben WLAN sein.")
     print("Abbrechen: STRG+C. Musik-Stream stoppt spätestens nach 65 Sekunden.\n", flush=True)
     web.run_app(app, host=ip, port=PORT, print=None)
