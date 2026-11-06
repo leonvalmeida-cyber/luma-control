@@ -25,6 +25,9 @@ try {
     if (-not $Source) { throw "ZIP-Archiv konnte nicht entpackt werden." }
     New-Item -ItemType Directory -Force $Target | Out-Null
     Copy-Item -Path (Join-Path $Source "*") -Destination $Target -Recurse -Force
+    # Do not leave old token-bearing QR images in the publicly served project tree.
+    $OldQR = Join-Path $Target "v51-relay\v51-iphone-link.svg"
+    if (Test-Path $OldQR) { Remove-Item $OldQR -Force }
 
     $Launcher = Join-Path $Target "v51-relay\Luma Flow starten.cmd"
     if (-not (Test-Path $Launcher)) { throw "Startdatei fehlt nach der Installation." }
