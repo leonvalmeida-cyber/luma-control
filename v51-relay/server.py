@@ -79,8 +79,20 @@ def protected(request):
     return relay
 
 async def home(request):
-    protected(request)
-    response = web.FileResponse(Path(__file__).resolve().parents[1] / "flow-v50" / "index.html")
+    relay = protected(request)
+    # A protected per-user manifest preserves the token in a Home Screen launch.
+    # Never put the token into a public static manifest.
+    source = Path(__file__).resolve().parents[1] / "flow-v50" / "index.html"
+    html = source.read_text(encoding="utf-8")
+    original_manifest = '<link rel="manifest" href="../app.webmanifest">'
+    if original_manifest not in html:
+        raise web.HTTPInternalServerError(text="V5.0-Manifest-Verknüpfung nicht gefunden")
+    html = html.replace(
+        original_manifest,
+        '<link rel="manifest" href="/app-v51.webmanifest?t=' + relay.token + '">',
+        1,
+    )
+    response = web.Response(text=html, content_type="text/html", charset="utf-8")
     response.headers["Cache-Control"] = "no-store"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -90,6 +102,33 @@ async def home(request):
         "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
         "object-src 'none'; base-uri 'self'"
     )
+    return response
+
+async def manifest(request):
+    relay = protected(request)
+    response = web.json_response(
+        {
+            "id": "/luma-flow-v51",
+            "name": "Luma Flow V5.1",
+            "short_name": "Luma",
+            "start_url": "/?t=" + relay.token,
+            "scope": "/",
+            "display": "standalone",
+            "background_color": "#0b0e18",
+            "theme_color": "#101322",
+            "icons": [
+                {
+                    "src": "/icon.svg",
+                    "sizes": "any",
+                    "type": "image/svg+xml",
+                    "purpose": "any"
+                }
+            ]
+        },
+        content_type="application/manifest+json",
+    )
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Referrer-Policy"] = "no-referrer"
     return response
 
 async def start(request):
@@ -231,6 +270,7 @@ def main():
     app = web.Application(client_max_size=4096)
     app["relay"] = relay
     app.router.add_get("/", home)
+    app.router.add_get("/app-v51.webmanifest", manifest)
     app.router.add_post("/api/start", start)
     app.router.add_post("/api/frame", frame)
     app.router.add_post("/api/stop", stop)
