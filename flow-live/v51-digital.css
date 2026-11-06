@@ -1,0 +1,28 @@
+/* Luma Flow V5.1: the original light/scene UI is untouched.
+   Digital music sits in the existing Music tab; old mic controls remain behind an optional mode. */
+#v51Digital{background:linear-gradient(160deg,#251d35,#111b29 68%);border:1px solid #574a79;border-radius:22px;margin:14px 0;padding:18px;color:#f5f2fc}
+#v51Digital *{box-sizing:border-box}#v51Digital h2{font-size:25px;letter-spacing:-.6px;margin:5px 0 8px}
+#v51Digital .v51-kicker{font-size:11px;font-weight:750;letter-spacing:1.4px;color:#c5a7fc}
+#v51Digital .v51-muted{font-size:13px;color:#c5bbd6;line-height:1.5;margin:7px 0 12px}
+#v51Digital .v51-bar{height:11px;background:#272c3e;border-radius:9px;overflow:hidden}
+#v51Digital .v51-fill{width:0;height:100%;background:linear-gradient(90deg,#63c6e9,#b288e8);transition:width .06s}
+#v51Digital .v51-pair{display:flex;justify-content:space-between;gap:9px;margin:10px 0 5px;font-size:12px}
+#v51Digital .v51-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+#v51Digital .v51-metric{border:1px solid #4e4364;border-radius:12px;padding:11px;background:#171b2c}
+#v51Digital .v51-metric strong{font-size:17px;display:block;font-variant-numeric:tabular-nums}
+#v51Digital .v51-metric small{font-size:11px;color:#b2aec2}
+#v51Digital button{background:#8963d8;color:#fff;min-height:46px}
+#v51Digital button.v51-alt{background:#35324b;color:#ddd4ef}
+#v51Digital button:disabled{opacity:.48}
+#v51Digital input[type=file]{display:block;width:100%;max-width:100%;margin:10px 0 16px;font-size:13px;color:#e4daf9}
+#v51Digital select{font-size:14px;width:auto;max-width:100%}
+#v51Digital .v51-actions{display:flex;gap:9px;flex-wrap:wrap;margin:8px 0}
+#v51Digital .v51-light{width:105px;height:105px;border-radius:50%;margin:14px auto;background:#343349;box-shadow:0 0 20px #3a324d}
+#v51Digital .v51-status{font-size:13px;white-space:pre-line;line-height:1.45;padding:12px;background:#101521;border-radius:12px;color:#dcd0fa;margin:11px 0;min-height:52px}
+#v51Digital .v51-top{display:flex;justify-content:space-between;gap:9px;align-items:center}
+#v51Digital .v51-top button{min-height:35px;padding:8px 10px;font-size:12px}
+#v51Digital .v51-steps{color:#c1b6d0;font-size:12px;line-height:1.6;margin:6px 0 15px}
+body.v51-mode-digital #musicPane > :not(#v51Digital){display:none!important}
+body.v51-mode-legacy #v51Digital .v51-main{display:none!important}
+#v51Digital[hidden]{display:none!important}
+@media(max-width:360px){#v51Digital{padding:13px}#v51Digital .v51-actions button{width:100%}}
