@@ -74,7 +74,7 @@ def protected(request):
 
 async def home(request):
     protected(request)
-    response = web.FileResponse(Path(__file__).resolve().parents[1] / "flow-live" / "index.html")
+    response = web.FileResponse(Path(__file__).resolve().parents[1] / "flow-v50" / "index.html")
     response.headers["Cache-Control"] = "no-store"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -218,9 +218,9 @@ def local_ip(bridge):
 def main():
     relay = Relay()
     ip = local_ip(relay.host)
-    static_root = Path(__file__).resolve().parents[1] / "flow-live"
-    if not static_root.is_dir() or not (static_root / "index.html").exists():
-        raise RuntimeError("flow-live/ fehlt. Bitte das gesamte V5.1-Paket herunterladen.")
+    static_root = Path(__file__).resolve().parents[1]
+    if not (static_root / "flow-v50" / "index.html").is_file() or not (static_root / "flow-live" / "v51-digital.js").is_file():
+        raise RuntimeError("V5.0-Original oder V5.1-Musikmodul fehlen. Vollständiges V5.1-Paket nötig.")
     app = web.Application(client_max_size=4096)
     app["relay"] = relay
     app.router.add_get("/", home)
@@ -234,7 +234,7 @@ def main():
     app.router.add_static("/", path=static_root, show_index=False)
     app.on_startup.append(setup)
     app.on_cleanup.append(cleanup)
-    print("\nLUMA FLOW V5.1 – Licht + Szenen + Musik in einer App")
+    print("\nLUMA FLOW V5.1 – auf Original V5.0 Home Sweet Home aufgebaut")
     print("Nur im privaten WLAN verwenden. Keine Audiodatei wird übertragen.")
     test_url = "http://%s:%s/?t=%s" % (ip, PORT, relay.token)
     print("V5.1 auf iPhone in Safari: " + test_url, flush=True)
