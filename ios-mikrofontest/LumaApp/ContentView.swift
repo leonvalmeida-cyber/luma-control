@@ -59,6 +59,7 @@ struct ContentView: View {
                         }
                         .padding(.vertical, 8)
                     }
+                    HueDiagnosticsView()
                     Text("Dieser erste native Test steuert noch keine Lampen. Erst wenn die Mikrofonanalyse dauerhaft stabil ist, aktivieren wir den verschlüsselten Hue-Entertainment-Stream.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)

@@ -14,7 +14,7 @@ jobs:
         run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
       - name: Build iPhone device app
         run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphoneos SYMROOT=/tmp/luma-products CODE_SIGNING_ALLOWED=NO build
-      - name: Package unsigned test
+      - name: Verify iPhone permissions\n        run: |\n          /usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' /tmp/luma-products/Debug-iphoneos/LumaApp.app/Info.plist\n          /usr/libexec/PlistBuddy -c 'Print :NSLocalNetworkUsageDescription' /tmp/luma-products/Debug-iphoneos/LumaApp.app/Info.plist\n          /usr/libexec/PlistBuddy -c 'Print :NSBonjourServices:0' /tmp/luma-products/Debug-iphoneos/LumaApp.app/Info.plist\n      - name: Package unsigned test
         run: |
           mkdir -p /tmp/luma-package/Payload
           cp -R /tmp/luma-products/Debug-iphoneos/LumaApp.app /tmp/luma-package/Payload/
