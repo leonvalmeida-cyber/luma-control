@@ -288,7 +288,9 @@ def main():
     try:
         import qrcode
         from qrcode.image.svg import SvgPathImage
-        qr_path = Path(__file__).with_name("v51-iphone-link.svg")
+        private_dir = Path(os.environ.get("LOCALAPPDATA", str(Path.home()))) / "LumaFlow" / "private"
+        private_dir.mkdir(parents=True, exist_ok=True)
+        qr_path = private_dir / "v51-iphone-link.svg"
         qrcode.make(test_url, image_factory=SvgPathImage).save(str(qr_path))
         print("QR-Code für iPhone-Kamera: " + str(qr_path), flush=True)
     except Exception:
