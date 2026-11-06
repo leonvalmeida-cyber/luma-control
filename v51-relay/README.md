@@ -12,6 +12,8 @@ Es ist kein tägliches Kopieren langer PowerShell-Befehle mehr nötig.
 6. Das Windows-Serverfenster muss geöffnet bleiben. Dies ist eine Verbesserung des Startvorgangs, **kein** Betrieb ohne PC.
 7. Test nur im privaten LAN, **kein öffentliches WLAN, keine Portfreigabe**.
 
+**Start-Icon auf dem iPhone:** Der lokale Server liefert bei der gültigen, tokenisierten Safari-Adresse ein **separates geschütztes Web-App-Manifest** aus. Dessen `start_url` enthält denselben gespeicherten Token. Das verhindert, dass das Home-Screen-Symbol durch das alte GitHub-Pages-Manifest beim Öffnen den Zugangscode verliert. Ob iOS auf einer HTTP-LAN-Adresse alle Standalone-/PWA-Funktionen unterstützt, muss praktisch geprüft werden; der Link selbst bleibt unabhängig davon nutzbar.
+
 **Sicherheitsmodell:** `start-luma.ps1` erzeugt beim ersten Start einen kryptografisch zufälligen Zugangstoken und legt ihn per Windows-DPAPI verschlüsselt unter `%LOCALAPPDATA%\LumaFlow\stable-launch-token.dpapi` ab. Beim nächsten Start entschlüsselt nur derselbe Windows-Benutzer den Token. Der Token wird ausschließlich an den lokalen Python-Prozess weitergegeben; Hue-Zugangsdaten bleiben ebenfalls DPAPI-verschlüsselt auf Windows. Auf dem iPhone enthält der URL den Zugangstoken; nicht öffentlich teilen. **Der LAN-Webverkehr ist weiterhin HTTP und nicht verschlüsselt.** Bei kompromittiertem Link den Luma-Server stoppen und `stable-launch-token.dpapi` löschen, um beim nächsten Start einen neuen Token zu erzeugen (danach iPhone-Link neu speichern).
 
 
