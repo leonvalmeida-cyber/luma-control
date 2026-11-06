@@ -236,7 +236,16 @@ def main():
     app.on_cleanup.append(cleanup)
     print("\nLUMA FLOW V5.1 – Licht + Szenen + Musik in einer App")
     print("Nur im privaten WLAN verwenden. Keine Audiodatei wird übertragen.")
-    print("V5.1 auf iPhone in Safari: http://%s:%s/?t=%s" % (ip, PORT, relay.token), flush=True)
+    test_url = "http://%s:%s/?t=%s" % (ip, PORT, relay.token)
+    print("V5.1 auf iPhone in Safari: " + test_url, flush=True)
+    try:
+        import qrcode
+        from qrcode.image.svg import SvgPathImage
+        qr_path = Path(__file__).with_name("v51-iphone-link.svg")
+        qrcode.make(test_url, image_factory=SvgPathImage).save(str(qr_path))
+        print("QR-Code für iPhone-Kamera: " + str(qr_path), flush=True)
+    except Exception:
+        print("QR-Code optional nicht verfügbar; URL oben verwenden.", flush=True)
     print("Windows-PC und iPhone müssen im selben WLAN sein.")
     print("Abbrechen: STRG+C. Musik-Stream stoppt spätestens nach 65 Sekunden.\n", flush=True)
     web.run_app(app, host=ip, port=PORT, print=None)
