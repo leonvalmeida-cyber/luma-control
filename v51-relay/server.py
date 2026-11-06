@@ -81,7 +81,8 @@ async def home(request):
     response.headers["Content-Security-Policy"] = (
         "default-src 'self' blob:; connect-src 'self'; "
         "media-src 'self' blob:; script-src 'self' 'unsafe-inline'; "
-        "style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'"
+        "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
+        "object-src 'none'; base-uri 'self'"
     )
     return response
 
