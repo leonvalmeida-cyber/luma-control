@@ -10,10 +10,14 @@ jobs:
     runs-on: xcode-27
     steps:
       - uses: actions/checkout@v4
+      - name: Check bridge request safety
+        run: |
+          xcrun swiftc ios-mikrofontest/LumaApp/HueRequestPolicy.swift ios-mikrofontest/Tests/HueRequestPolicyChecks.swift -o /tmp/hue-policy-check
+          /tmp/hue-policy-check
       - name: Build iPhone simulator app
-        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
       - name: Build iPhone device app
-        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphoneos SYMROOT=/tmp/luma-products CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project ios-mikrofontest/LumaApp.xcodeproj -target LumaApp -configuration Debug -sdk iphoneos SYMROOT=/tmp/luma-products CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
       - name: Verify iPhone permissions
         run: |
           /usr/libexec/PlistBuddy -c 'Print :NSMicrophoneUsageDescription' /tmp/luma-products/Debug-iphoneos/LumaApp.app/Info.plist

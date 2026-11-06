@@ -42,9 +42,7 @@ final class HueDiagnostics: ObservableObject {
         areas = []
         defer { busy = false }
 
-        // NIO sends one HTTPS request and does not follow redirects. Each
-        // connection verifies the Hue CA chain and the selected Bridge ID.
-        let transport = NIOHueHTTPTransport(trustPolicy: .hueBridge(bridgeID: bridgeID))
+        let transport = HueSecureTransport(host: endpoint.host, bridgeID: bridgeID)
         let alias = "bridge-" + bridgeID.uppercased()
         do {
             let credentials: HueCredentials
