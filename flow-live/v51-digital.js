@@ -24,7 +24,7 @@ async function api(path,body,verb='POST'){
  const response=await fetch('/api/'+path,{
   method:verb,credentials:'same-origin',cache:'no-store',
   headers:{'Content-Type':'application/json','X-Luma-Token':token},
-  ...(verb==='POST'?{body:JSON.stringify(body||{})}:{})
+  ...(verb!=='GET'?{body:JSON.stringify(body||{})}:{})
  });
  if(!response.ok){const text=await response.text();throw new Error((text||'HTTP '+response.status).slice(0,180))}
  return response.json();
