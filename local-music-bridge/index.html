@@ -1,0 +1,121 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Luma Flow – Digital → echte Hue</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui,-apple-system;background:#101017;color:#f5f5fa}*{box-sizing:border-box}body{margin:0 auto;padding:22px 17px 60px;max-width:660px}
+h1{font-size:26px;margin:10px 0 6px;letter-spacing:-.7px}.small{color:#aeb1c2;line-height:1.5;font-size:14px}.card{background:#1c202b;padding:18px;border:1px solid #3b3f4c;border-radius:20px;margin:14px 0}
+button{background:#dfd2ff;border:0;border-radius:13px;padding:13px 15px;color:#1b1921;font:700 15px system-ui;cursor:pointer;margin:4px 4px 4px 0}button.alt{background:#424758;color:white}button:disabled{opacity:.43}
+input[type=file]{max-width:100%;margin:12px 0;font-size:14px}.badge{display:inline-block;padding:6px 10px;background:#35384a;border-radius:20px;font-size:12px;color:#d6dcf0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 5px;font-size:14px}.track{height:12px;background:#303540;border-radius:8px;overflow:hidden}.bar{height:100%;width:0%;background:linear-gradient(90deg,#6ac2f9,#c4a3ff)}
+#lamp{width:118px;height:118px;border-radius:50%;margin:16px auto;background:rgb(30,35,45);box-shadow:0 0 15px #2c293f}
+#status{white-space:pre-line;line-height:1.5;font-size:14px;color:#d9d9e5;min-height:42px}
+select{padding:9px;border:1px solid #55576d;border-radius:10px;background:#272b39;color:white}strong{font-weight:750}
+</style></head><body>
+<div class="badge">TEST · NUR LOKALES WLAN · OHNE MIKROFON</div>
+<h1>🎵 Luma Music Engine</h1>
+<p class="small">Digitale Audiodatei auf dem iPhone → lokale FFT-Analyse → nur RGB-Farbwerte an deinen Windows-PC → Hue Entertainment → 7 Lampen / 9 Kanäle. <strong>Die Musikdatei verlässt das iPhone nicht.</strong></p>
+<div class="card"><strong>1 · Eigene Musikdatei</strong><input id="file" type="file" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg">
+<p class="small">MP3, WAV oder ungeschützte M4A aus „Dateien“. Apple-Music-Abo-Titel sind nicht direkt zugänglich.</p>
+<strong>2 · Entertainment-Verbindung</strong><div><button id="connect" disabled>Mit Hue verbinden</button></div>
+<strong>3 · Digitale Musik & Licht</strong><div><button id="play" disabled>▶ Musik + Licht starten</button><button id="stop" class="alt" disabled>■ Stopp</button></div>
+<div class="row"><span>Verstrichene Zeit</span><span id="seconds">0 / 60 s</span></div>
+<p id="status" role="status">Bitte eine Musikdatei auswählen. Windows-Relay muss laufen.</p>
+</div>
+<div class="card"><div class="row"><strong>Digitale Musikanalyse</strong><span id="state" class="badge">Bereit</span></div>
+<div class="row"><span>Gesamtpegel</span><span id="levelText">0%</span></div><div class="track"><div class="bar" id="level"></div></div>
+<div class="row"><span>Bass</span><span id="bassText">0%</span></div><div class="track"><div class="bar" id="bass"></div></div>
+<div class="row"><span>Mitten</span><span id="midText">0%</span></div><div class="track"><div class="bar" id="mid"></div></div>
+<div class="row"><span>Höhen</span><span id="highText">0%</span></div><div class="track"><div class="bar" id="high"></div></div>
+<div id="lamp" aria-label="Farbvorschau"></div>
+<div class="row"><label for="focus">Musikreaktion</label><select id="focus"><option value="balanced">Ausgewogen</option><option value="bass">Bass</option><option value="mid">Mitten</option><option value="high">Höhen</option></select></div>
+<div class="row"><span>Erkannte Bassimpulse</span><strong id="beats">0</strong></div>
+<div class="row"><span>RGB-Frames gesendet</span><strong id="frames">0</strong></div>
+<div class="row"><span>Ø Übertragung zum PC</span><strong id="latency">–</strong></div>
+</div>
+<div class="card small">Hinweise: iPhone-Display anlassen und Safari im Vordergrund behalten. Ein Stream endet automatisch nach spätestens 65 Sekunden oder bei ausbleibenden Farbframes. Die angezeigte PC-Übertragungszeit ist <strong>nicht</strong> die tatsächliche Lichtlatenz. Kein externes Netzwerk, kein Mikrofon, kein Upload. Die Verbindung im privaten WLAN nutzt für diesen Prototyp HTTP; sie ist nicht für öffentliche Netze geeignet.</div>
+<audio id="player" preload="metadata" playsinline style="display:none"></audio>
+<script>
+const $=id=>document.getElementById(id);
+const token=new URLSearchParams(location.search).get('t');
+const audio=$('player');
+let blobUrl=null,ctx=null,source=null,analyser=null,timer=null,streamReady=false,stopping=false,busy=false,frames=0,beats=0,prevBass=0,baseBass=.015,lastBeat=-9,flash=0,runStart=0,latencySum=0,latencyCount=0;
+function status(s){$('status').textContent=s}
+function state(s){$('state').textContent=s}
+async function api(endpoint,payload={}){
+ const response=await fetch('/api/'+endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-Luma-Token':token},body:JSON.stringify(payload),cache:'no-store'});
+ if(!response.ok){const body=await response.text();throw new Error(body.slice(0,200)||('HTTP '+response.status))}
+ return response.json();
+}
+function drawBar(id,v){const p=Math.max(0,Math.min(100,Math.round(v*100)));$(id).style.width=p+'%';$(id+'Text').textContent=p+'%'}
+function avgBand(bins,lo,hi){const hz=ctx.sampleRate/analyser.fftSize;const start=Math.max(1,Math.ceil(lo/hz)),end=Math.min(bins.length,Math.ceil(hi/hz));let sum=0;for(let i=start;i<end;i++)sum+=bins[i];return sum/(Math.max(1,end-start)*255)}
+function hsv(h,s,v){const a=(n,k=(n+h*6)%6)=>v-v*s*Math.max(Math.min(k,4-k,1),0);return [a(5),a(3),a(1)].map(n=>Math.max(0,Math.min(65535,Math.round(n*65535))))}
+function updatePreview(rgb){const c='rgb('+rgb.map(x=>Math.round(x/257)).join(',')+')';$('lamp').style.background=c;$('lamp').style.boxShadow='0 0 42px 10px '+c}
+async function initAudio(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();source=ctx.createMediaElementSource(audio);analyser=ctx.createAnalyser();analyser.fftSize=2048;analyser.smoothingTimeConstant=.22;source.connect(analyser);analyser.connect(ctx.destination);}
+async function stopAll(message){
+ if(stopping)return;stopping=true;clearInterval(timer);timer=null;audio.pause();streamReady=false;
+ $('connect').disabled=!audio.src;$('play').disabled=true;$('stop').disabled=true;state('Gestoppt');
+ try{await api('stop')}catch(e){status('Stop angefordert. Server beendet den Stream spätestens automatisch. '+e.message)}
+ if(message)status(message);
+ stopping=false;
+}
+async function tick(){
+ if(busy||!streamReady||audio.paused||stopping)return;
+ const elapsed=(performance.now()-runStart)/1000;
+ if(elapsed>=60){await stopAll('60 Sekunden abgeschlossen. Hue-Stream beendet.');return}
+ busy=true;
+ try{
+ const bins=new Uint8Array(analyser.frequencyBinCount);analyser.getByteFrequencyData(bins);
+ const bass=avgBand(bins,45,180),mid=avgBand(bins,180,2000),high=avgBand(bins,2000,8000);
+ const level=Math.min(1,(bass*.42+mid*.38+high*.20)*1.6);
+ drawBar('bass',bass);drawBar('mid',mid);drawBar('high',high);drawBar('level',level);
+ baseBass=baseBass*.975+bass*.025;
+ const when=audio.currentTime;
+ if(bass>Math.max(.05,baseBass*1.36)&&bass-prevBass>Math.max(.012,baseBass*.15)&&when-lastBeat>.22){
+  beats++;lastBeat=when;flash=1;$('beats').textContent=String(beats);
+ }
+ prevBass=bass;flash*=.76;
+ const mode=$('focus').value;
+ const val=mode==='bass'?Math.max(bass,flash*.86):mode==='mid'?mid:mode==='high'?high:Math.min(1,level*.78+flash*.72);
+ const brightness=Math.min(.85,.045+val*.72);
+ const baseHue=(when/14)%1;
+ const colors=Array.from({length:9},(_,i)=>hsv((baseHue+i*.058)%1,.91,Math.max(.025,brightness*(.86+.14*Math.sin(i+when)))));
+ updatePreview(colors[0]);
+ const start=performance.now();await api('frame',{colors});const ms=performance.now()-start;
+ latencySum+=ms;latencyCount++;$('latency').textContent=(latencySum/latencyCount).toFixed(1)+' ms';
+ frames++;$('frames').textContent=String(frames);$('seconds').textContent=elapsed.toFixed(0)+' / 60 s';
+ }catch(e){await stopAll('Frame-Übertragung fehlgeschlagen: '+e.message)}
+ finally{busy=false}
+}
+$('file').addEventListener('change',e=>{
+ if(streamReady||timer){status('Bitte erst den laufenden Stream stoppen.');return}
+ if(blobUrl)URL.revokeObjectURL(blobUrl);
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ blobUrl=URL.createObjectURL(file);audio.src=blobUrl;audio.load();$('connect').disabled=false;
+ status('Bereit: '+file.name+'\nDatei bleibt auf dem iPhone. Jetzt mit Hue verbinden.');
+});
+$('connect').onclick=async()=>{
+ $('connect').disabled=true;state('Verbinde');status('Hue Entertainment wird aktiviert …');
+ try{await initAudio();const result=await api('start');if(result.channels!==9)throw Error('Unerwartete Kanalzahl');
+ streamReady=true;$('play').disabled=false;$('stop').disabled=false;state('Hue bereit');
+ status('9 Kanäle verbunden. Jetzt „Musik + Licht starten“ drücken.');}
+ catch(e){streamReady=false;$('connect').disabled=false;state('Fehler');status('Verbindung fehlgeschlagen: '+e.message)}
+};
+$('play').onclick=async()=>{
+ if(!streamReady)return;
+ try{
+  await ctx.resume();
+  await audio.play();
+  clearInterval(timer);
+  frames=0;beats=0;prevBass=0;baseBass=.015;lastBeat=-9;flash=0;latencySum=0;latencyCount=0;
+  $('beats').textContent='0';$('frames').textContent='0';runStart=performance.now();
+  timer=setInterval(tick,40);
+  $('play').disabled=true;$('stop').disabled=false;state('Musik + Hue aktiv');
+  status('Direkte digitale Audioanalyse läuft. RGB geht über deinen PC zu Hue.');
+ }catch(e){status('Audio lässt sich nicht starten: '+e.message)}
+};
+$('stop').onclick=()=>stopAll('Test beendet.');
+audio.addEventListener('ended',()=>stopAll('Song beendet. Stream geschlossen.'));
+audio.addEventListener('error',()=>{if(audio.error)status('Safari kann die Datei nicht abspielen. Verwende eine ungeschützte MP3 oder WAV.')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&streamReady)stopAll('Safari im Hintergrund – Stream zur Sicherheit gestoppt.')});
+window.addEventListener('pagehide',()=>{if(streamReady)navigator.sendBeacon('/api/stop?t='+encodeURIComponent(token),new Blob(['{}'],{type:'application/json'}));if(blobUrl)URL.revokeObjectURL(blobUrl)});
+if(!token){state('Link ungültig');status('Bitte die vollständige lokale Adresse aus PowerShell öffnen.');$('file').disabled=true}
+</script></body></html>
